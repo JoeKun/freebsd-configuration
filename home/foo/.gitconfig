@@ -1,0 +1,11 @@
+[user]
+	name = Foo
+	email = foo@foo.com
+[apply]
+	whitespace = nowarn
+[color]
+	ui = true
+[core]
+	abbrev = 12
+[push]
+	default = simple
