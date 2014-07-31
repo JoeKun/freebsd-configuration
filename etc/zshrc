@@ -22,8 +22,8 @@ alias rm='rm -i'
 
 # Aliases for `ls`
 alias ll='ls -l'
-alias la='ls -a'
-alias lla='ls -la'
+alias la='ls -A'
+alias lla='ls -lA'
 
 # updatedb
 alias updatedb='cd / && /usr/libexec/locate.updatedb ; cd - > /dev/null'
