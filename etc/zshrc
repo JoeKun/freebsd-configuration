@@ -13,7 +13,7 @@
 #-----------------------------------------------------------
 
 # `ls` customization: color
-alias ls='ls -F -G -h'
+alias ls='ls -I -F -G -h'
 
 # Prompt before erasing or overwriting a file
 alias cp='cp -i'
