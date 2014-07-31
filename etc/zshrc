@@ -1,0 +1,338 @@
+# /etc/zsh/zshrc
+# 
+# Configuration file for zsh
+# 
+# Originally taken from files available at 
+# http://formation-debian.via.ecp.fr/fichiers-config.tar.gz
+# which are part of the "Formation Debian GNU/Linux".
+# 
+# Modified by Joel Lopes Da Silva to fit Mac OS X Snow Leopard environment.
+
+#-----------------------------------------------------------
+# Aliases
+#-----------------------------------------------------------
+
+# `ls` customization: color
+alias ls='ls -F -G -h'
+
+# Prompt before erasing or overwriting a file
+alias cp='cp -i'
+alias mv='mv -i'
+alias rm='rm -i'
+
+# Aliases for `ls`
+alias ll='ls -l'
+alias la='ls -a'
+alias lla='ls -la'
+
+# updatedb
+alias updatedb='cd / && /usr/libexec/locate.updatedb ; cd - > /dev/null'
+
+# Some handy aliases
+alias c='clear'
+alias less='less --quiet -M'
+alias s='cd ..'
+alias df='df -h'
+alias du='du -h'
+alias m='mutt'
+alias md='mkdir'
+alias rd='rmdir'
+alias screen='screen -U'
+
+
+#-----------------------------------------------------------
+# Prompt key bindings
+#-----------------------------------------------------------
+
+# Mappings: key, function
+bindkey ''    beginning-of-line       # Home
+bindkey "\e[1~" beginning-of-line
+bindkey "\e[H"  beginning-of-line
+bindkey ''    end-of-line             # End
+bindkey "\e[4~" end-of-line
+bindkey "\e[F"  end-of-line
+bindkey ''    delete-char             # Del
+bindkey '[3~' delete-char
+bindkey '[2~' overwrite-mode          # Insert
+bindkey '[5~' history-search-backward # PgUp
+bindkey '[6~' history-search-forward  # PgDn
+
+# Color prompt (the color is not the same for root and for simple users)
+if [ "`id -u`" -eq 0 ]
+then
+    export PS1="%{[36;1m%}%T %{[34m%}%n%{[33m%}@%{[37m%}%m %{[32m%}%~%{[33m%}%#%{[0m%} "
+else
+    export PS1="%{[36;1m%}%T %{[31m%}%n%{[33m%}@%{[37m%}%m %{[32m%}%~%{[33m%}%#%{[0m%} "
+fi
+
+# Handling directional keys: [home], [end] and others
+typeset -A key
+
+key[Home]=${terminfo[khome]}
+key[End]=${terminfo[kend]}
+key[Insert]=${terminfo[kich1]}
+key[Delete]=${terminfo[kdch1]}
+key[Up]=${terminfo[kcuu1]}
+key[Down]=${terminfo[kcud1]}
+key[Left]=${terminfo[kcub1]}
+key[Right]=${terminfo[kcuf1]}
+key[PageUp]=${terminfo[kpp]}
+key[PageDown]=${terminfo[knp]}
+
+[[ -n "${key[Home]}"    ]]  && bindkey  "${key[Home]}"    beginning-of-line
+[[ -n "${key[End]}"     ]]  && bindkey  "${key[End]}"     end-of-line
+[[ -n "${key[Insert]}"  ]]  && bindkey  "${key[Insert]}"  overwrite-mode
+[[ -n "${key[Delete]}"  ]]  && bindkey  "${key[Delete]}"  delete-char
+[[ -n "${key[Up]}"      ]]  && bindkey  "${key[Up]}"      up-line-or-history
+[[ -n "${key[Down]}"    ]]  && bindkey  "${key[Down]}"    down-line-or-history
+[[ -n "${key[Left]}"    ]]  && bindkey  "${key[Left]}"    backward-char
+[[ -n "${key[Right]}"   ]]  && bindkey  "${key[Right]}"   forward-char
+
+# Title of xterm window
+case $TERM in
+   xterm*)
+       precmd () {print -Pn "\e]0;%n@%m: %~\a"}
+       ;;
+esac
+
+# Color management for `ls` (exporting LS_COLORS)
+if [ -x /usr/bin/dircolors ]
+then
+    if [ -r ~/.dir_colors ]
+    then
+        eval "`dircolors ~/.dir_colors`"
+    elif [ -r /etc/dir_colors ]
+    then
+        eval "`dircolors /etc/dir_colors`"
+    else
+        eval "`dircolors`"
+    fi
+fi
+
+
+#-----------------------------------------------------------
+# `zsh` options
+#-----------------------------------------------------------
+
+# No beep
+unsetopt beep
+unsetopt hist_beep
+unsetopt list_beep
+
+# `>|` must be used to overwrite an existing file; the file will not be 
+# overwritten `>`
+unsetopt clobber
+
+# Ctrl+D is equivalent to `logout`
+unsetopt ignore_eof
+
+# Print the exit code if different from `0`
+setopt print_exit_value
+
+# Asks confirmation for `rm *`
+unsetopt rm_star_silent
+
+# Correcting commands orthography
+#setopt correct
+
+# Misc
+setopt nullglob
+
+
+# Auto-completion scheme
+
+# Scheme A
+# 1st tab: completes until the end of common part
+# 2nd tab: gives a list of choices
+# 3rd tab: completes with the 1st item of the list
+# 4th tab: completes with the 2nd item of the list
+# Default completion for `zsh`
+
+# Scheme B
+# 1st tab: gives a list of choices and completes with the 1st item 
+#          of the list
+# 2nd tab: completes with the 2nd item of the list, etc.
+# If you want to use this schemem uncomment the following line:
+#setopt menu_complete
+
+# Scheme C
+# 1st tab: completes until the end of the common part and
+#          gives a list of choices
+# 2nd tab: completes with the 1st item of the list
+# 3rd tab: completes with the 2nd item of the list, etc.
+# This is the best scheme for me!
+unsetopt list_ambiguous
+
+
+# Completion options
+setopt auto_remove_slash
+unsetopt glob_dots
+
+# Follow symbolic links
+setopt chase_links
+
+# When the user starts his command with `!` to make historical completion, 
+# don't execute the command immediately, but write it to the prompt
+setopt hist_verify
+
+# If the command is not valid but corresponds to the name of a sub-directory
+# execute `cd sub-directory`
+setopt auto_cd
+
+# Execution of `cd` puts the directory we come from in the stack
+setopt auto_pushd
+
+# Ignore dups in the stack
+setopt pushd_ignore_dups
+
+# Don't print the stack after a "pushd" or "popd"
+setopt pushd_silent
+
+# `pushd` without argument = `pushd $HOME`
+setopt pushd_to_home
+
+# Background jobs get a `nice 0`
+unsetopt bg_nice
+
+# Don't send `HUP` to jobs running when the shell exits
+unsetopt hup
+
+
+#-----------------------------------------------------------
+# Commands history parameters
+#-----------------------------------------------------------
+
+# Number of rows in the history
+export HISTORY=10000
+export HISTSIZE=10000
+export SAVEHIST=10000
+
+# File where the history is stored
+export HISTFILE=$HOME/.history
+
+# Append history to the end of the old file
+#setopt append_history
+
+# Each row is added in the history as it is typed
+setopt inc_append_history
+
+# Don't store a line in the history if it is identical to the previous one
+setopt hist_ignore_dups
+
+# Remove dups in the history file, keeping only the last added occurrence
+#setopt hist_ignore_all_dups
+
+# Remove dups in the history when it is full, but not before
+setopt hist_expire_dups_first
+
+# Don't store more than once a row, whatever setted options for current session
+#setopt hist_save_no_dups
+
+# History lookup with `zsh` command editor does not show a row more than
+# once, even if it has been stored
+setopt hist_find_no_dups
+
+
+#-----------------------------------------------------------
+# RVM Support
+#-----------------------------------------------------------
+
+# Always pick single-user RVM installs over multi-user ones.
+if [[ -d "/usr/local/rvm" ]] && [[ ! -d "$HOME/.rvm" ]]
+then
+    export __RVM_INSTALL_PATH="/usr/local/rvm"
+else
+    export __RVM_INSTALL_PATH="$HOME/.rvm"
+fi
+
+# Clear stale rvm environment variables when rvm is not loaded and 
+# rvm_path is set but corresponds to some other user's home directory.
+# This tends to happen when using su, since by default, su preserves 
+# most environment variables even though it doesn't preserve functions 
+# and aliases.
+if [[ -n "${rvm_path:-}" ]] && [[ "${rvm_path}" != "${RVM_INSTALL_PATH}" ]] && ! typeset -f rvm >/dev/null 2>&1
+then
+    for home_directory in `grep ":/bin/zsh$" /etc/passwd | cut -d ":" -f 6`
+    do
+        if [[ "${home_directory}/.rvm" == "${rvm_path}" ]]
+        then
+            # Taken from __rvm_unload in scripts/functions/env
+            stale_rvm_variables=( $( set |
+                awk -F"=" 'BEGIN{v=0;} /^[a-zA-Z_][a-zA-Z0-9_]*=/{v=1;} v==1&&$2~/^['\''\$]/{v=2;}
+                  v==1&&$2~/^\(/{v=3;} v==2&&/'\''$/&&!/'\'\''$/{v=1;} v==3&&/\)$/{v=1;} v{print;} v==1{v=0;}' |
+                awk -F"=" '/^[^ ]*(RUBY|GEM|IRB|gem|rubies|rvm)[^ ]*=/ {print $1} /^[^ ]*=.*rvm/ {print $1}' |
+                \grep -vE "^PROMPT|^prompt|^PS|^BASH_SOURCE" | uniq ) )
+            for stale_rvm_variable in "${stale_rvm_variables[@]}"
+            do
+                unset "${stale_rvm_variable}"
+            done
+            unset stale_rvm_variable
+            unset stale_rvm_variables
+            break
+        fi
+    done
+    unset home_directory
+fi
+
+# Load any user rvm configuration
+if [[ -f "$HOME/.rvmrc" ]] && [[ -r "$HOME/.rvmrc" ]]
+then
+    source "$HOME/.rvmrc"
+    [[ -n "${rvm_path:-}" ]] && export __RVM_INSTALL_PATH="${rvm_path}"
+fi
+
+# Load RVM into a shell session *as a function*
+[[ -s "$__RVM_INSTALL_PATH/scripts/rvm" ]] && source "$__RVM_INSTALL_PATH/scripts/rvm"
+[[ -s "$__RVM_INSTALL_PATH/scripts/completion" ]] && source "$__RVM_INSTALL_PATH/scripts/completion"
+unset __RVM_INSTALL_PATH
+
+
+#-----------------------------------------------------------
+# Option commands completion
+#-----------------------------------------------------------
+
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}'
+zstyle ':completion:*' max-errors 3 numeric
+zstyle ':completion:*' use-compctl false
+
+autoload -Uz compinit
+compinit
+
+
+#-----------------------------------------------------------
+# Other tweaks for non login shells
+#-----------------------------------------------------------
+
+if [[ ! -o login ]]
+then
+    
+    # When coming from some user's home, automatically move to the new 
+    # user's home directory.
+    for home_directory in `grep ":/bin/zsh$" /etc/passwd | cut -d ":" -f 6`
+    do
+        if [[ "`pwd`" == "${home_directory}" ]]
+        then
+            cd ~
+            break
+        fi
+    done
+    unset home_directory
+    
+    # Welcome message
+    [[ -z "${LOGIN_GREETING_NAME:-}" ]] && export LOGIN_GREETING_NAME="$USER"
+    login_greeting_figlet_options=""
+    (( ${LOGIN_GREETING_SLANTED_TEXT_DISABLED:=0} == 0 )) && login_greeting_figlet_options=("-f" "slant")
+    echo
+    figlet -c -t ${login_greeting_figlet_options[@]} "Hey ${LOGIN_GREETING_NAME}"
+    echo
+    unset login_greeting_figlet_options
+    
+    # Fortune
+    if (( ${FORTUNE_UPON_LOGIN_DISABLED:=0} == 0 ))
+    then
+        fortune
+        echo
+    fi
+    
+fi
+

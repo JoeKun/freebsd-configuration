@@ -1,0 +1,57 @@
+# /etc/zsh/zlogin
+# 
+# Configuration file for zsh
+# 
+# Originally taken from files available at 
+# http://formation-debian.via.ecp.fr/fichiers-config.tar.gz
+# which are part of the "Formation Debian GNU/Linux".
+# 
+# Modified by Joel Lopes Da Silva.
+
+# This file contains commands executed when the user opens a Terminal
+
+#-----------------------------------------------------------
+# System status
+#-----------------------------------------------------------
+
+# Prints information about the system
+if (( ${ECHO_SYSTEM_INFORMATION_UPON_LOGIN_DISABLED:=0} == 0 ))
+then
+    uname -a
+    uptime
+fi
+
+# Accept messages from other users
+if (( ${ACCEPT_MESSAGES_FROM_OTHER_USERS_DISABLED:=0} == 0 ))
+then
+    mesg y
+fi
+
+
+#-----------------------------------------------------------
+# Welcome message
+#-----------------------------------------------------------
+
+if (( ${LOGIN_GREETING_DISABLED:=0} == 0 ))
+then
+    [[ -z "${LOGIN_GREETING_NAME:-}" ]] && export LOGIN_GREETING_NAME="$USER"
+    
+    login_greeting_figlet_options=""
+    (( ${LOGIN_GREETING_SLANTED_TEXT_DISABLED:=0} == 0 )) && login_greeting_figlet_options=("-f" "slant")
+    echo
+    figlet -c -t ${login_greeting_figlet_options[@]} "Hello $LOGIN_GREETING_NAME"
+    echo
+    unset login_greeting_figlet_options
+fi
+
+
+#-----------------------------------------------------------
+# Fortune...
+#-----------------------------------------------------------
+
+if (( ${FORTUNE_UPON_LOGIN_DISABLED:=0} == 0 ))
+then
+    fortune
+    echo
+fi
+
