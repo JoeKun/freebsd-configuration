@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/ntpd: system configuration for ntpd
+
+ntpd_enable="YES"
+

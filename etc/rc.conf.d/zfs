@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/zfs: system configuration for zfs
+
+zfs_enable="YES"
+

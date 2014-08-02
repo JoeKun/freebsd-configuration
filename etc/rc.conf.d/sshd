@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/sshd: system configuration for sshd
+
+sshd_enable="YES"
+

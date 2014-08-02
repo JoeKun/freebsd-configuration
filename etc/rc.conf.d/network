@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/network: system configuration for network
+
+ifconfig_em0="DHCP"
+
