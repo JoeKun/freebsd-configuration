@@ -5,6 +5,8 @@
 #-----------------------------------------------------------
 
 # Frequently used applications
+alias upgrade="pkg update && pkg upgrade && pkg clean --all --yes"
+alias freebsd-upgrade="freebsd-update fetch && freebsd-update install"
 
 
 #-----------------------------------------------------------
