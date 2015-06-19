@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ProductCopyright</key>
+	<string>1995-2015 The FreeBSD Project</string>
+	<key>ProductName</key>
+	<string>FreeBSD</string>
+	<key>ProductUserVisibleVersion</key>
+	<string>10.1</string>
+	<key>ProductVersion</key>
+	<string>10.1</string>
+</dict>
+</plist>
