@@ -252,7 +252,7 @@ fi
 # and aliases.
 if [[ -n "${rvm_path:-}" ]] && [[ "${rvm_path}" != "${RVM_INSTALL_PATH}" ]] && ! typeset -f rvm >/dev/null 2>&1
 then
-    for home_directory in `grep ":/bin/zsh$" /etc/passwd | cut -d ":" -f 6`
+    for home_directory in `grep ":/usr/local/bin/zsh$" /etc/passwd | cut -d ":" -f 6`
     do
         if [[ "${home_directory}/.rvm" == "${rvm_path}" ]]
         then
@@ -308,7 +308,7 @@ then
     
     # When coming from some user's home, automatically move to the new 
     # user's home directory.
-    for home_directory in `grep ":/bin/zsh$" /etc/passwd | cut -d ":" -f 6`
+    for home_directory in `grep ":/usr/local/bin/zsh$" /etc/passwd | cut -d ":" -f 6`
     do
         if [[ "`pwd`" == "${home_directory}" ]]
         then
