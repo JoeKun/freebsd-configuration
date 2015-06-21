@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/routing: system configuration for routing
+
+defaultrouter="10.0.0.1"
+
