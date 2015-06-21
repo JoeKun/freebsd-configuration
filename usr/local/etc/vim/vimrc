@@ -108,7 +108,7 @@ set foldlevel=12
 set incsearch
 
 " Highlight search term
-"set hlsearch
+set hlsearch
 
 " Uncomment the following line if you want to display line numbers
 "set number
