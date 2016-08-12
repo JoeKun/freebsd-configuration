@@ -16,20 +16,20 @@
 
 The main drive that ships with the Mac Mini uses Core Storage. We'd like to use some of that disk space for partitions dedicated to FreeBSD, so we need to disable Core Storage.
 
-To do that, we will re-install OS X Yosemite from scratch.
+To do that, we will re-install OS X El Capitan from scratch.
 
-### Prepare a USB drive with a bootable image of the OS X Yosemite installer
+### Prepare a USB drive with a bootable image of the OS X El Capitan installer
 
- * Boot the Mac Mini to OS X Yosemite, and go to the App Store.
- * Search for "OS X Yosemite", and download it. You may get some warning about OS X Yosemite already being installed; just ignore the warning and confirm the download.
- * Once the download has complete, the OS X Yosemite setup assistant will launch. Just quit it.
+ * Boot the Mac Mini to OS X El Capitan, and go to the App Store.
+ * Search for "OS X El Capitan", and download it. You may get some warning about OS X El Capitan already being installed; just ignore the warning and confirm the download.
+ * Once the download has complete, the OS X El Capitan setup assistant will launch. Just quit it.
  * Plug a USB drive.
  * Using the "Disk Utility" application, re-partition the USB drive with a GUID Partition Table, and a single partition with an HFS+ volume named "USB".
  * Open Terminal, and enter the following command:
  
-   `$ sudo /Applications/Install\ OS\ X\ Yosemite.app/Contents/Resources/createinstallmedia --volume /Volumes/Untitled --applicationpath /Applications/Install\ OS\ X\ Yosemite.app --nointeraction`
+   `$ sudo /Applications/Install\ OS\ X\ El\ Capitan.app/Contents/Resources/createinstallmedia --volume /Volumes/Untitled --applicationpath /Applications/Install\ OS\ X\ El\ Capitan.app --nointeraction`
 
-### Re-install OS X Yosemite
+### Re-install OS X El Capitan
 
  * Boot into the USB drive.
  * Launch Terminal.
@@ -44,23 +44,35 @@ To do that, we will re-install OS X Yosemite from scratch.
 
  * Exit Terminal.
  * Launch Disk Utility.
- * Repartition drive with a GUID Partition Table, and a single partition with an HFS+ volume named "Macintosh HD".
+ * Repartition drive with a GUID Partition Table, and a single partition with an HFS+ volume named "Macintosh HD". This can be done very easily using the Erase button in the toolbar.
  * Exit Disk Utility.
- * Proceed installing OS X Yosemite onto this new "Macintosh HD" volume.
+ * Proceed installing OS X El Capitan onto this new "Macintosh HD" volume.
+
+### Disable System Integrity Protection
+
+After completing the install and going through the first launch setup assistant,  we need to disable System Integrity Protection, which will prevent us from changing the boot volume later on.
+
+ * Restart the computer, while booting hold down Command-R to boot into recovery mode.
+ * Once booted, navigate to the “Utilities > Terminal” in the top menu bar.
+ * Enter `csrutil disable` in the terminal window and hit the return key.
+ * Restart the machine and System Integrity Protection will now be disabled.
 
 ### Make room for FreeBSD partitions in the main drive
 
-After completing the install and going through the first launch setup assistant, we need to make some room for FreeBSD partitions.
+Now we need to make some room for FreeBSD partitions.
 
- * Launch Disk Utility.
- * Select the main drive.
- * Resize the "Macintosh HD" partition to 100 GB.
+In Terminal, execute the following commands:
+
+```
+$ diskutil resizeVolume disk0s2 120G
+$ diskutil resizeVolume disk0s2 100G
+```
 
 ## Prepare installation media
 
- * Download latest FreeBSD 10.1 image for AMD64 architecture, in `memstick` format, with UEFI support.
+ * Download latest FreeBSD 11 image for AMD64 architecture, in `memstick` format.
 
-   `$ wget ftp://ftp.freebsd.org/pub/FreeBSD/releases/ISO-IMAGES/10.1/FreeBSD-10.1-RELEASE-amd64-uefi-memstick.img`
+   `$ wget ftp://ftp.freebsd.org/pub/FreeBSD/releases/amd64/amd64/ISO-IMAGES/11.0/FreeBSD-11.0-BETA4-amd64-memstick.img`
 
  * Find device identifier for USB drive to be used for installing FreeBSD by looking at the output of the following command.
 
@@ -72,7 +84,7 @@ After completing the install and going through the first launch setup assistant,
 
  * Expand image to USB drive using the following command.
 
-   `$ sudo dd if=FreeBSD-10.1-RELEASE-amd64-uefi-memstick.img of=/dev/disk2 bs=4m`
+   `$ sudo dd if=FreeBSD-11.0-BETA4-amd64-memstick.img of=/dev/disk2 bs=4m`
    
  * For the installation process, you will also need a second USB drive with a FAT partition, to help transfer one critical file from FreeBSD's boot volume an HFS+ partition.
 
@@ -97,11 +109,10 @@ After completing the install and going through the first launch setup assistant,
     * The "Macintosh HD" HFS+ partition of 93 GB (OS X counts GB differently from other OSes).
     * The Recovery partition of type "apple-boot", of about 620 MB.
 
- * In the main drive, we need to add a small HFS+ partition which will be visible by the Mac Boot Manager as well as OS X's System Preferences to boot into FreeBSD. Because FreeBSD's `boot1.efi` doesn't currently have support for booting into a system using ZFS-on-root, we will also need a small UFS partition where we will store a copy of the `/boot` folder. Finally, we need a swap partition.
+ * In the main drive, we need to add a small HFS+ partition which will be visible by the Mac Boot Manager as well as OS X's System Preferences to boot into FreeBSD. We will also need a swap partition.
  
    ```
    # gpart add -s 200m -a 4k -t apple-hfs -l FreeBSD ada2
-   # gpart add -s 1g -a 4k -t freebsd-ufs -l ufsboot ada2
    # gpart add -s 8g -a 4k -t freebsd-swap -l swap ada2
    # gpart add -a 4k -t freebsd-zfs -l ssd ada2
    ```
@@ -110,17 +121,26 @@ After completing the install and going through the first launch setup assistant,
  
    `# gpart show ada2`
  
-   The index of the UFS partition should be 5.
- 
- * Make a new UFS filesystem for `/dev/ada2p5`.
- 
-   `# newfs -U /dev/ada2p5`
- 
- * Create new GPT partitioned disks, repeat this for all disks.
- 
+ * Destroy previous partition table on the disks, if any.
+
    ```
    # gpart destroy -F ada0
    # gpart destroy -F ada1
+   ```
+
+ * If those disks have previously been used as vdevs of a previous ZFS pool, you may want to zero out a few sectors at the beginning and at the end of the disks to prevent an annoying warning later on with the `zpool create` command.
+ 
+   ```
+   # dd if=/dev/zero of=/dev/ada0 bs=1m count=1
+   # dd if=/dev/zero of=/dev/ada0 bs=1m oseek=`diskinfo ada0 | awk '{print int($3 / (1024*1024)) - 4;}'`
+   
+   # dd if=/dev/zero of=/dev/ada1 bs=1m count=1
+   # dd if=/dev/zero of=/dev/ada1 bs=1m oseek=`diskinfo ada1 | awk '{print int($3 / (1024*1024)) - 4;}'`
+   ```
+
+ * Create new GPT partitioned disks.
+
+   ```
    # gpart create -s gpt ada0
    # gpart create -s gpt ada1
    ```
@@ -132,9 +152,11 @@ After completing the install and going through the first launch setup assistant,
    # gpart add -a 4k -t freebsd-zfs -l owc0.1 ada1
    ```
  
- * Set VFS tunable to make sure ZFS will setup the pool optimized for 4k (i.e. Advanced Format) drives.
+ * For FreeBSD 10.1, we used to need to set a VFS tunable to make sure ZFS will setup the pool optimized for 4k (i.e. Advanced Format) drives, like so:
  
    `# sysctl vfs.zfs.min_auto_ashift=12`
+
+However, it seems like that VFS tunable doesn't exist in FreeBSD 11 anymore, as running this command produces an error. Nevertheless, the ZFS pool we're about to create with the following commands will have the correct `ashift` value, as you can verify later on by checking the output of `zdb`.
  
  * Create the ZFS pool.
  
@@ -176,7 +198,6 @@ After completing the install and going through the first launch setup assistant,
    # cat << EOF > /tmp/bsdinstall_etc/fstab
  # Device                       Mountpoint              FStype  Options         Dump    Pass#
  /dev/gpt/swap                  none                    swap    sw              0       0
- /dev/gpt/ufsboot               /ufsboot                ufs     rw              1       1
  EOF
    ```
  
@@ -188,7 +209,6 @@ After completing the install and going through the first launch setup assistant,
    ```
    # mount -t devfs devfs /dev
    # echo 'zfs_enable="YES"' >> /etc/rc.conf
-   # echo 'zfs_load="YES"' >> /boot/loader.conf
    # echo 'vfs.root.mountfrom="zfs:storage"' >> /boot/loader.conf
    ```
  
@@ -202,15 +222,6 @@ After completing the install and going through the first launch setup assistant,
    
    ```
    # zfs set readonly=on storage/var/empty
-   ```
- 
- * Copy contents of `/boot` to `/ufsboot`.
- 
-   ```
-   # mkdir /ufsboot
-   # mount -t ufs /dev/ada2p5 /ufsboot
-   # cp -av /boot /ufsboot
-   # umount /ufsboot
    ```
    
  * Copy `/boot/boot1.efi` to the FAT partition in the second USB drive.
@@ -227,24 +238,22 @@ After completing the install and going through the first launch setup assistant,
 
  * Reboot, and hold the option key when the Mac starts up again.
  * Select the Macintosh HD partition in the Mac Boot Manager.
- * Open Disk Utility, and format the second visible partition of the main drive as HFS+ with the "Erase" functionality, using the volume name "FreeBSD".
- 
-   This is the first partition we added to the main drive, with 200 MB partition of space. This should show as the second partition in the Disk Utility application because it hides the EFI System Partition as well as the Recovery Partition.
- 
- * Prepare this volume with what we need to have it show up in System Preferences or in the Mac Boot Manager.
+ * Prepare the second HFS+ volume with 200 MB of space to allow booting FreeBSD,  with what we need to have it show up in System Preferences or in the Mac Boot Manager.
  
    ```
+   $ diskutil eraseVolume JHFS+ FreeBSD /dev/disk0s4
    $ mkdir -p /Volumes/FreeBSD/System/Library/CoreServices
-   $ cp /Volumes/FAT/boot1.efi /Volumes/FreeBSD/System/Library/CoreServices
+   $ cp /Volumes/FAT/boot1.efi /Volumes/FreeBSD/System/Library/CoreServices/boot.efi
    $ cp /path/to/freebsd-configuration/documentation/freebsd/SystemVersion.plist /Volumes/FreeBSD/System/Library/CoreServices
    $ cp /path/to/freebsd-configuration/documentation/freebsd/FreeBSD.icns /Volumes/FreeBSD/.VolumeIcon.icns
    $ touch /Volumes/FreeBSD/mach_kernel
    $ SetFile -a V /Volumes/FreeBSD/mach_kernel
-   $ sudo chown root:wheel /Volumes/FreeBSD/{mach_kernel,System}
-   $ sudo chmod 644 /Volumes/FreeBSD/System/Library/CoreServices/boot1.efi
+   $ sudo chown -R root:wheel /Volumes/FreeBSD/{mach_kernel,System}
+   $ sudo chmod 644 /Volumes/FreeBSD/System/Library/CoreServices/boot.efi
+   $ sudo bless --folder /Volumes/FreeBSD --label "FreeBSD"
+   $ sudo bless --mount /Volumes/FreeBSD --setBoot
    ```
 
- * Open System Preferences > Startup Disk and select the FreeBSD volume.
  * Reboot.
 
 ## Upgrade base system
@@ -252,8 +261,6 @@ After completing the install and going through the first launch setup assistant,
 ```
 # freebsd-update fetch
 # freebsd-update install
-# rm -R -f /ufsboot/boot
-# cp -av /boot /ufsboot
 # reboot
 ```
 
