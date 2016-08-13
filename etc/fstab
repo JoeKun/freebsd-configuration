@@ -9,6 +9,3 @@ fdesc                   /dev/fd                 fdescfs         rw             0
 # Swap
 /dev/gpt/swap           none                    swap            sw             0       0
 
-# UFS boot partition
-/dev/gpt/ufsboot        /ufsboot                ufs             rw             1       1
-
