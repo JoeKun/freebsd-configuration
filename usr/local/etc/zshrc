@@ -1,4 +1,4 @@
-# /etc/zsh/zshrc
+# /usr/local/etc/zshrc
 # 
 # Configuration file for zsh
 # 
@@ -6,7 +6,7 @@
 # http://formation-debian.via.ecp.fr/fichiers-config.tar.gz
 # which are part of the "Formation Debian GNU/Linux".
 # 
-# Modified by Joel Lopes Da Silva to fit Mac OS X Snow Leopard environment.
+# Modified by Joel Lopes Da Silva to fit FreeBSD environment.
 
 #-----------------------------------------------------------
 # Aliases
