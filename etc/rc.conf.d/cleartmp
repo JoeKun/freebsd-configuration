@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/cleartmp: system configuration for clearing temporary directories
+
+clear_tmp_enable="YES"
+
