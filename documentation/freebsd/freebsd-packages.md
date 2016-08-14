@@ -43,7 +43,7 @@ Link to git configuration file:
 # ln -s ../freebsd-configuration/home/foo/.gitconfig
 # mkdir -p .config
 # cd .config
-# ln -s ../../freebsd-configuration/home/foo/.config/git 
+# ln -s ../../freebsd-configuration/home/foo/.config/git
 ```
 
 You should then edit the name and email fields in the user section of this `.gitconfig` file.
@@ -55,7 +55,7 @@ $ cd
 $ ln -s freebsd-configuration/home/foo/.gitconfig
 $ mkdir -p .config
 $ cd .config
-$ ln -s ../freebsd-configuration/home/foo/.config/git 
+$ ln -s ../freebsd-configuration/home/foo/.config/git
 ```
 
 
@@ -104,7 +104,8 @@ $ chsh -s /usr/local/bin/zsh
 
 ```
 # cd /boot
-# rm -f loader.conf ; cp -a /freebsd-configuration/boot/loader.conf .
+# rm -f loader.conf
+# cp -a /freebsd-configuration/boot/loader.conf .
 ```
 
 Other system configuration files don't have that restriction.
@@ -118,6 +119,14 @@ Other system configuration files don't have that restriction.
 # rm -f rc.conf ; ln -s ../freebsd-configuration/etc/rc.conf
 # cd rc.conf.d
 # for file_name in cleartmp hostname network ntpd routing sshd zfs; do rm -f ${file_name}; ln -s ../../freebsd-configuration/etc/rc.conf.d/${file_name} ; done
+```
+
+
+## Minor improvements to password prompts
+
+```
+# cd /freebsd-configuration/patches/password_prompts
+# ./adjust_password_prompts
 ```
 
 
