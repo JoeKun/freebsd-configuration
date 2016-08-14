@@ -28,6 +28,20 @@ alias lla='ls -lA'
 # updatedb
 alias updatedb='cd / && /usr/libexec/locate.updatedb ; cd - > /dev/null'
 
+# Favor some GNU variants of common developer tools.
+which gpatch > /dev/null
+if [[ $? -eq 0 ]]
+then
+    alias patch='gpatch'
+else
+    alias patch='patch --posix'
+fi
+which gmake > /dev/null
+if [[ $? -eq 0 ]]
+then
+    alias make='gmake'
+fi
+
 # Some handy aliases
 alias c='clear'
 alias less='less --quiet -M'
