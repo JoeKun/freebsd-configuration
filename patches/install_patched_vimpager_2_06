@@ -1,0 +1,15 @@
+#! /bin/sh
+
+git clone https://github.com/rkitover/vimpager
+cd vimpager
+git checkout -b 2.06 2.06
+
+git am ../vimpager-2.06-fix-for-none-color-capitalization-for-latest-vim-releases.patch
+
+gmake
+gmake install PREFIX=/opt/local
+rm -R -f /opt/local/etc/vimpagerrc 
+
+cd ..
+rm -R -f vimpager
+

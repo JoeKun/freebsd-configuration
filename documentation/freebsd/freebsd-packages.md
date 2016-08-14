@@ -98,15 +98,6 @@ $ chsh -s /usr/local/bin/zsh
 ```
 
 
-## `vimpagerrc`
-
-```
-# pkg install vimpagerrc
-# cd /usr/local/etc
-# rm -f vimpagerrc ; ln -s ../../../freebsd-configuration/usr/local/etc/vimpagerrc
-```
-
-
 ## Clean up system configuration files
 
 `loader.conf` cannot be a symbolic link.
@@ -139,4 +130,22 @@ Other system configuration files don't have that restriction.
 # pkg install screen
 # pkg install bash
 # pkg install most
+# pkg install gmake
+```
+
+
+## `vimpager`
+
+```
+# pkg install vimpager
+# cd /usr/local/etc
+# rm -f vimpagerrc
+# ln -s ../../../freebsd-configuration/usr/local/etc/vimpagerrc
+```
+
+Unfortunately, `vimpager` 2.06 has a serious bug when used with the latest version of `vim`. So we can compile it from source after applying a small patch, and then install it in an alternate directory so the binary that gets picked up is the patched one.
+
+```
+# cd /freebsd-configuration/patches
+# ./install_patched_vimpager_2_06
 ```
