@@ -139,6 +139,7 @@ Other system configuration files don't have that restriction.
 # pkg install screen
 # pkg install bash
 # pkg install most
+# pkg install par_format
 # pkg install gmake
 ```
 
