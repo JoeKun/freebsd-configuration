@@ -146,6 +146,6 @@ Other system configuration files don't have that restriction.
 Unfortunately, `vimpager` 2.06 has a serious bug when used with the latest version of `vim`. So we can compile it from source after applying a small patch, and then install it in an alternate directory so the binary that gets picked up is the patched one.
 
 ```
-# cd /freebsd-configuration/patches
+# cd /freebsd-configuration/patches/vimpager
 # ./install_patched_vimpager_2_06
 ```
