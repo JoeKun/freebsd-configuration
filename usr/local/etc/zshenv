@@ -17,7 +17,24 @@ export VISUAL=vim
 export EDITOR=vim
 
 # Default pager (for man, ...)
-export PAGER=/opt/local/bin/vimpager
+if [[ -x /opt/local/bin/vimpager ]]
+then
+    export PAGER=/opt/local/bin/vimpager
+else
+    which vimpager > /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        export PAGER=vimpager
+    else
+        which most > /dev/null
+        if [[ $? -eq 0 ]]
+        then
+            export PAGER=most
+        else
+            export PAGER=less
+        fi
+    fi
+fi
 
 # Permissions rw-r--r-- for created files
 # and rwxr-xr-x for created directories
