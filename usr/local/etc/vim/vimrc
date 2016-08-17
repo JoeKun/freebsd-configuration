@@ -110,6 +110,9 @@ set incsearch
 " Highlight search term
 set hlsearch
 
+" Clear any previous search term highlight upon startup
+autocmd VimEnter * let @/ = ""
+
 " Uncomment the following line if you want to display line numbers
 "set number
 
