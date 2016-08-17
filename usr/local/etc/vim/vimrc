@@ -113,6 +113,9 @@ set hlsearch
 " Clear any previous search term highlight upon startup
 autocmd VimEnter * let @/ = ""
 
+" Automatically clear upon exit
+autocmd VimLeave * :!clear
+
 " Uncomment the following line if you want to display line numbers
 "set number
 
