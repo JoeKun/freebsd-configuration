@@ -1,4 +1,5 @@
 # /etc/rc.conf.d/ntpd: system configuration for ntpd
 
 ntpd_enable="YES"
+ntpd_sync_on_start="YES"
 
