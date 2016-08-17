@@ -95,6 +95,8 @@ $ chsh -s /usr/local/bin/zsh
 # pkg install vim
 # cd /usr/local/etc/vim
 # rm -f vimrc ; ln -s ../../../../freebsd-configuration/usr/local/etc/vim/vimrc
+# cd /root
+# ln -s ../freebsd-configuration/root/.vim
 ```
 
 
