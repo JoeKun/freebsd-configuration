@@ -88,6 +88,9 @@ if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
     set t_Sb=[4%dm
 endif
 
+" Restore screen upon exiting
+set t_ti=7[r[?47h t_te=[?47l8
+
 " When programming, you don't want to use real tabs, but only spaces
 set expandtab
 
@@ -112,9 +115,6 @@ set hlsearch
 
 " Clear any previous search term highlight upon startup
 autocmd VimEnter * let @/ = ""
-
-" Automatically clear upon exit
-autocmd VimLeave * :!clear
 
 " Uncomment the following line if you want to display line numbers
 "set number
