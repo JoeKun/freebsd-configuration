@@ -144,6 +144,7 @@ Other system configuration files don't have that restriction.
 # pkg install most
 # pkg install par_format
 # pkg install gmake
+# pkg install pwgen
 ```
 
 
