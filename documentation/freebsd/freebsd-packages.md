@@ -262,3 +262,57 @@ We should restart the MySQL service to ensure that our instance immediately impl
 ```
 # service mysql-server restart
 ```
+
+
+# `phpMyAdmin`
+
+```
+# pkg install php56-mysql phpMyAdmin
+```
+
+Create the `phpMyAdmin` storage database, as well as the `phpmyadmin` MySQL user with the right privileges:
+
+```
+# mysql -u root -p < /usr/local/www/phpMyAdmin/sql/create_tables.sql
+# mysql -u root -p < /freebsd-configuration/documentation/phpmyadmin/phpmyadmin_user_and_privileges.sql
+```
+
+Alter password of `phpmyadmin` user:
+
+```
+# mysql -u root -p
+
+[...]
+
+root@localhost [(none)]> ALTER USER 'phpmyadmin'@'localhost' IDENTIFIED BY 'SomeThing@1234';
+```
+
+Prepare configuration for `phpMyAdmin`:
+
+```
+# cd /usr/local/etc
+# ln -s ../../../freebsd-configuration/usr/local/etc/phpmyadmin
+# cd /usr/local/etc/phpmyadmin
+# chown root:www blowfish_secret.inc.php config-db.php
+# chmod 640 blowfish_secret.inc.php config-db.php
+# cd /usr/local/www/phpMyAdmin
+# ln -s ../../../../freebsd-configuration/usr/local/www/phpMyAdmin/config.inc.php
+```
+
+Open `/usr/local/etc/phpmyadmin/config-db.php` and edit the `$phpmyadmin_user_password` variable in to match the password used above for the `phpmyadmin` MySQL user.
+
+Open `/usr/local/etc/phpmyadmin/blowfish_secret.inc.php` and assign a 32 character password to the `$cfg['blowfish_secret']` variable.
+
+Finally, remove any trace of these passwords:
+
+```
+# rm -f ~/.mysql_secret ~/.mysql_history
+```
+
+Enable `phpMyAdmin` configuration for `nginx`.
+
+```
+# cd /usr/local/etc/nginx/sites-enabled/admin.foo.com.conf.d
+# ln -s ../../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf.d/phpmyadmin.conf
+# service nginx restart
+```
