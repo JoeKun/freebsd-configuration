@@ -221,3 +221,44 @@ Configure `nginx`:
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/nginx
 # service nginx start
 ```
+
+
+## MySQL
+
+```
+# pkg install mysql57-server
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/mysql
+# service mysql-server start
+```
+
+After the service is started, we need to secure the installation. This can be accomplished through a script called mysql_secure_installation. Run this as `root` to lock down some insecure defaults:
+
+```
+# mysql_secure_installation
+```
+
+The script will start by asking you for the current password for the MySQL root account.
+
+```
+[...]
+Enter current password for root (enter for none):
+```
+
+Since we have not set a password for this user yet, we can press Enter to bypass this prompt.
+
+Next, it will ask you if you would like to set the MySQL root account's password.
+
+```
+Set root password? [Y/n]
+```
+
+Press Enter to accept this suggestion. Choose and confirm an administrative password.
+
+The script will then proceed with additional suggestions that will help reverse some insecure conditions in the default MySQL installation. Simply press Enter through all of these prompts to complete all of the suggested actions.
+
+We should restart the MySQL service to ensure that our instance immediately implements the security changes:
+
+```
+# service mysql-server restart
+```

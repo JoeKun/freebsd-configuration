@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/mysql: system configuration for mysql-server
+
+mysql_enable="YES"
+
