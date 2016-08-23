@@ -162,3 +162,24 @@ Unfortunately, `vimpager` 2.06 has a serious bug when used with the latest versi
 # cd /freebsd-configuration/patches/vimpager
 # ./install_patched_vimpager_2_06
 ```
+
+
+## SSL
+
+```
+# pw group add ssl -g 551
+# pw user add ssl -u 551 -g 551 -c "SSL Unprivileged User" -d /var/empty -s /usr/sbin/nologin
+# pw group mod ssl -m www
+# mkdir -p /etc/ssl/certs /etc/ssl/private
+# chown root:ssl /etc/ssl/private
+# chmod 710 /etc/ssl/private
+```
+
+Assuming you have an SSL certificate named `foo.com_wildcard`, install it like this:
+
+```
+# cp foo.com_wildcard.pem /etc/ssl/certs
+# cp foo.com_wildcard.key /etc/ssl/private
+# chown root:ssl /etc/ssl/private/foo.com_wildcard.key
+# chmod 640 /etc/ssl/private/foo.com_wildcard.key
+```
