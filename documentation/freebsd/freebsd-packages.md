@@ -165,6 +165,19 @@ Unfortunately, `vimpager` 2.06 has a serious bug when used with the latest versi
 ```
 
 
+## `pf`
+
+```
+# cd /etc
+# ln -s ../freebsd-configuration/etc/pf.conf
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/pf
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/pflog
+# service pf start
+# service pflog start
+```
+
+
 ## SSL
 
 ```

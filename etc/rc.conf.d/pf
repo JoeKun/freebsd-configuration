@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/pf: system configuration for pf
+
+pf_enable="YES"
+

@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/pflog: system configuration for pflog
+
+pflog_enable="YES"
+
