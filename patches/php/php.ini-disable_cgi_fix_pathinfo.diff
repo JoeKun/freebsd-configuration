@@ -1,0 +1,11 @@
+--- a/php.ini	2016-08-10 02:03:56.000000000 -0700
++++ b/php.ini	2016-08-17 21:53:53.812490000 -0700
+@@ -769,7 +769,7 @@
+ ; of zero causes PHP to behave as before.  Default is 1.  You should fix your scripts
+ ; to use SCRIPT_FILENAME rather than PATH_TRANSLATED.
+ ; http://php.net/cgi.fix-pathinfo
+-;cgi.fix_pathinfo=1
++cgi.fix_pathinfo=0
+ 
+ ; FastCGI under IIS (on WINNT based OS) supports the ability to impersonate
+ ; security tokens of the calling client.  This allows IIS to define the

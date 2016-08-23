@@ -1,0 +1,24 @@
+--- a/php-fpm.conf	2016-08-10 02:03:49.000000000 -0700
++++ b/php-fpm.conf	2016-08-13 22:51:49.697944000 -0700
+@@ -161,7 +161,7 @@
+ ;                            (IPv6 and IPv4-mapped) on a specific port;
+ ;   '/path/to/unix/socket' - to listen on a unix socket.
+ ; Note: This value is mandatory.
+-listen = 127.0.0.1:9000
++listen = /var/run/php-fpm.sock
+ 
+ ; Set listen(2) backlog.
+ ; Default Value: 65535 (-1 on FreeBSD and OpenBSD)
+@@ -172,9 +172,9 @@
+ ; BSD-derived systems allow connections regardless of permissions. 
+ ; Default Values: user and group are set as the running user
+ ;                 mode is set to 0660
+-;listen.owner = www
+-;listen.group = www
+-;listen.mode = 0660
++listen.owner = www
++listen.group = www
++listen.mode = 0660
+ ; When POSIX Access Control Lists are supported you can set them using
+ ; these options, value is a comma separated list of user/group names.
+ ; When set, listen.owner and listen.group are ignored

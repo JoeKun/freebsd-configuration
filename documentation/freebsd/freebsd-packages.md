@@ -183,3 +183,41 @@ Assuming you have an SSL certificate named `foo.com_wildcard`, install it like t
 # chown root:ssl /etc/ssl/private/foo.com_wildcard.key
 # chmod 640 /etc/ssl/private/foo.com_wildcard.key
 ```
+
+
+## `nginx` and `php`
+
+```
+# pkg install nginx
+# pkg install php56
+```
+
+Configure `php`:
+
+```
+# cd /freebsd-configuration/patches/php
+# ./configure_php
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/php_fpm
+# service php-fpm start
+```
+
+Configure `nginx`:
+
+```
+# cd /usr/local/www
+# ln -s ../../../freebsd-configuration/usr/local/www/admin
+
+# cd /usr/local/etc/nginx
+# rm -f nginx.conf
+# for file_name in nginx.conf error_pages php php_ssl redirect_to_ssl ssl_wildcard_certificate; do ln -s ../../../../freebsd-configuration/usr/local/etc/nginx/${file_name}; done
+
+# mkdir sites-enabled
+# cd sites-enabled
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf
+# mkdir admin.foo.com.conf.d
+
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/nginx
+# service nginx start
+```
