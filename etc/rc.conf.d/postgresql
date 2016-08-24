@@ -1,0 +1,5 @@
+# /etc/rc.conf.d/postgresql: system configuration for postgresql
+
+postgresql_enable="YES"
+postgresql_initdb_flags="--encoding=\"UTF-8\" --locale=\"en_US.UTF-8\" --auth-host=peer --auth-host=md5"
+

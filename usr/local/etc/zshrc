@@ -53,6 +53,16 @@ alias md='mkdir'
 alias rd='rmdir'
 alias screen='screen -U'
 
+# Workaround to allow `su pgsql` to use zsh as if it was the actual login shell.
+function su() {
+    if [[ $# -eq 1 ]] && [[ "$1" == "pgsql" ]]
+    then
+        /usr/bin/su $1 -c "SHELL=`which zsh` zsh"
+    else
+        /usr/bin/su $*
+    fi
+}
+
 
 #-----------------------------------------------------------
 # Prompt key bindings

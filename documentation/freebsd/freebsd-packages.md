@@ -330,3 +330,39 @@ Enable `phpMyAdmin` configuration for `nginx`.
 # ln -s ../../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf.d/phpmyadmin.conf
 # service nginx restart
 ```
+
+
+## PostgreSQL
+
+```
+# pkg install postgresql93-client postgresql93-server
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/postgresql
+# service postgresql initdb
+# cd /freebsd-configuration/patches/postgresql
+# ./configure_postgresql
+# service postgresql start
+# chown -R pgsql:pgsql /freebsd-configuration/usr/local/pgsql
+# cd /usr/local/pgsql
+# ln -s ../../../freebsd-configuration/usr/local/pgsql/.zshenv
+# ln -s ../../../freebsd-configuration/usr/local/pgsql/.zshrc
+```
+
+Change the Unix password of `pgsql` user:
+
+```
+# passwd pgsql
+```
+
+And alter password of `pgsql` user in the database:
+
+```
+# su pgsql
+$ psql postgres
+
+[...]
+
+postgres=# ALTER USER pgsql WITH PASSWORD 'SomeThing@1234';
+postgres=# \q
+# rm -f .psql_history
+```
