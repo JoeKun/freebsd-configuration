@@ -1,0 +1,11 @@
+--- a/config.inc.php	2016-08-17 12:42:28.000000000 -0700
++++ b/config.inc.php	2016-08-23 23:24:22.110091000 -0700
+@@ -15,7 +15,7 @@
+ 
+ 	// Hostname or IP address for server.  Use '' for UNIX domain socket.
+ 	// use 'localhost' for TCP/IP connection on this computer
+-	$conf['servers'][0]['host'] = '';
++	$conf['servers'][0]['host'] = 'localhost';
+ 
+ 	// Database port on server (5432 is the PostgreSQL default)
+ 	$conf['servers'][0]['port'] = 5432;

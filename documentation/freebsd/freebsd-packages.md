@@ -366,3 +366,20 @@ postgres=# ALTER USER pgsql WITH PASSWORD 'SomeThing@1234';
 postgres=# \q
 # rm -f .psql_history
 ```
+
+
+## `phpPgAdmin`
+
+```
+# pkg install phpPgAdmin
+# cd /freebsd-configuration/patches/phppgadmin
+# ./configure_phppgadmin
+```
+
+Enable `phpPgAdmin` configuration for `nginx`.
+
+```
+# cd /usr/local/etc/nginx/sites-enabled/admin.foo.com.conf.d
+# ln -s ../../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf.d/phppgadmin.conf
+# service nginx restart
+```

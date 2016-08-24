@@ -1,0 +1,5 @@
+#! /bin/sh
+
+cd /usr/local/www/phpPgAdmin/conf
+patch --posix -p1 -i /freebsd-configuration/patches/phppgadmin/phppgadmin-config-host-localhost.diff
+
