@@ -36,11 +36,21 @@ then
 else
     alias patch='patch --posix'
 fi
-which gmake > /dev/null
-if [[ $? -eq 0 ]]
-then
-    alias make='gmake'
-fi
+function make() {
+    pwd | grep "^\/usr\/ports" &> /dev/null
+    if [[ $? -eq 0 ]]
+    then
+        /usr/bin/make $*
+    else
+        which gmake > /dev/null
+        if [[ $? -eq 0 ]]
+        then
+            gmake $*
+        else
+            /usr/bin/make $*
+        fi
+    fi
+}
 
 # Some handy aliases
 alias c='clear'
