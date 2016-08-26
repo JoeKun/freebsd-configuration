@@ -213,6 +213,20 @@ Configure `php`:
 ```
 # cd /freebsd-configuration/patches/php
 # ./configure_php
+```
+
+Manually edit `/usr/local/etc/php.ini` to set the timezone. For example:
+
+```
+[Date]
+; Defines the default timezone used by the date functions
+; http://php.net/date.timezone
+date.timezone = America/Los_Angeles
+```
+
+Enable `php`:
+
+```
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/php_fpm
 # service php-fpm start
@@ -374,7 +388,7 @@ $ psql postgres
 
 postgres=# ALTER USER pgsql WITH PASSWORD 'SomeThing@1234';
 postgres=# \q
-# rm -f .psql_history
+$ rm -f ~/.psql_history
 ```
 
 
@@ -429,6 +443,7 @@ $ psql postgres
 postgres=# GRANT ALL PRIVILEGES ON DATABASE mail TO mail;
 postgres=# \q
 $ psql --host=localhost --username=mail --dbname=mail < /freebsd-configuration/documentation/mail/mail-database-schema.sql
+$ rm -f ~/.psql_history
 ```
 
 
@@ -612,6 +627,7 @@ Add listeners for `postfix` in `dovecot` configuration files:
 ```
 # cd /usr/local/etc/dovecot
 # patch --posix -p1 -i /freebsd-configuration/patches/dovecot/dovecot-listeners-for-postfix.diff
+# service dovecot restart
 ```
 
 Update all map files:
@@ -637,4 +653,97 @@ For the password field in the mailboxes table, you should use the following comm
 
 ```
 # doveadm pw -s BLF-CRYPT
+```
+
+
+### Roundcube
+
+```
+# cd /usr/ports/mail/roundcube
+# make config
+```
+
+Keep all options enabled by default, and additionally enable the following:
+
+ * `PGSQL` in *DB* section.
+
+See if any dependency is missing:
+
+```
+# make missing
+```
+
+If any, install the dependency using `pkg`. For example:
+
+```
+# pkg install converters/php56-iconv devel/autoconf devel/m4 misc/help2man devel/p5-Locale-gettext devel/gettext-tools devel/autoconf-wrapper textproc/php56-dom devel/pecl-intl sysutils/php56-fileinfo graphics/php56-exif databases/php56-pdo_pgsql databases/php56-pdo
+# service php-fpm restart
+```
+
+Then proceed to installing `roundcube`:
+
+```
+# make all install clean
+# pkg lock roundcube
+```
+
+Create `roundcube` PostgreSQL database:
+
+```
+# su pgsql
+$ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt roundcube
+$ createdb --owner=roundcube roundcube "Roundcube"
+$ psql postgres
+postgres=# GRANT ALL PRIVILEGES ON DATABASE roundcube TO roundcube;
+postgres=# \q
+$ psql --host=localhost --username=roundcube --dbname=roundcube < /usr/local/www/roundcube/SQL/postgres.initial.sql
+$ psql --host=localhost --username=mail --dbname=mail
+mail=> GRANT CONNECT ON DATABASE mail TO roundcube;
+mail=> GRANT SELECT, UPDATE ON TABLE mailboxes TO roundcube;
+mail=> \q
+$ rm -f ~/.psql_history
+```
+
+Configure `roundcube`
+
+```
+# cd /usr/local/www/roundcube/config
+# wget http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types
+# ln -s ../../../../../freebsd-configuration/usr/local/www/roundcube/config/config.inc.php
+# cd /freebsd-configuration/patches/roundcube
+# ./configure_roundcube_password_plugin
+```
+
+Manually edit the following in `/usr/local/www/roundcube/config.inc.php`:
+
+ * password in `pgsql` address set for key `db_dsnw`;
+ * administrator address set for key `support_url`.
+
+Manually edit the following in `/usr/local/www/roundcube/plugins/password/config.inc.php`:
+
+ * password in `pgsql` address set for key `password_db_dsn`.
+
+Fix permissions:
+
+```
+# chown -H root:www /usr/local/www/roundcube/config/config.inc.php
+# chmod -H 640 /usr/local/www/roundcube/config/config.inc.php
+
+# chown -H root:www /usr/local/www/roundcube/plugins/password/config.inc.php
+# chmod -H 640 /usr/local/www/roundcube/plugins/password/config.inc.php
+```
+
+Enable `nginx` configuration for `roundcube`:
+
+```
+# cd /usr/local/etc/nginx/sites-enabled
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/mail.foo.com.conf
+```
+
+Manually edit `server_name` directives in `/usr/local/etc/nginx/sites-enabled/mail.foo.com.conf`.
+
+Restart `nginx`:
+
+```
+# service nginx restart
 ```
