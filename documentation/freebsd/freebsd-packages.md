@@ -123,6 +123,8 @@ Other system configuration files don't have that restriction.
 # for file_name in cleartmp hostname network ntpd routing sshd zfs; do rm -f ${file_name}; ln -s ../../freebsd-configuration/etc/rc.conf.d/${file_name} ; done
 ```
 
+Manually edit `hostname` in `/etc/rc.conf.d/hostname`.
+
 
 ## Minor improvements to password prompts
 
@@ -225,12 +227,20 @@ Configure `nginx`:
 # cd /usr/local/etc/nginx
 # rm -f nginx.conf
 # for file_name in nginx.conf error_pages php php_ssl redirect_to_ssl ssl_wildcard_certificate; do ln -s ../../../../freebsd-configuration/usr/local/etc/nginx/${file_name}; done
+```
 
+Manually edit `ssl_certificate` and `ssl_certificate_key` in `/usr/local/etc/nginx/ssl_wildcard_certificate` to point to your own SSL certificate.
+
+```
 # mkdir sites-enabled
 # cd sites-enabled
 # ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf
 # mkdir admin.foo.com.conf.d
+```
 
+Manually edit `server_name` directives in `/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf`.
+
+```
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/nginx
 # service nginx start
@@ -469,6 +479,11 @@ Apply basic `dovecot` configuration:
 # cd /freebsd-configuration/patches/dovecot
 # ./bootstrap_dovecot_configuration
 ```
+
+Manually edit server dependent configuration:
+
+ * `ssl_cert` and `ssl_key` in `/usr/local/etc/dovecot/conf.d/10-ssl.conf` to point to your own SSL certificate;
+ * password in `connect` configuration in `/usr/local/etc/dovecot/dovecot-sql.conf.ext`.
 
 Enable `dovecot`:
 
