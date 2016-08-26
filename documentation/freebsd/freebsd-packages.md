@@ -395,6 +395,8 @@ Enable `phpPgAdmin` configuration for `nginx`.
 
 ## Email
 
+The following is heavily inspired from [Kliment Andreev's amazing howto guide](https://blog.iandreev.com/?p=1604).
+
 ### Disable `sendmail`
 
 ```
