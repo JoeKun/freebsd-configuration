@@ -1,0 +1,176 @@
+diff -ru a/conf.d/10-auth.conf b/conf.d/10-auth.conf
+--- a/conf.d/10-auth.conf	2016-08-24 15:41:17.185864000 -0700
++++ b/conf.d/10-auth.conf	2016-08-25 00:50:27.152104000 -0700
+@@ -7,7 +7,7 @@
+ # matches the local IP (ie. you're connecting from the same computer), the
+ # connection is considered secure and plaintext authentication is allowed.
+ # See also ssl=required setting.
+-#disable_plaintext_auth = yes
++disable_plaintext_auth = yes
+ 
+ # Authentication cache size (e.g. 10M). 0 means it's disabled. Note that
+ # bsdauth, PAM and vpopmail require cache_key to be set for caching to be used.
+@@ -97,7 +97,7 @@
+ #   plain login digest-md5 cram-md5 ntlm rpa apop anonymous gssapi otp skey
+ #   gss-spnego
+ # NOTE: See also disable_plaintext_auth setting.
+-auth_mechanisms = plain
++auth_mechanisms = plain login
+ 
+ ##
+ ## Password and user databases
+@@ -119,8 +119,8 @@
+ #!include auth-deny.conf.ext
+ #!include auth-master.conf.ext
+ 
+-!include auth-system.conf.ext
+-#!include auth-sql.conf.ext
++#!include auth-system.conf.ext
++!include auth-sql.conf.ext
+ #!include auth-ldap.conf.ext
+ #!include auth-passwdfile.conf.ext
+ #!include auth-checkpassword.conf.ext
+diff -ru a/conf.d/10-mail.conf b/conf.d/10-mail.conf
+--- a/conf.d/10-mail.conf	2016-08-24 15:41:17.186071000 -0700
++++ b/conf.d/10-mail.conf	2016-08-25 01:38:43.547488000 -0700
+@@ -27,7 +27,7 @@
+ #
+ # <doc/wiki/MailLocation.txt>
+ #
+-#mail_location = 
++mail_location = maildir:%{home}/mail
+ 
+ # If you need to set multiple mailbox locations or want to change default
+ # namespace settings, you can do it by defining namespace sections.
+@@ -105,13 +105,13 @@
+ # System user and group used to access mails. If you use multiple, userdb
+ # can override these by returning uid or gid fields. You can use either numbers
+ # or names. <doc/wiki/UserIds.txt>
+-#mail_uid =
+-#mail_gid =
++mail_uid = virtual_mail
++mail_gid = virtual_mail
+ 
+ # Group to enable temporarily for privileged operations. Currently this is
+ # used only with INBOX when either its initial creation or dotlocking fails.
+ # Typically this is set to "mail" to give access to /var/mail.
+-#mail_privileged_group =
++mail_privileged_group = virtual_mail
+ 
+ # Grant access to these supplementary groups for mail processes. Typically
+ # these are used to set up access to shared mailboxes. Note that it may be
+@@ -172,7 +172,7 @@
+ # to make sure that users can't log in as daemons or other system users.
+ # Note that denying root logins is hardcoded to dovecot binary and can't
+ # be done even if first_valid_uid is set to 0.
+-#first_valid_uid = 500
++first_valid_uid = 100
+ #last_valid_uid = 0
+ 
+ # Valid GID range for users, defaults to non-root/wheel. Users having
+diff -ru a/conf.d/10-ssl.conf b/conf.d/10-ssl.conf
+--- a/conf.d/10-ssl.conf	2016-08-24 15:41:17.186208000 -0700
++++ b/conf.d/10-ssl.conf	2016-08-25 00:58:22.150381000 -0700
+@@ -3,14 +3,14 @@
+ ##
+ 
+ # SSL/TLS support: yes, no, required. <doc/wiki/SSL.txt>
+-#ssl = yes
++ssl = required
+ 
+ # PEM encoded X.509 SSL/TLS certificate and private key. They're opened before
+ # dropping root privileges, so keep the key file unreadable by anyone but
+ # root. Included doc/mkcert.sh can be used to easily generate self-signed
+ # certificate, just make sure to update the domains in dovecot-openssl.cnf
+-ssl_cert = </etc/ssl/certs/dovecot.pem
+-ssl_key = </etc/ssl/private/dovecot.pem
++ssl_cert = </etc/ssl/certs/foo.com_wildcard.pem
++ssl_key = </etc/ssl/private/foo.com_wildcard.key
+ 
+ # If key file is password protected, give the password here. Alternatively
+ # give it when starting dovecot with -p parameter. Since this file is often
+diff -ru a/dovecot-sql.conf.ext b/dovecot-sql.conf.ext
+--- a/dovecot-sql.conf.ext	2016-08-24 15:41:17.194626000 -0700
++++ b/dovecot-sql.conf.ext	2016-08-25 01:10:18.141081000 -0700
+@@ -29,7 +29,7 @@
+ # );
+ 
+ # Database driver: mysql, pgsql, sqlite
+-#driver = 
++driver = pgsql
+ 
+ # Database connection string. This is driver-specific setting.
+ #
+@@ -68,14 +68,14 @@
+ #   connect = host=sql.example.com dbname=virtual user=virtual password=blarg
+ #   connect = /etc/dovecot/authdb.sqlite
+ #
+-#connect =
++connect = host=localhost dbname=mail user=dovecot password=SomeThing@1234
+ 
+ # Default password scheme.
+ #
+ # List of supported schemes is in
+ # http://wiki2.dovecot.org/Authentication/PasswordSchemes
+ #
+-#default_pass_scheme = MD5
++default_pass_scheme = BLF-CRYPT
+ 
+ # passdb query to retrieve the password. It can return fields:
+ #   password - The user's password. This field must be returned.
+@@ -104,9 +104,12 @@
+ #   password_query = SELECT userid AS user, pw AS password \
+ #     FROM users WHERE userid = '%u' AND active = 'Y'
+ #
+-#password_query = \
+-#  SELECT username, domain, password \
+-#  FROM users WHERE username = '%n' AND domain = '%d'
++password_query = \
++    SELECT address AS user, password \
++    FROM mailboxes \
++    INNER JOIN domains \
++        ON domains.domain = '%L{domain}' AND domains.active = true AND domains.mailboxes = true \
++    WHERE address = '%L{user}' AND mailboxes.active = true
+ 
+ # userdb query to retrieve the user information. It can return fields:
+ #   uid - System UID (overrides mail_uid setting)
+@@ -124,9 +127,12 @@
+ #   user_query = SELECT dir AS home, user AS uid, group AS gid FROM users where userid = '%u'
+ #   user_query = SELECT home, 501 AS uid, 501 AS gid FROM users WHERE userid = '%u'
+ #
+-#user_query = \
+-#  SELECT home, uid, gid \
+-#  FROM users WHERE username = '%n' AND domain = '%d'
++user_query = \
++    SELECT concat_ws('/', '/var/mail/virtual', '%L{domain}', '%L{username}') AS home, 'virtual_mail' AS uid, 'virtual_mail' AS gid \
++    FROM mailboxes \
++    INNER JOIN domains \
++        ON domains.domain = '%L{domain}' AND domains.active = true AND domains.mailboxes = true \
++    WHERE address = '%L{user}' AND mailboxes.active = true
+ 
+ # If you wish to avoid two SQL lookups (passdb + userdb), you can use
+ # userdb prefetch instead of userdb sql in dovecot.conf. In that case you'll
+@@ -138,4 +144,10 @@
+ #  FROM users WHERE userid = '%u'
+ 
+ # Query to get a list of all usernames.
+-#iterate_query = SELECT username AS user FROM users
++iterate_query = \
++    SELECT address AS user \
++    FROM mailboxes \
++    INNER JOIN domains \
++        ON domain = split_part(address, '@', 2) AND domains.active = true AND domains.mailboxes = true \
++    WHERE mailboxes.active = true
++
+diff -ru a/dovecot.conf b/dovecot.conf
+--- a/dovecot.conf	2016-08-24 15:41:17.194338000 -0700
++++ b/dovecot.conf	2016-08-25 00:47:18.684375000 -0700
+@@ -21,7 +21,7 @@
+ # --sysconfdir=/usr/local/etc --localstatedir=/var
+ 
+ # Protocols we want to be serving.
+-#protocols = imap pop3 lmtp
++protocols = imap lmtp
+ 
+ # A comma separated list of IPs or hosts where to listen in for connections. 
+ # "*" listens in all IPv4 interfaces, "::" listens in all IPv6 interfaces.

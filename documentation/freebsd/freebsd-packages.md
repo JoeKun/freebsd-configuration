@@ -418,3 +418,60 @@ postgres=# GRANT ALL PRIVILEGES ON DATABASE mail TO mail;
 postgres=# \q
 $ psql --host=localhost --username=mail --dbname=mail < /freebsd-configuration/documentation/mail/mail-database-schema.sql
 ```
+
+
+### `dovecot`
+
+```
+# cd /usr/ports/mail/dovecot2
+# make config
+```
+
+Keep all options enabled by default, and additionally enable the following:
+
+ * `PGSQL` in *Database support* section;
+ * `ICU` in *Full text search plugins* section.
+
+See if any dependency is missing:
+
+```
+# make missing
+```
+
+If any, install the dependency using `pkg`. For example:
+
+```
+# pkg install devel/pkgconf
+```
+
+Then proceed to installing `dovecot2`:
+
+```
+# make all install clean
+# pkg lock dovecot2
+```
+
+Prepare storage for virtual mailboxes:
+
+```
+# pw group add virtual_mail -g 145
+# pw user add virtual_mail -u 145 -g 145 -c "Virtual Mail Administrator" -d /var/mail/virtual -s /usr/sbin/nologin
+# rm -f /var/mail/virtual_mail
+# mkdir /var/mail/virtual
+# chown virtual_mail:virtual_mail /var/mail/virtual
+```
+
+Apply basic `dovecot` configuration:
+
+```
+# cd /freebsd-configuration/patches/dovecot
+# ./bootstrap_dovecot_configuration
+```
+
+Enable `dovecot`:
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/dovecot
+# service dovecot start
+```

@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/dovecot: system configuration for dovecot
+
+dovecot_enable="YES"
+
