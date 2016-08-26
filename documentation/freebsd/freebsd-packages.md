@@ -403,3 +403,18 @@ Enable `phpPgAdmin` configuration for `nginx`.
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/var
 # service sendmail stop
 ```
+
+
+### Create `mail` SQL database and users
+
+```
+# su pgsql
+$ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt mail
+$ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt dovecot
+$ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt postfix
+$ createdb --owner=mail mail "Mail aliases and accounts information"
+$ psql postgres
+postgres=# GRANT ALL PRIVILEGES ON DATABASE mail TO mail;
+postgres=# \q
+$ psql --host=localhost --username=mail --dbname=mail < /freebsd-configuration/documentation/mail/mail-database-schema.sql
+```
