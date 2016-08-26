@@ -383,3 +383,11 @@ Enable `phpPgAdmin` configuration for `nginx`.
 # ln -s ../../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf.d/phppgadmin.conf
 # service nginx restart
 ```
+
+
+## `ports` tree
+
+```
+# portsnap fetch extract
+# portsnap fetch update
+```
