@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/var: system configuration for var
+
+. /etc/rc.conf.d/sendmail
+

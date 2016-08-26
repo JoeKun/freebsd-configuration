@@ -391,3 +391,15 @@ Enable `phpPgAdmin` configuration for `nginx`.
 # portsnap fetch extract
 # portsnap fetch update
 ```
+
+
+## Email
+
+### Disable `sendmail`
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/sendmail
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/var
+# service sendmail stop
+```
