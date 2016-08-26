@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/clamav_clamd: system configuration for clamav_clamd
+
+clamav_clamd_enable="YES"
+

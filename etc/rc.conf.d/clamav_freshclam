@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/clamav_freshclam: system configuration for clamav_freshclam
+
+clamav_freshclam_enable="YES"
+

@@ -1,0 +1,18 @@
+#! /usr/local/bin/bash
+#
+# /usr/local/etc/periodic/daily/340.spamassassin-update
+
+export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+
+service sa-spamd status &> /dev/null
+
+if [[ $? -eq 0 ]]
+then
+    echo ""
+    echo "Updating spamassassin rules..."
+    sa-update && service sa-spamd restart
+    echo "Done updating spamassassin rules."
+fi
+
+exit 0
+

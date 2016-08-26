@@ -492,3 +492,56 @@ Enable `dovecot`:
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/dovecot
 # service dovecot start
 ```
+
+
+### Content filters (anti-spam and anti-virus)
+
+Install content filter tools:
+
+```
+# pkg install amavisd-new clamav spamassassin
+```
+
+Initialize and enable `spamassassin`:
+
+```
+# sa-update -D
+# cd /usr/local/etc/periodic/daily
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/periodic/daily/340.spamassassin-update
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/spamd
+# service sa-spamd start
+```
+
+Initialize and enable ClamAV:
+
+```
+# pw group mod vscan -m clamav
+# freshclam
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/clamav_clamd
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/clamav_freshclam
+# service clamav-clamd start
+# service clamav-freshclam start
+```
+
+Apply base patch for `amavisd` configuration file:
+
+```
+# cd /usr/local/etc
+# chmod u+w amavisd.conf
+# patch --posix -p1 -i /freebsd-configuration/patches/amavis/amavisd.conf.diff
+```
+
+Manually edit `$mydomain` and `$myhostname` in `/usr/local/etc/amavisd.conf`.
+
+Enable `amavisd`:
+
+```
+# chmod u-w amavisd.conf
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/amavisd
+# service amavisd start
+```
+
+TODO: Look into `pyzor`, `razor`, `SPF`, `DKIM`.
