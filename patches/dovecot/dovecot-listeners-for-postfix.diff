@@ -1,0 +1,40 @@
+diff -ru a/conf.d/10-master.conf b/conf.d/10-master.conf
+--- a/conf.d/10-master.conf	2016-08-24 15:41:17.186139000 -0700
++++ b/conf.d/10-master.conf	2016-08-25 01:04:29.113145000 -0700
+@@ -50,6 +50,12 @@
+     #mode = 0666
+   }
+ 
++  unix_listener /var/spool/postfix/private/dovecot-lmtp {
++    mode = 0660
++    user = postfix
++    group = postfix
++  }
++
+   # Create inet listener only if you can't use the above UNIX socket
+   #inet_listener lmtp {
+     # Avoid making LMTP visible for the entire internet
+@@ -87,15 +93,17 @@
+   # something else than 0666 and Dovecot lets the kernel enforce the
+   # permissions (e.g. 0777 allows everyone full permissions).
+   unix_listener auth-userdb {
+-    #mode = 0666
+-    #user = 
+-    #group = 
++    mode = 0600
++    user = postfix
++    group = postfix
+   }
+ 
+   # Postfix smtp-auth
+-  #unix_listener /var/spool/postfix/private/auth {
+-  #  mode = 0666
+-  #}
++  unix_listener /var/spool/postfix/private/auth {
++    mode = 0660
++    user = postfix
++    group = postfix
++  }
+ 
+   # Auth process is run as this user.
+   #user = $default_internal_user

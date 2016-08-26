@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/postfix: system configuration for postfix
+
+postfix_enable="YES"
+

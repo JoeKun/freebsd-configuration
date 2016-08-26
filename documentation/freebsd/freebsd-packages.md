@@ -545,3 +545,96 @@ Enable `amavisd`:
 ```
 
 TODO: Look into `pyzor`, `razor`, `SPF`, `DKIM`.
+
+
+### `postfix`
+
+```
+# cd /usr/ports/mail/postfix
+# make config
+```
+
+Keep all options enabled by default, and additionally enable the following:
+
+ * `PGSQL`.
+
+See if any dependency is missing:
+
+```
+# make missing
+```
+
+If any, install the dependency using `pkg`.
+
+Then proceed to installing `postfix`:
+
+```
+# make all install clean
+# pkg lock postfix
+```
+
+Configure `postfix`:
+
+```
+# cd /usr/local/etc/postfix
+# patch --posix -p1 -i /freebsd-configuration/patches/postfix/postfix-master.cf.diff
+# rm -f main.cf
+# ln -s ../../../../freebsd-configuration/usr/local/etc/postfix/main.cf
+# ln -s ../../../../freebsd-configuration/usr/local/etc/postfix/transport
+# ln -s ../../../../freebsd-configuration/usr/local/etc/postfix/sql
+# cd /usr/local/etc/postfix/sql
+# chown -R root:postfix .
+# find . -type d -exec chmod 710 {} \;
+# find . -type f -exec chmod 640 {} \;
+
+# cd /usr/local/etc/mail
+# ln -s ../../../../freebsd-configuration/usr/local/etc/mail/aliases
+```
+
+Manually edit the following keys in `/usr/local/etc/postfix/main.cf`:
+
+ * `myhostname`;
+ * `mydestination`;
+ * `smtpd_tls_cert_file`;
+ * `smtpd_tls_key_file`;
+ * `smtpd_tls_CAfile`.
+
+Manually edit the entry for `root` in `/usr/local/etc/mail/aliases`.
+
+Manually edit the `password` entry in the following files:
+
+ * `/usr/local/etc/postfix/sql/virtual_alias/domains.cf`;
+ * `/usr/local/etc/postfix/sql/virtual_alias/maps.cf`;
+ * `/usr/local/etc/postfix/sql/virtual_mailbox/domains.cf`.
+
+Add listeners for `postfix` in `dovecot` configuration files:
+
+```
+# cd /usr/local/etc/dovecot
+# patch --posix -p1 -i /freebsd-configuration/patches/dovecot/dovecot-listeners-for-postfix.diff
+```
+
+Update all map files:
+
+```
+# postalias /usr/local/etc/postfix/transport
+# postalias /usr/local/etc/mail/aliases
+# newaliases
+```
+
+Enable `postfix`:
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/postfix
+# service postfix start
+```
+
+
+### Additional notes
+
+For the password field in the mailboxes table, you should use the following command:
+
+```
+# doveadm pw -s BLF-CRYPT
+```

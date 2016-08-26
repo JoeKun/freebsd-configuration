@@ -1,0 +1,21 @@
+# /usr/local/etc/mail/aliases
+
+#-----------------------------------------------------------
+# Mails for root
+#-----------------------------------------------------------
+
+root:                   name@domain.com
+admin:                  root
+
+
+#-----------------------------------------------------------
+# Main services
+#-----------------------------------------------------------
+
+# Anti-virus
+virusalert:             admin
+
+# Web
+webadmin:               admin
+webmaster:              webadmin
+
