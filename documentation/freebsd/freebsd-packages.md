@@ -819,3 +819,10 @@ Restart `nginx`:
 ```
 # service nginx restart
 ```
+
+
+## Other client applications
+
+```
+# pkg install mutt
+```
