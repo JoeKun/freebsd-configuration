@@ -658,6 +658,8 @@ For the password field in the mailboxes table, you should use the following comm
 
 ### Roundcube
 
+The following is heavily inspired from [Kliment Andreev's howto guide on `roundcube`](https://blog.iandreev.com/?p=1339).
+
 ```
 # cd /usr/ports/mail/roundcube
 # make config
