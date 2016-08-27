@@ -161,7 +161,7 @@ $ cd
 $ git clone https://github.com/JoeKun/freebsd-configuration.git
 
 $ rm -f .zshenv .zshrc
-$ for file_name in .zshenv .zshrc; do ln -s freebsd-configuration/root/${file_name}; done
+$ for file_name in .zshenv .zshrc; do ln -s freebsd-configuration/home/foo/${file_name}; done
 
 $ ln -s freebsd-configuration/home/foo/.gitconfig
 $ mkdir -p .config
