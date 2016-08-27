@@ -1,11 +1,9 @@
 # Common packages and configuration for FreeBSD
 
-## Setup ssh keys for `root` and `admin` users
+## Setup ssh keys for `root`
 
 ```
 # ssh-keygen -t rsa -b 4096 -C foo@foo.com
-# cp -av ~/.ssh ~admin
-# chown -R admin:admin ~admin/.ssh
 ```
 
 Upload contents of `~/.ssh/id_rsa.pub` to GitHub.
@@ -26,13 +24,6 @@ Then clone the repository to `/`:
 # git clone https://github.com/JoeKun/freebsd-configuration.git
 ```
 
-Repeat this for `admin`:
-
-```
-$ cd
-$ git clone https://github.com/JoeKun/freebsd-configuration.git
-```
-
 
 ## Configure `git`
 
@@ -47,16 +38,6 @@ Link to git configuration file:
 ```
 
 You should then edit the name and email fields in the user section of this `.gitconfig` file.
-
-Repeat this for `admin` in the user's home directory:
-
-```
-$ cd
-$ ln -s freebsd-configuration/home/foo/.gitconfig
-$ mkdir -p .config
-$ cd .config
-$ ln -s ../freebsd-configuration/home/foo/.config/git
-```
 
 
 ## `zsh`
@@ -80,14 +61,6 @@ Link to user `zsh` configuration files for `root`:
 # chsh -s /usr/local/bin/zsh
 ```
 
-Link to user `zsh` configuration files for `admin`:
-
-```
-$ cd
-$ for file_name in .zshenv .zshrc; do ln -s freebsd-configuration/root/${file_name}; done
-$ chsh -s /usr/local/bin/zsh
-```
-
 
 ## `vim`
 
@@ -97,6 +70,103 @@ $ chsh -s /usr/local/bin/zsh
 # rm -f vimrc ; ln -s ../../../../freebsd-configuration/usr/local/etc/vim/vimrc
 # cd /root
 # ln -s ../freebsd-configuration/root/.vim
+```
+
+
+## Add unprivileged `admin` user
+
+Prepare a skeleton for all regular unprivileged users:
+
+```
+# cd /usr/local/etc
+# ln -s ../../../freebsd-configuration/usr/local/etc/skel
+# pw group add users -g 500
+```
+
+Apply configuration for `adduser`:
+
+```
+# adduser -s zsh -k /usr/local/etc/skel -u 1000 -g users -C
+Uid [1000]: 
+Login group [users]: 
+Enter additional groups []: 
+Login class [default]: 
+Shell (sh csh tcsh git-shell zsh rzsh bash rbash nologin) [zsh]: 
+Home directory [/home/]: 
+Home directory permissions (Leave empty for default): 
+Use password-based authentication? [yes]: 
+Use an empty password? (yes/no) [no]: 
+Use a random password? (yes/no) [no]: 
+Lock out the account after creation? [no]: 
+Pass Type  : yes
+Class      : 
+Groups     : users 
+Home       : /home/
+Home Mode  : 
+Shell      : /usr/local/bin/zsh
+Locked     : no
+OK? (yes/no): yes
+Re-edit the default configuration? (yes/no): no
+Goodbye!
+```
+
+Add unprivileged `admin` user:
+
+```
+# pw group add admin -g 1000
+# adduser
+Username: admin
+Full name: Administrator
+Uid [1000]: 
+Login group [users]: admin
+Login group is admin. Invite admin into other groups? []: wheel
+Login class [default]: 
+Shell (sh csh tcsh git-shell zsh rzsh bash rbash nologin) [zsh]: 
+Home directory [/home/admin]: 
+Home directory permissions (Leave empty for default): 
+Use password-based authentication? [yes]: 
+Use an empty password? (yes/no) [no]: 
+Use a random password? (yes/no) [no]: 
+Enter password: 
+Enter password again: 
+Lock out the account after creation? [no]: 
+Username   : admin
+Password   : *****
+Full Name  : Administrator
+Uid        : 1000
+Class      : 
+Groups     : admin wheel
+Home       : /home/admin
+Home Mode  : 
+Shell      : /usr/local/bin/zsh
+Locked     : no
+OK? (yes/no): yes
+adduser: INFO: Successfully added (admin) to the user database.
+Add another user? (yes/no): no
+Goodbye!
+```
+
+Copy `root` ssh key for `admin`:
+
+```
+# cp -av ~/.ssh ~admin
+# chown -R admin:admin ~admin/.ssh
+```
+
+Apply basic configuration for `admin`:
+
+```
+# su admin
+$ cd
+$ git clone https://github.com/JoeKun/freebsd-configuration.git
+
+$ rm -f .zshenv .zshrc
+$ for file_name in .zshenv .zshrc; do ln -s freebsd-configuration/root/${file_name}; done
+
+$ ln -s freebsd-configuration/home/foo/.gitconfig
+$ mkdir -p .config
+$ cd .config
+$ ln -s ../freebsd-configuration/home/foo/.config/git
 ```
 
 
