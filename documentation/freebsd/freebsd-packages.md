@@ -823,6 +823,21 @@ Restart `nginx`:
 
 ## Other client applications
 
+### `mutt`
+
 ```
 # pkg install mutt
+```
+
+
+### `irssi`
+
+```
+# pkg install irssi irssi-scripts
+```
+
+To launch `irssi` in a `screen` upon rebooting, add the following entry to the user's `crontab` using `crontab -e`:
+
+```
+@reboot screen -d -m -S irc sh -c "TERM=xterm-256color; export TERM; irssi"
 ```
