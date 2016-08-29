@@ -841,3 +841,40 @@ To launch `irssi` in a `screen` upon rebooting, add the following entry to the u
 ```
 @reboot screen -d -m -S irc sh -c "TERM=xterm-256color; export TERM; irssi"
 ```
+
+
+## `bind`
+
+```
+# pkg install bind910
+
+# mkdir /var/named
+# cd /var/named
+# git clone https://github.com/JoeKun/freebsd-configuration.git
+
+# mkdir -p usr/local/etc var/db/namedb var/db/namedb/managed-keys
+# chgrp bind var/db/namedb var/db/namedb/managed-keys
+# chmod 775 var/db/namedb var/db/namedb/managed-keys
+# chown bind:bind .
+# chmod 700 .
+
+# cd /usr/local/etc
+# mv namedb /var/named/usr/local/etc
+# ln -s ../../../var/named/usr/local/etc/namedb
+# cd /var/db
+# ln -s ../../var/named/var/db/namedb
+
+# cd /var/named/usr/local/etc/namedb
+# patch --posix -p1 -i ../../../../freebsd-configuration/patches/bind/modularize-named.conf.diff
+# for file_name in named.conf.local named.conf.logging named.conf.options; do ln -s ../../../../freebsd-configuration/var/named/usr/local/etc/namedb/${file_name}; done
+```
+
+Manually edit `/var/named/usr/local/etc/namedb/named.conf.local` with your own zones and access lists.
+
+Enable `bind`:
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/named
+# service named start
+```

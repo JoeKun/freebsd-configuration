@@ -1,0 +1,61 @@
+// /usr/local/etc/namedb/named.conf.local: Local configuration for bind
+
+//-----------------------------------------------------------
+// Access-Lists
+//-----------------------------------------------------------
+
+// self: local link, localhost
+acl myself {
+	127.0.0.0/8;
+	::1/128;
+};
+
+// BuddyNS domain name service transfer servers:
+//  - a.transfer.buddyns.com;
+//  - b.transfer.buddyns.com.
+acl buddyns-transfer {
+	173.244.206.26;
+	2607:f0d0:1005:72::100;
+
+	88.198.106.11;
+	2a01:4f8:d12:d01::10:100;
+};
+
+// baz.org
+masters baz {
+	123.45.67.89;
+};
+
+
+//-----------------------------------------------------------
+// DNS Zones Configuration as master
+//-----------------------------------------------------------
+
+zone "foo.com" {
+	type master;
+	file "master/foo.com.zone";
+	allow-query {
+		any;
+	};
+	allow-transfer {
+		buddyns-transfer;
+	};
+};
+
+
+//-----------------------------------------------------------
+// DNS Zones Configuration as slave
+//-----------------------------------------------------------
+
+zone "bar.com" {
+	type slave;
+	file "slave/bar.com.zone";
+	masters {
+		baz;
+	};
+	allow-query {
+		any;
+	};
+	notify no;
+};
+

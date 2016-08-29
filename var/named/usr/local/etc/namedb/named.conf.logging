@@ -1,0 +1,35 @@
+// /usr/local/etc/namedb/named.conf.logging: Logging options for bind
+
+// To have logs in /var/log/named.log rather than in syslog.
+// They also go to syslog for people who want it.
+// To avoid strange logs of some things we are not responsible for.
+channel default_out {
+	file "/var/log/named.log" versions 7 size 100m;
+	print-time yes;
+	print-category yes;
+};
+
+category default {
+	default_out;
+	default_syslog;
+};
+
+category config {
+	default_out;
+	default_syslog;
+};
+
+category xfer-in {
+	default_out;
+	default_syslog;
+};
+
+category xfer-out {
+	default_out;
+	default_syslog;
+};
+
+category lame-servers {
+	null;
+};
+

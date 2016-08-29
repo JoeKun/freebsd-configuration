@@ -1,0 +1,74 @@
+// /usr/local/etc/namedb/named.conf.options: General options for bind
+
+// Working directory of the server
+directory "/var/db/namedb";
+
+// Managed keys
+managed-keys-directory "managed-keys";
+
+// If there is a firewall between you and nameservers you want
+// to talk to, you may need to fix the firewall to allow multiple
+// ports to talk. See http://www.kb.cert.org/vuls/id/800113
+
+// If your ISP provided one or more IP addresses for stable
+// nameservers, you probably want to use them as forwarders.
+// Uncomment the following block, and insert the addresses replacing
+// the all-0's placeholder.
+
+// forwarders {
+// 	0.0.0.0;
+// };
+
+// Conform to RFC1035
+auth-nxdomain no;
+
+// If BIND logs error messages about the root key being expired,
+// you will need to update your keys. See https://www.isc.org/bind-keys
+dnssec-validation auto;
+
+// By default, queries are not allowed to anyone except myself.
+// This is mostly useful for zones which this server is not
+// authoritative for.
+// For zones for which this server is an authoritative Name
+// Server, we have to override this directive by putting an
+// "allow-query" section within the "zone" section.
+allow-query {
+	myself;
+};
+
+// Recursive requests must be done only by myself
+// If "recursion" is set to "no", then DNS resolution for zones
+// for which the server is not an authoritative Name Server may
+// fail.
+recursion yes;
+allow-recursion {
+	myself;
+};
+
+// By default, zones cannot be transferred to anyone.
+// This is mostly useful for zones for which this server is a
+// slave Name Server.
+// For zones for which this server is a master Name
+// Server, we have to override this directive by putting an
+// "allow-transfer" section within the "zone" section.
+allow-transfer {
+	none;
+};
+
+// By default, zone changes will be notified.
+// This is mostly useful for zones for which this server is a
+// master Name Server.
+// For zones for which this server is a slave Name Server, we
+// have to override this directive by putting a "notify no;"
+// within the "zone" section.
+notify yes;
+
+// Don't show the version of BIND9 used here.
+version "";
+
+// IPv6 support
+listen-on-v6 {
+	any;
+};
+match-mapped-addresses yes;
+

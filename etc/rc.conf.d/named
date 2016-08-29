@@ -1,0 +1,5 @@
+# /etc/rc.conf.d/named: system configuration for named
+
+named_enable="YES"
+named_chrootdir="/var/named"
+
