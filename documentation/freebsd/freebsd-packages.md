@@ -878,3 +878,41 @@ Enable `bind`:
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/named
 # service named start
 ```
+
+
+## `apache` behind `nginx` for WebDAV
+
+Install `apache`:
+
+```
+# pkg install apache24
+```
+
+Apply basic configuration for `apache`:
+
+```
+# mkdir -p /var/db/httpd-dav-lock
+# cd /usr/local/etc/apache24
+# mkdir -p sites-enabled
+# patch --posix -p1 -i /freebsd-configuration/patches/apache/apache-base-configuration.diff
+# cd sites-enabled
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/apache24/sites-enabled/personal-files.foo.com.conf
+```
+
+Enable `apache`:
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/apache24
+# service apache24 start
+```
+
+Configure `nginx` to proxy to `apache`:
+
+```
+# cd /usr/local/etc/nginx
+# ln -s ../../../../freebsd-configuration/usr/local/etc/nginx/redirect_to_apache_ssl
+# cd sites-enabled
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/personal-files.foo.com.conf
+# service nginx restart
+```

@@ -1,0 +1,68 @@
+diff -ru a/extra/httpd-dav.conf b/extra/httpd-dav.conf
+--- a/extra/httpd-dav.conf	2016-08-30 22:56:54.000000000 -0700
++++ b/extra/httpd-dav.conf	2016-09-03 00:51:03.654258000 -0700
+@@ -12,27 +12,7 @@
+ # on the directory where the DavLockDB is placed and on any directory where
+ # "Dav On" is specified.
+ 
+-DavLockDB "/usr/local/var/DavLock"
+-
+-Alias /uploads "/usr/local/uploads"
+-
+-<Directory "/usr/local/uploads">
+-    Dav On
+-
+-    AuthType Digest
+-    AuthName DAV-upload
+-    # You can use the htdigest program to create the password database:
+-    #   htdigest -c "/usr/local/user.passwd" DAV-upload admin
+-    AuthUserFile "/usr/local/user.passwd"
+-    AuthDigestProvider file
+-
+-    # Allow universal read-access, but writes are restricted
+-    # to the admin user.
+-    <RequireAny>
+-        Require method GET POST OPTIONS
+-        Require user admin
+-    </RequireAny>
+-</Directory>
++DAVLockDB "/var/db/httpd-dav-lock/httpd-dav-lock.db"
+ 
+ #
+ # The following directives disable redirects on non-GET requests for
+diff -ru a/httpd.conf b/httpd.conf
+--- a/httpd.conf	2016-09-02 23:42:46.222470000 -0700
++++ b/httpd.conf	2016-09-03 01:00:21.086319000 -0700
+@@ -49,7 +49,7 @@
+ # prevent Apache from glomming onto all bound IP addresses.
+ #
+ #Listen 12.34.56.78:80
+-Listen 80
++Listen localhost:8765
+ 
+ #
+ # Dynamic Shared Object (DSO) Support
+@@ -481,7 +481,7 @@
+ #Include etc/apache24/extra/httpd-multilang-errordoc.conf
+ 
+ # Fancy directory listings
+-#Include etc/apache24/extra/httpd-autoindex.conf
++Include etc/apache24/extra/httpd-autoindex.conf
+ 
+ # Language settings
+ #Include etc/apache24/extra/httpd-languages.conf
+@@ -499,7 +499,7 @@
+ #Include etc/apache24/extra/httpd-manual.conf
+ 
+ # Distributed authoring and versioning (WebDAV)
+-#Include etc/apache24/extra/httpd-dav.conf
++Include etc/apache24/extra/httpd-dav.conf
+ 
+ # Various default settings
+ #Include etc/apache24/extra/httpd-default.conf
+@@ -522,4 +522,5 @@
+ </IfModule>
+ 
+ Include etc/apache24/Includes/*.conf
++Include etc/apache24/sites-enabled/*.conf
+ 

@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/apache24: system configuration for apache24
+
+apache24_enable="YES"
+
