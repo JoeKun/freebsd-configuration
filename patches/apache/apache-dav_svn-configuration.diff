@@ -1,0 +1,13 @@
+diff -ru a/modules.d/220_subversion.conf b/modules.d/220_subversion.conf
+--- a/modules.d/220_subversion.conf	2016-09-04 13:56:32.911506000 -0700
++++ b/modules.d/220_subversion.conf	2016-09-04 13:32:22.843498000 -0700
+@@ -13,7 +13,8 @@
+ ## ==========================================================================
+ ## Subversion modules
+ ## ==========================================================================
+-#LoadModule dav_svn_module     libexec/apache24/mod_dav_svn.so
++
++LoadModule dav_svn_module     libexec/apache24/mod_dav_svn.so
+ #LoadModule authz_svn_module   libexec/apache24/mod_authz_svn.so
+ #LoadModule dontdothat_module  libexec/apache24/mod_dontdothat.so
+ 
