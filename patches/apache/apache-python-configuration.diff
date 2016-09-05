@@ -1,0 +1,10 @@
+diff -ru a/modules.d/270_mod_python.conf b/modules.d/270_mod_python.conf
+--- a/modules.d/270_mod_python.conf	2016-09-04 23:05:23.220070000 -0700
++++ b/modules.d/270_mod_python.conf	2016-09-04 22:40:50.443048000 -0700
+@@ -7,5 +7,5 @@
+ ## REQUIRE: 
+ 
+ ## make sure the following module is activated (httpd.conf or here)
+-#LoadModule python_module libexec/apache24/mod_python.so
++LoadModule python_module libexec/apache24/mod_python.so
+ 
