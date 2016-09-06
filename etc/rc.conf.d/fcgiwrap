@@ -1,0 +1,5 @@
+# /etc/rc.conf.d/fcgiwrap: system configuration for fcgiwrap
+
+fcgiwrap_enable="YES"
+fcgiwrap_user="www"
+

@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/mailman: system configuration for mailman
+
+mailman_enable="YES"
+

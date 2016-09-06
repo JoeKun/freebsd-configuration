@@ -821,6 +821,140 @@ Restart `nginx`:
 ```
 
 
+### `mailman`
+
+##### `mailman` software itself
+
+```
+# cd /usr/ports/mail/mailman
+# make config
+```
+
+Keep all options enabled by default, and additionally enable the following:
+
+ * `POSTFIX` in *Integrate with which MTA?* section.
+
+See if any dependency is missing:
+
+```
+# make missing
+```
+
+If any, install the dependency using `pkg`. For example:
+
+```
+# pkg install dns/py-dnspython devel/automake devel/automake-wrapper security/fakeroot
+```
+
+Then proceed to installing `mailman`:
+
+```
+# make all install clean
+# pkg lock mailman
+```
+
+Configure `mailman`:
+
+```
+# cd /usr/local/mailman/Mailman
+# ln -s ../../../../freebsd-configuration/usr/local/mailman/Mailman/mm_cfg.py
+# chown -H root:mailman /usr/local/mailman/Mailman/mm_cfg.py
+```
+
+Manually edit the following options with your own domain name in `/usr/local/mailman/Mailman/mm_cfg.py`:
+
+ * `DEFAULT_EMAIL_HOST`;
+ * `DEFAULT_URL_HOST`;
+ * `POSTFIX_STYLE_VIRTUAL_DOMAINS`;
+ * `FREEBSD_LISTMASTER`.
+
+Enable `mailman`:
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/mailman
+# service mailman start
+```
+
+
+##### Integration with `postfix`
+
+This part was inspired from [FreeBSD Diary's amazing howto guide](http://www.freebsddiary.org/mailman.php).
+
+Make sure that the following configuration option in `/usr/local/etc/postfix/main.cf` is uncommented:
+
+```
+mailman_destination_recipient_limit = 1
+```
+
+Make sure your lists subdomain is enabled in `/usr/local/etc/postfix/transport`:
+
+```
+lists.foo.com           mailman:
+```
+
+Rebuild `transport.db`:
+
+```
+# cd /usr/local/etc/postfix
+# postmap transport
+```
+
+Install `postfix-to-mailman.py` script:
+
+```
+# cd /usr/local/mailman/bin
+# ln -s ../../../../freebsd-configuration/usr/local/mailman/bin/postfix-to-mailman.py
+# chown -H root:mailman /usr/local/mailman/bin/postfix-to-mailman.py
+# chmod -H +x /usr/local/mailman/bin/postfix-to-mailman.py
+```
+
+Apply patch for `master.cf` to defer Mailman traffic to `postfix-to-mailman.py`:
+
+```
+# cd /usr/local/etc/postfix
+# patch --posix -p1 -i /freebsd-configuration/patches/postfix/postfix-integration-with-mailman-master.cf.diff
+```
+
+Restart `postfix`:
+
+```
+# service postfix restart
+```
+
+
+##### Integration with `nginx`
+
+This part was inspired from [My Wushu Blog's amazing howto guide](https://www.mywushublog.com/2012/05/mailman-with-nginx-on-freebsd/).
+
+Install `fcgiwrap`:
+
+```
+# pkg install fcgiwrap
+```
+
+Enable `fcgiwrap`:
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/fcgiwrap
+# service fcgiwrap start
+```
+
+Enable mailing lists virtual host for `nginx`:
+
+```
+# cd /usr/local/etc/nginx/sites-enabled
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/lists.foo.com.conf
+```
+
+Restart `nginx`:
+
+```
+# service nginx restart
+```
+
+
 ## Other client applications
 
 ### `mutt`

@@ -193,7 +193,7 @@ content_filter = smtp-amavis:[127.0.0.1]:10024
 # Mailman configuration
 #-----------------------------------------------------------
 
-#mailman_destination_recipient_limit = 1
+mailman_destination_recipient_limit = 1
 
 
 #-----------------------------------------------------------
