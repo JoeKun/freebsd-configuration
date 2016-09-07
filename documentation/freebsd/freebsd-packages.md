@@ -1050,3 +1050,94 @@ Configure `nginx` to proxy to `apache`:
 # ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/personal-files.foo.com.conf
 # service nginx restart
 ```
+
+
+## GateOne
+
+Install some important dependencies of GateOne:
+
+```
+# pkg install sudo
+# pkg install dtach
+# pkg install py27-tornado
+```
+
+Make sure to load the `pty` kernel module for pseudo-terminal support:
+
+```
+# kldload pty
+```
+
+And make sure to include the following directive in `/boot/loader.conf`:
+
+```
+pty_load="YES"
+```
+
+Add unprivileged user for GateOne:
+
+```
+# pw group add gateone -g 647
+# pw user add gateone -u 647 -g 647 -c "GateOne" -d /usr/local/gateone -s /usr/local/bin/zsh -m -k /usr/local/etc/skel
+```
+
+Give `gateone` unprivileged user the ability to call `login` using `sudo` without requiring password authentication.
+
+```
+# cp /freebsd-configuration/usr/local/etc/sudoers.d/gateone /usr/local/etc/sudoers.d
+# chown root:wheel /usr/local/etc/sudoers.d/gateone
+# chmod 440 /usr/local/etc/sudoers.d/gateone
+# su gateone
+```
+
+Proceed with installation:
+
+```
+$ mkdir -p "$HOME/lib/python$(python -V 2>&1 | grep -o '[0-9].[0-9]')/site-packages"
+$ export PYTHONPATH="$HOME/lib/python$(python -V 2>&1 | grep -o '[0-9].[0-9]')/site-packages"
+$ git clone https://github.com/liftoff/GateOne.git gateone
+$ cd gateone
+$ python setup.py install --prefix=/usr/local/gateone
+```
+
+Launch GateOne manually once so it will lay down its own configuration file:
+
+```
+$ ~/bin/gateone --settings_dir="$HOME/etc/gateone" --disable_ssl="true" --port=2222 --origins="localhost;127.0.0.1"
+```
+
+Interrupt with Control+C.
+
+Replace `50terminal.conf`:
+
+```
+$ cd ~/etc/gateone
+$ rm -f 50terminal.conf
+$ ln -s ../../../../../freebsd-configuration/usr/local/gateone/etc/gateone/50terminal.conf
+```
+
+Install bootstrap script:
+
+```
+$ cd ~/bin
+$ ln -s ../../../../freebsd-configuration/usr/local/gateone/bin/gateone_start
+$ exit
+# cd /usr/local/etc/rc.d
+# ln -s ../../../../freebsd-configuration/usr/local/etc/rc.d/gateone
+```
+
+Enable GateOne:
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/gateone
+# service gateone start
+```
+
+Enable GateOne virtual host for `nginx`:
+
+```
+# cd /usr/local/etc/nginx/sites-enabled
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/gateone.foo.com.conf
+# service nginx restart
+```

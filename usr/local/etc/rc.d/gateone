@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# PROVIDE: gateone
+# REQUIRE: LOGIN DAEMON
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name=gateone
+rcvar=gateone_enable
+command=/usr/local/gateone/bin/gateone
+command_interpreter=/usr/local/bin/python
+start_cmd="${name}_start"
+
+load_rc_config $name
+
+gateone_start() {
+    echo "Starting ${name}."
+    /usr/sbin/daemon -u gateone /usr/local/gateone/bin/gateone_start > /dev/null 2>&1
+}
+
+run_rc_command "$1"

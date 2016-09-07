@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/gateone: system configuration for gateone
+
+gateone_enable="YES"
+
