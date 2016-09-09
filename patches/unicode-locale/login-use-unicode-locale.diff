@@ -1,0 +1,23 @@
+--- a/login.conf	2016-08-13 05:15:03.951323000 -0700
++++ b/login.conf	2016-09-08 09:39:57.829593000 -0700
+@@ -26,7 +26,7 @@
+ 	:passwd_format=sha512:\
+ 	:copyright=/etc/COPYRIGHT:\
+ 	:welcome=/etc/motd:\
+-	:setenv=MAIL=/var/mail/$,BLOCKSIZE=K:\
++	:setenv=MAIL=/var/mail/$,BLOCKSIZE=K,LC_COLLATE=C:\
+ 	:path=/sbin /bin /usr/sbin /usr/bin /usr/local/sbin /usr/local/bin ~/bin:\
+ 	:nologin=/var/run/nologin:\
+ 	:cputime=unlimited:\
+@@ -45,8 +45,9 @@
+ 	:kqueues=unlimited:\
+ 	:umtxp=unlimited:\
+ 	:priority=0:\
+-	:ignoretime@:\
+-	:umask=022:
++	:umask=022:\
++	:charset=UTF-8:\
++	:lang=en_US.UTF-8:
+ 
+ 
+ #

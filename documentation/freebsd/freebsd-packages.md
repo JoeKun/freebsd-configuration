@@ -73,6 +73,19 @@ Link to user `zsh` configuration files for `root`:
 ```
 
 
+## Edit login configuration to use Unicode (UTF-8)
+
+As seen in [b1c1l1's blog post](https://www.b1c1l1.com/blog/2011/05/09/using-utf-8-unicode-on-freebsd/).
+
+```
+# cd /etc
+# patch --posix -p1 -i /freebsd-configuration/patches/unicode-locale/login-use-unicode-locale.diff
+# cap_mkdb /etc/login.conf
+```
+
+Log out and log back in.
+
+
 ## Add unprivileged `admin` user
 
 Prepare a skeleton for all regular unprivileged users:
