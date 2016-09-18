@@ -442,7 +442,7 @@ Enable `phpMyAdmin` configuration for `nginx`.
 ## PostgreSQL
 
 ```
-# pkg install postgresql93-client postgresql93-server
+# pkg install postgresql93-client postgresql93-server postgresql93-contrib
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/postgresql
 # service postgresql initdb
@@ -1137,6 +1137,8 @@ $ ln -s ../../../../freebsd-configuration/usr/local/gateone/bin/gateone_start
 $ exit
 # cd /usr/local/etc/rc.d
 # ln -s ../../../../freebsd-configuration/usr/local/etc/rc.d/gateone
+# chmod -H 555 gateone
+# chown -R gateone:gateone /freebsd-configuration/usr/local/gateone
 ```
 
 Enable GateOne:
@@ -1153,4 +1155,82 @@ Enable GateOne virtual host for `nginx`:
 # cd /usr/local/etc/nginx/sites-enabled
 # ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/gateone.foo.com.conf
 # service nginx restart
+```
+
+
+## GitLab
+
+Install and enable `redis`:
+
+```
+# pkg install redis
+
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/redis
+# service redis start
+```
+
+Install other required dependencies:
+
+```
+# pkg install sudo bash icu cmake pkgconf node logrotate krb5 gmake go libtool bison
+```
+
+Add unprivileged user for GitLab:
+
+```
+# pw group add git -g 617
+# pw user add git -u 617 -g 617 -c "GitLab" -d /usr/local/git -s /usr/local/bin/zsh -m -k /usr/local/etc/skel
+# pw group mod redis -m git
+```
+
+Install RVM and ruby 2.3.1:
+
+```
+# su git
+$ gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+$ \curl -L https://get.rvm.io | bash -s stable
+$ rm -f .bash_profile .bashrc .mkshrc .profile .zlogin .zshrc
+$ for file_name in .gitconfig .zprofile .zshenv .zshrc; do ln -s ../../../freebsd-configuration/usr/local/git/${file_name}; done
+$ exit
+# chown -R git:git /freebsd-configuration/usr/local/git
+# su git
+$ rvm autolibs read
+$ rvm install 2.3.1
+$ gem install bundler
+$ exit
+```
+
+Prepare database:
+
+```
+# su pgsql
+$ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt gitlab
+$ createdb --owner=gitlab gitlab "GitLab"
+$ psql postgres
+postgres=# GRANT ALL PRIVILEGES ON DATABASE gitlab TO gitlab;
+postgres=# CREATE EXTENSION IF NOT EXISTS pg_trgm;
+postgres=# \q
+$ psql gitlab
+gitlab=# CREATE EXTENSION IF NOT EXISTS pg_trgm;
+gitlab=# \q
+$ rm -f ~/.psql_history
+```
+
+Complete installation drawing some inspiration from the instructions in [this guide](https://github.com/gitlabhq/gitlab-recipes/blob/master/install/freebsd/freebsd-10.md#6-install-and-set-up-gitlab); go straight to part 6 of this guide, named *Install and set up GitLab*.
+
+Some important differences:
+
+ * don't apply the change described as "Change the Redis socket path to `/usr/local/var/run/redis/redis.sock`";
+ * change `/home/*` to `/usr/local/*`;
+ * use the following instructions for the init script instead of the ones from the guide.
+
+```
+# cd /usr/local/etc/rc.d
+# ln -s ../../../../freebsd-configuration/usr/local/etc/rc.d/gitlab
+# chmod -H 555 gitlab
+
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/gitlab
+# service gitlab start
 ```

@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/redis: system configuration for redis
+
+redis_enable="YES"
+
