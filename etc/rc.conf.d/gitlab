@@ -1,6 +1,9 @@
 # /etc/rc.conf.d/gitlab: system configuration for GitLab
 
+# Enable GitLab
 gitlab_enable="YES"
-gitlab_app_user="git"
-gitlab_app_root="/usr/local/$gitlab_app_user/gitlab"
+
+# Extend GitLab environment for compatibility with RVM
+gitlab_additional_environment_variables="$(cat ~git/.rvm/environments/default | sed 's/[^\\]#.*$//g' | sed 's/^#.*$//g' | grep -E -v '^[[:blank:]]*$' | grep -v '^unset ' | sed 's/^export //g' | tr '\n' ' ')"
+gitlab_additional_environment_variables=$(echo "$gitlab_additional_environment_variables" | sed "s|\$PATH|$PATH:/usr/local/sbin:/usr/local/bin|g")
 

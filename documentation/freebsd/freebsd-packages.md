@@ -1173,7 +1173,7 @@ Install and enable `redis`:
 Install other required dependencies:
 
 ```
-# pkg install sudo bash icu cmake pkgconf node logrotate krb5 gmake go libtool bison
+# pkg install sudo bash icu cmake pkgconf node krb5 gmake go libtool bison
 ```
 
 Add unprivileged user for GitLab:

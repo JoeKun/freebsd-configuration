@@ -1,57 +1,53 @@
-#! /bin/sh
+#!/bin/sh
 
-# GITLAB
-# Maintainer: joel@lopes-da-silva.com
-# Authors: joel@lopes-da-silva.com, @charlienewey, rovanion.luckey@gmail.com, @randx
+# GitLab
+# Maintainer: Joel Lopes Da Silva <joel@lopes-da-silva.com>
+# Based on work of: Torsten Zuehlsdorff <ports@toco-domains.de>,
+#                   @charlienewey, rovanion.luckey@gmail.com, @randx
 
-# PROVIDE: ghost
+# PROVIDE: gitlab
+# REQUIRE: LOGIN DAEMON mysql postgresql redis
 # KEYWORD: shutdown
 
 . /etc/rc.subr
 
 name="gitlab"
-rcvar="gitlab_enable"
-extra_commands="status"
-
-load_rc_config gitlab
-: ${gitlab_enable:="NO"}
+rcvar="${name}_enable"
+extra_commands="reload status"
 
 status_cmd="print_status"
 start_cmd="start_gitlab"
 stop_cmd="stop_gitlab"
 restart_cmd="restart_gitlab"
+reload_cmd="reload_gitlab"
 
-### Environment variables
-RAILS_ENV=${RAILS_ENV:-"production"}
-
-# Try to find where bash is located.
-default_shell_path="/bin/bash"
-if [ ! -x $default_shell_path ] && [ -x /usr/local/bin/bash ]; then
-  default_shell_path="/usr/local/bin/bash"
-fi
+load_rc_config $name
 
 # Script variable names should be lower-case not to conflict with
 # internal /bin/sh variables such as PATH, EDITOR or SHELL.
 # They should also be prefixed with "gitlab_".
-gitlab_app_user=${gitlab_app_user:-"git"}
-gitlab_app_root=${gitlab_app_root:-"/home/$gitlab_app_user/gitlab"}
-gitlab_pid_path=${gitlab_pid_path:-"$gitlab_app_root/tmp/pids"}
-gitlab_socket_path=${gitlab_socket_path:-"$gitlab_app_root/tmp/sockets"}
+gitlab_enable=${gitlab_enable:-"NO"}
+gitlab_user=${gitlab_user:-"git"}
+eval gitlab_home=${gitlab_home:-"~${gitlab_user}"}
+gitlab_root=${gitlab_root:-"$gitlab_home/gitlab"}
+gitlab_pid_path=${gitlab_pid_path:-"$gitlab_root/tmp/pids"}
+gitlab_socket_path=${gitlab_socket_path:-"$gitlab_root/tmp/sockets"}
 gitlab_rails_socket=${gitlab_rails_socket:-"$gitlab_socket_path/gitlab.socket"}
 gitlab_web_server_pid_path=${gitlab_web_server_pid_path:-"$gitlab_pid_path/unicorn.pid"}
 gitlab_sidekiq_pid_path=${gitlab_sidekiq_pid_path:-"$gitlab_pid_path/sidekiq.pid"}
 gitlab_mail_room_enabled=${gitlab_mail_room_enabled:-"false"}
 gitlab_mail_room_pid_path=${gitlab_mail_room_pid_path:-"$gitlab_pid_path/mail_room.pid"}
-gitlab_workhorse_dir=${gitlab_workhorse_dir:-"$(cd $gitlab_app_root/../gitlab-workhorse 2> /dev/null && pwd)"}
+gitlab_workhorse_dir=${gitlab_workhorse_dir:-"$(cd $gitlab_root/../gitlab-workhorse 2> /dev/null && pwd)"}
 gitlab_workhorse_pid_path=${gitlab_workhorse_pid_path:-"$gitlab_pid_path/gitlab-workhorse.pid"}
-gitlab_workhorse_options=${gitlab_workhorse_options:-"-listenUmask 0 -listenNetwork unix -listenAddr $gitlab_socket_path/gitlab-workhorse.socket -authBackend http://127.0.0.1:8080 -authSocket $gitlab_rails_socket -documentRoot $gitlab_app_root/public"}
-gitlab_workhorse_log=${gitlab_workhorse_log:-"$gitlab_app_root/log/gitlab-workhorse.log"}
-gitlab_shell_path=${gitlab_shell_path:-"$default_shell_path"}
+gitlab_workhorse_options=${gitlab_workhorse_options:-"-listenUmask 0 -listenNetwork unix -listenAddr $gitlab_socket_path/gitlab-workhorse.socket -authBackend http://127.0.0.1:8080 -authSocket $gitlab_rails_socket -documentRoot $gitlab_root/public"}
+gitlab_workhorse_log=${gitlab_workhorse_log:-"$gitlab_root/log/gitlab-workhorse.log"}
+gitlab_rails_environment=${gitlab_rails_environment:-"production"}
+gitlab_additional_environment_variables=${gitlab_additional_environment_variables:-"PATH=\"$PATH:/usr/local/sbin:/usr/local/bin\""}
 
 # Redefine most of these variables without the "gitlab_" prefix for
 # backward compatibility with old configuration files.
-app_user=${app_user:-"$gitlab_app_user"}
-app_root=${app_root:-"$gitlab_app_root"}
+app_user=${app_user:-"$gitlab_user"}
+app_root=${app_root:-"$gitlab_root"}
 pid_path=${pid_path:-"$gitlab_pid_path"}
 socket_path=${socket_path:-"$gitlab_socket_path"}
 rails_socket=${rails_socket:-"$gitlab_rails_socket"}
@@ -59,37 +55,12 @@ web_server_pid_path=${web_server_pid_path:-"$gitlab_web_server_pid_path"}
 sidekiq_pid_path=${sidekiq_pid_path:-"$gitlab_sidekiq_pid_path"}
 mail_room_enabled=${mail_room_enabled:-"$gitlab_mail_room_enabled"}
 mail_room_pid_path=${mail_room_pid_path:-"$gitlab_mail_room_pid_path"}
-shell_path=${shell_path:-"$gitlab_shell_path"}
 
-# Switch to the app_user if it is not he/she who is running the script.
-if [ `whoami` != "$app_user" ]; then
-  eval su - "$app_user" -c $(echo \")$shell_path -l -c \'$0 "$@"\'$(echo \"); exit;
-fi
-
-# Switch to the gitlab path, exit on failure.
-if ! cd "$app_root" ; then
- echo "Failed to cd into $app_root, exiting!";  exit 1
-fi
+### Environment variables
+run_env="env RAILS_ENV=$gitlab_rails_environment HOME=$gitlab_home $gitlab_additional_environment_variables"
 
 
 ### Init Script functions
-
-## Appends argument to PATH environment variable it it's not already included
-## in it.
-append_to_path_environment_variable() {
-  case ":${PATH:=$1}:" in
-    *:$1:*)
-        ;;
-    *)
-        PATH="${PATH:+"$PATH:"}$1"
-        ;;
-  esac
-}
-
-# Make sure our PATH includes sbin and bin directories in /usr/local.
-# This may be particularly relevant on FreeBSD.
-append_to_path_environment_variable "/usr/local/sbin"
-append_to_path_environment_variable "/usr/local/bin"
 
 ## Gets the pids from the files
 check_pids(){
@@ -224,7 +195,7 @@ exit_if_not_running(){
   check_stale_pids
   if [ "$web_status" != "0" ] && [ "$sidekiq_status" != "0" ] && [ "$gitlab_workhorse_status" != "0" ] && { [ "$mail_room_enabled" != true ] || [ "$mail_room_status" != "0" ]; }; then
     echo "GitLab is not running."
-    exit
+    exit 1
   fi
 }
 
@@ -232,34 +203,26 @@ exit_if_not_running(){
 start_gitlab() {
   check_stale_pids
 
-  if [ "$web_status" != "0" ]; then
-    echo "Starting GitLab Unicorn"
-  fi
-  if [ "$sidekiq_status" != "0" ]; then
-    echo "Starting GitLab Sidekiq"
-  fi
-  if [ "$gitlab_workhorse_status" != "0" ]; then
-    echo "Starting GitLab Workhorse"
-  fi
-  if [ "$mail_room_enabled" = true ] && [ "$mail_room_status" != "0" ]; then
-    echo "Starting GitLab MailRoom"
-  fi
-
   # Then check if the service is running. If it is: don't start again.
   if [ "$web_status" = "0" ]; then
     echo "The Unicorn web server already running with pid $wpid, not restarting."
   else
+    echo "Starting GitLab Unicorn"
     # Remove old socket if it exists
     rm -f "$rails_socket" 2>/dev/null
     # Start the web server
-    RAILS_ENV=$RAILS_ENV bin/web start
+    # Unicorn may break the current process on freebsd during 
+    # daemonizing (defunct exists until new master has prefilled 
+    # caches); therefore start itself is decoupled.
+    su - $gitlab_user -c "/usr/sbin/daemon -t gitlab-unicorn $run_env ${app_root}/bin/web start"
   fi
 
   # If sidekiq is already running, don't start it again.
   if [ "$sidekiq_status" = "0" ]; then
     echo "The Sidekiq job dispatcher is already running with pid $spid, not restarting"
   else
-    RAILS_ENV=$RAILS_ENV bin/background_jobs start &
+    echo "Starting GitLab Sidekiq"
+    su - $gitlab_user -c "$run_env ${app_root}/bin/background_jobs start"
   fi
 
   if [ "$gitlab_workhorse_status" = "0" ]; then
@@ -268,10 +231,20 @@ start_gitlab() {
     # No need to remove a socket, gitlab-workhorse does this itself.
     # Because gitlab-workhorse has multiple executables we need to fix
     # the PATH.
-    $app_root/bin/daemon_with_pidfile $gitlab_workhorse_pid_path  \
-      /usr/bin/env PATH=$gitlab_workhorse_dir:$PATH \
-        gitlab-workhorse $gitlab_workhorse_options \
-      >> $gitlab_workhorse_log 2>&1 &
+    echo "Starting GitLab Workhorse"
+    gitlab_workhorse_run_env=""
+    case "$run_env" in
+      *\ PATH=*)
+        gitlab_workhorse_run_env=$(echo $run_env | sed "s| PATH=| PATH=$gitlab_workhorse_dir:|g")
+        ;;
+      *)
+        gitlab_workhorse_run_env="$run_env PATH=$gitlab_workhorse_dir:$PATH"
+        ;;
+    esac
+    su - $gitlab_user -c "/usr/sbin/daemon -p $gitlab_workhorse_pid_path \
+      -t gitlab-workhorse $gitlab_workhorse_run_env \
+        $gitlab_workhorse_dir/gitlab-workhorse $gitlab_workhorse_options \
+      >> $gitlab_workhorse_log 2>&1"
   fi
 
   if [ "$mail_room_enabled" = true ]; then
@@ -279,7 +252,8 @@ start_gitlab() {
     if [ "$mail_room_status" = "0" ]; then
       echo "The MailRoom email processor is already running with pid $mpid, not restarting"
     else
-      RAILS_ENV=$RAILS_ENV bin/mail_room start &
+      echo "Starting GitLab MailRoom"
+      su - $gitlab_user -c "$run_env ${app_root}/bin/mail_room start"
     fi
   fi
 
@@ -295,11 +269,11 @@ stop_gitlab() {
 
   if [ "$web_status" = "0" ]; then
     echo "Shutting down GitLab Unicorn"
-    RAILS_ENV=$RAILS_ENV bin/web stop
+    su - $gitlab_user -c "$run_env ${app_root}/bin/web stop"
   fi
   if [ "$sidekiq_status" = "0" ]; then
     echo "Shutting down GitLab Sidekiq"
-    RAILS_ENV=$RAILS_ENV bin/background_jobs stop
+    su - $gitlab_user -c "$run_env ${app_root}/bin/background_jobs stop"
   fi
   if [ "$gitlab_workhorse_status" = "0" ]; then
     echo "Shutting down GitLab Workhorse"
@@ -307,7 +281,7 @@ stop_gitlab() {
   fi
   if [ "$mail_room_enabled" = true ] && [ "$mail_room_status" = "0" ]; then
     echo "Shutting down GitLab MailRoom"
-    RAILS_ENV=$RAILS_ENV bin/mail_room stop
+    su - $gitlab_user -c "$run_env ${app_root}/bin/mail_room stop"
   fi
 
   # If something needs to be stopped, lets wait for it to stop. Never use SIGKILL in a script.
@@ -330,15 +304,20 @@ stop_gitlab() {
     rm "$mail_room_pid_path" 2>/dev/null
   fi
 
-  print_status
+  print_status exit_cleanly_if_not_running
 }
 
 ## Prints the status of GitLab and its components.
 print_status() {
+  exit_policy="$1"
   check_status
   if [ "$web_status" != "0" ] && [ "$sidekiq_status" != "0" ] && [ "$gitlab_workhorse_status" != "0" ] && { [ "$mail_room_enabled" != true ] || [ "$mail_room_status" != "0" ]; }; then
     echo "GitLab is not running."
-    return
+    if [ "$exit_policy" = "exit_cleanly_if_not_running" ]; then
+        exit
+    else
+        exit 1
+    fi
   fi
   if [ "$web_status" = "0" ]; then
       echo "The GitLab Unicorn web server with pid $wpid is running."
@@ -375,15 +354,15 @@ reload_gitlab(){
     exit 1
   fi
   printf "Reloading GitLab Unicorn configuration... "
-  RAILS_ENV=$RAILS_ENV bin/web reload
+  su - $gitlab_user -c "$run_env ${app_root}/bin/web reload"
   echo "Done."
 
   echo "Restarting GitLab Sidekiq since it isn't capable of reloading its config..."
-  RAILS_ENV=$RAILS_ENV bin/background_jobs restart
+  su - $gitlab_user -c "$run_env ${app_root}/bin/background_jobs restart"
 
-  if [ "$mail_room_enabled" != true ]; then
+  if [ "$mail_room_enabled" = true ]; then
     echo "Restarting GitLab MailRoom since it isn't capable of reloading its config..."
-    RAILS_ENV=$RAILS_ENV bin/mail_room restart
+    su - $gitlab_user -c "$run_env ${app_root}/bin/mail_room restart"
   fi
 
   wait_for_pids
@@ -400,29 +379,5 @@ restart_gitlab(){
 }
 
 
-### Finally the input handling.
+run_rc_command "$1"
 
-case "$1" in
-  start)
-        start_gitlab
-        ;;
-  stop)
-        stop_gitlab
-        ;;
-  restart)
-        restart_gitlab
-        ;;
-  reload|force-reload)
-	reload_gitlab
-        ;;
-  status)
-        print_status
-        exit $gitlab_status
-        ;;
-  *)
-        echo "Usage: service gitlab {start|stop|restart|reload|status}"
-        exit 1
-        ;;
-esac
-
-exit
