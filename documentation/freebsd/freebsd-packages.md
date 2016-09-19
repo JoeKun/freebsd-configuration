@@ -1132,9 +1132,6 @@ $ ln -s ../../../../../freebsd-configuration/usr/local/gateone/etc/gateone/50ter
 Install bootstrap script:
 
 ```
-$ cd ~/bin
-$ ln -s ../../../../freebsd-configuration/usr/local/gateone/bin/gateone_start
-$ exit
 # cd /usr/local/etc/rc.d
 # ln -s ../../../../freebsd-configuration/usr/local/etc/rc.d/gateone
 # chmod -H 555 gateone
