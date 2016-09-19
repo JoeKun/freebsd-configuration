@@ -986,7 +986,7 @@ Restart `nginx`:
 To launch `irssi` in a `screen` upon rebooting, add the following entry to the user's `crontab` using `crontab -e`:
 
 ```
-@reboot screen -d -m -S irc sh -c "TERM=xterm-256color; export TERM; irssi"
+@reboot screen -d -m -S irc env TERM=xterm-256color irssi
 ```
 
 
