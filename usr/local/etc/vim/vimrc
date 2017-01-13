@@ -116,6 +116,9 @@ set hlsearch
 " Clear any previous search term highlight upon startup
 autocmd VimEnter * let @/ = ""
 
+" Disable automatic switch to visual mode when using mouse
+autocmd VimEnter * set mouse-=a
+
 " Uncomment the following line if you want to display line numbers
 "set number
 
