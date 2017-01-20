@@ -119,6 +119,9 @@ autocmd VimEnter * let @/ = ""
 " Disable automatic switch to visual mode when using mouse
 autocmd VimEnter * set mouse-=a
 
+" Disable automatic continuation of comments after new lines
+autocmd VimEnter * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
 " Uncomment the following line if you want to display line numbers
 "set number
 
