@@ -231,6 +231,9 @@ unsetopt bg_nice
 # Don't send `HUP` to jobs running when the shell exits
 unsetopt hup
 
+# Disable bracketed paste
+unset zle_bracketed_paste
+
 
 #-----------------------------------------------------------
 # Commands history parameters
