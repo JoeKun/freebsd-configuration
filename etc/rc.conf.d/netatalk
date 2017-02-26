@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/netatalk: system configuration for netatalk
+
+netatalk_enable="YES"
+

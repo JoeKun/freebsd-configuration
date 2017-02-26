@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/avahi_daemon: system configuration for avahi-daemon
+
+avahi_daemon_enable="YES"
+

@@ -181,6 +181,7 @@ However, it seems like that VFS tunable doesn't exist in FreeBSD 11 anymore, as 
    # zfs create storage/usr/obj
    
    # zfs create -o compression=lz4 storage/var
+   # zfs create -o compression=gzip -o exec=off -o setuid=off storage/var/backups
    # zfs create -o exec=off -o setuid=off storage/var/crash
    # zfs create -o exec=off -o setuid=off storage/var/db
    # zfs create -o exec=on -o setuid=off storage/var/db/pkg

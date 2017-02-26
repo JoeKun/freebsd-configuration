@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/dbus: system configuration for dbus
+
+dbus_enable="YES"
+
