@@ -1,0 +1,11 @@
+--- a/sshd_config	2017-02-27 11:40:53.570616000 -0800
++++ b/sshd_config	2017-02-28 09:08:15.085038000 -0800
+@@ -115,7 +115,7 @@
+ #Compression delayed
+ #ClientAliveInterval 0
+ #ClientAliveCountMax 3
+-#UseDNS yes
++UseDNS no
+ #PidFile /var/run/sshd.pid
+ #MaxStartups 10:30:100
+ #PermitTunnel no

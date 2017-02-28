@@ -9,6 +9,13 @@
 Upload contents of `~/.ssh/id_rsa.pub` to GitHub.
 
 
+## Prepare `pkg`
+
+```
+# pkg update
+```
+
+
 ## Fetch configuration files
 
 First, make sure to have `git` installed.
@@ -84,6 +91,21 @@ As seen in [b1c1l1's blog post](https://www.b1c1l1.com/blog/2011/05/09/using-utf
 ```
 
 Log out and log back in.
+
+
+## Configure `sshd`
+
+As seen in the following [FreeBSD commit](https://svnweb.freebsd.org/base?view=revision&revision=294909), FreeBSD developers have made a conscious decision to deviate from the new default value of `UseDNS` since OpenSSH 6.8p1.
+
+Unfortunately, leaving `UseDNS` enabled can result in significant delays when logging in, especially from a client machine in a network where the public IP address doesn't have a proper reverse DNS entry. Furthermore, `UseDNS` seems [pretty pointless for most people](http://unix.stackexchange.com/questions/56941/what-is-the-point-of-sshd-usedns-option#answer-56947).
+
+So we can disable it by doing:
+
+```
+# cd /etc/ssh
+# patch --posix -p1 -i /freebsd-configuration/patches/sshd/sshd-disable-usedns-configuration-option.diff
+# service sshd reload
+```
 
 
 ## Add unprivileged `admin` user

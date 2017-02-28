@@ -264,15 +264,3 @@ However, it seems like that VFS tunable doesn't exist in FreeBSD 11 anymore, as 
 # freebsd-update install
 # reboot
 ```
-
-## Prepare `pkg`
-
-```
-# pkg update
-```
-
-## Install base packages
-
-```
-# pkg install git
-```
