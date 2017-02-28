@@ -353,6 +353,7 @@ Manually edit `ssl_certificate` and `ssl_certificate_key` in `/usr/local/etc/ngi
 ```
 # mkdir sites-enabled
 # cd sites-enabled
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/default.conf
 # ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf
 # mkdir admin.foo.com.conf.d
 ```
