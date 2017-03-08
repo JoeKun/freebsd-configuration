@@ -1,4 +1,4 @@
 # /etc/rc.conf.d/network: system configuration for network
 
-ifconfig_bge0="inet 10.0.0.100 netmask 255.255.255.0"
+ifconfig_bge0="inet 10.0.0.100 netmask 255.0.0.0"
 
