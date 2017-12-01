@@ -113,6 +113,9 @@ set incsearch
 " Highlight search term
 set hlsearch
 
+" Allow wrapping when hit the last search result in pager mode
+set wrapscan
+
 " Clear any previous search term highlight upon startup
 autocmd VimEnter * let @/ = ""
 
