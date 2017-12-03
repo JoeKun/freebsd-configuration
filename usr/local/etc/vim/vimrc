@@ -128,3 +128,7 @@ autocmd VimEnter * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 " Uncomment the following line if you want to display line numbers
 "set number
 
+" Add /usr/local/etc/vim to runtimepath to allow for system wide global
+" plugins and other configuration such as file type syntax definitions
+set runtimepath+=/usr/local/etc/vim
+

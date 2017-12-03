@@ -74,9 +74,8 @@ Link to user `zsh` configuration files for `root`:
 ```
 # pkg install vim
 # cd /usr/local/etc/vim
-# rm -f vimrc ; ln -s ../../../../freebsd-configuration/usr/local/etc/vim/vimrc
-# cd /root
-# ln -s ../freebsd-configuration/root/.vim
+# rm -f vimrc
+# for file_name in vimrc plugin syntax filetype.vim; do ln -s ../../../../freebsd-configuration/usr/local/etc/vim/${file_name}; done
 ```
 
 
