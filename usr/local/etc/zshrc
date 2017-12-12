@@ -332,6 +332,25 @@ zstyle ":completion:*" matcher-list "" "m:{a-z}={A-Z}"
 zstyle ":completion:*" max-errors 3 numeric
 zstyle ":completion:*" use-compctl false
 
+if [[ -f "/usr/local/etc/zsh_completion_ignored_patterns" ]] && [[ -r "/usr/local/etc/zsh_completion_ignored_patterns" ]]
+then
+    __zsh_completion_ignored_pattern=""
+    __zsh_completion_ignored_patterns=""
+    while read -r __zsh_completion_ignored_pattern
+    do
+        if [[ -n "${__zsh_completion_ignored_patterns}" ]]
+        then
+            __zsh_completion_ignored_patterns+="|"
+        fi
+        __zsh_completion_ignored_patterns+="${__zsh_completion_ignored_pattern}"
+    done < <(cat "/usr/local/etc/zsh_completion_ignored_patterns" | cut -d "#" -f 1 | sed "s/^[[:space:]]*//" | sed "s/[[:space:]]*$//" | grep -v -e "^$")
+    
+    zstyle ":completion:*" ignored-patterns "${__zsh_completion_ignored_patterns}"
+    
+    unset __zsh_completion_ignored_pattern
+    unset __zsh_completion_ignored_patterns
+fi
+
 autoload -Uz compinit
 compinit
 
