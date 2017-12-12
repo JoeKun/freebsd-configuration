@@ -15,14 +15,14 @@
 #-----------------------------------------------------------
 
 # Prints information about the system
-if (( ${ECHO_SYSTEM_INFORMATION_UPON_LOGIN_DISABLED:=0} == 0 ))
+if [[ ${ECHO_SYSTEM_INFORMATION_UPON_LOGIN_DISABLED:=0} -eq 0 ]]
 then
     uname -a
     uptime
 fi
 
 # Accept messages from other users
-if (( ${ACCEPT_MESSAGES_FROM_OTHER_USERS_DISABLED:=0} == 0 ))
+if [[ ${ACCEPT_MESSAGES_FROM_OTHER_USERS_DISABLED:=0} -eq 0 ]]
 then
     mesg y
 fi
@@ -32,16 +32,16 @@ fi
 # Welcome message
 #-----------------------------------------------------------
 
-if (( ${LOGIN_GREETING_DISABLED:=0} == 0 ))
+if [[ ${LOGIN_GREETING_DISABLED:=0} -eq 0 ]]
 then
-    [[ -z "${LOGIN_GREETING_NAME:-}" ]] && export LOGIN_GREETING_NAME="$USER"
+    [[ -z "${LOGIN_GREETING_NAME:-}" ]] && export LOGIN_GREETING_NAME="${USER}"
     
-    login_greeting_figlet_options=""
-    (( ${LOGIN_GREETING_SLANTED_TEXT_DISABLED:=0} == 0 )) && login_greeting_figlet_options=("-f" "slant")
+    __login_greeting_figlet_options=()
+    [[ ${LOGIN_GREETING_SLANTED_TEXT_DISABLED:=0} -eq 0 ]] && __login_greeting_figlet_options=("-f" "slant")
     echo
-    figlet -c -t ${login_greeting_figlet_options[@]} "Hello $LOGIN_GREETING_NAME"
+    figlet -c -t ${__login_greeting_figlet_options[@]} "Hello ${LOGIN_GREETING_NAME}"
     echo
-    unset login_greeting_figlet_options
+    unset __login_greeting_figlet_options
 fi
 
 
@@ -49,7 +49,7 @@ fi
 # Fortune...
 #-----------------------------------------------------------
 
-if (( ${FORTUNE_UPON_LOGIN_DISABLED:=0} == 0 ))
+if [[ ${FORTUNE_UPON_LOGIN_DISABLED:=0} -eq 0 ]]
 then
     fortune
     echo

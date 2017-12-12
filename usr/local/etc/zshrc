@@ -13,28 +13,28 @@
 #-----------------------------------------------------------
 
 # `ls` customization: color
-alias ls='ls -I -F -G -h'
+alias ls="ls -I -F -G -h"
 
 # Prompt before erasing or overwriting a file
-alias cp='cp -i'
-alias mv='mv -i'
-alias rm='rm -i'
+alias cp="cp -i"
+alias mv="mv -i"
+alias rm="rm -i"
 
 # Aliases for `ls`
-alias ll='ls -l'
-alias la='ls -A'
-alias lla='ls -lA'
+alias ll="ls -l"
+alias la="ls -A"
+alias lla="ls -lA"
 
 # updatedb
-alias updatedb='cd / && /usr/libexec/locate.updatedb ; cd - > /dev/null'
+alias updatedb="cd / && /usr/libexec/locate.updatedb ; cd - > /dev/null"
 
 # Favor some GNU variants of common developer tools.
 which gpatch > /dev/null
 if [[ $? -eq 0 ]]
 then
-    alias patch='gpatch'
+    alias patch="gpatch"
 else
-    alias patch='patch --posix'
+    alias patch="patch --posix"
 fi
 function make() {
     pwd | grep "^\/usr\/ports" &> /dev/null
@@ -53,21 +53,21 @@ function make() {
 }
 
 # Some handy aliases
-alias c='clear'
-alias less='less --quiet -M'
-alias s='cd ..'
-alias df='df -h'
-alias du='du -h'
-alias m='mutt'
-alias md='mkdir'
-alias rd='rmdir'
-alias screen='screen -U'
+alias c="clear"
+alias less="less --quiet -M"
+alias s="cd .."
+alias df="df -h"
+alias du="du -h"
+alias m="mutt"
+alias md="mkdir"
+alias rd="rmdir"
+alias screen="screen -U"
 
 # Workaround to allow `su pgsql` to use zsh as if it was the actual login shell.
 function su() {
-    if [[ $# -eq 1 ]] && [[ "$1" == "pgsql" ]]
+    if [[ $# -eq 1 ]] && [[ "${1}" == "pgsql" ]]
     then
-        /usr/bin/su $1 -c "SHELL=`which zsh` zsh"
+        /usr/bin/su ${1} -c "SHELL=$(which zsh) zsh"
     else
         /usr/bin/su $*
     fi
@@ -79,20 +79,20 @@ function su() {
 #-----------------------------------------------------------
 
 # Mappings: key, function
-bindkey ''    beginning-of-line       # Home
+bindkey ""    beginning-of-line       # Home
 bindkey "\e[1~" beginning-of-line
 bindkey "\e[H"  beginning-of-line
-bindkey ''    end-of-line             # End
+bindkey ""    end-of-line             # End
 bindkey "\e[4~" end-of-line
 bindkey "\e[F"  end-of-line
-bindkey ''    delete-char             # Del
-bindkey '[3~' delete-char
-bindkey '[2~' overwrite-mode          # Insert
-bindkey '[5~' history-search-backward # PgUp
-bindkey '[6~' history-search-forward  # PgDn
+bindkey ""    delete-char             # Del
+bindkey "[3~" delete-char
+bindkey "[2~" overwrite-mode          # Insert
+bindkey "[5~" history-search-backward # PgUp
+bindkey "[6~" history-search-forward  # PgDn
 
 # Color prompt (the color is not the same for root and for simple users)
-if [ "`id -u`" -eq 0 ]
+if [[ $(id -u) -eq 0 ]]
 then
     export PS1="%{[36;1m%}%T %{[34m%}%n%{[33m%}@%{[37m%}%m %{[32m%}%~%{[33m%}%#%{[0m%} "
 else
@@ -123,23 +123,23 @@ key[PageDown]=${terminfo[knp]}
 [[ -n "${key[Right]}"   ]]  && bindkey  "${key[Right]}"   forward-char
 
 # Title of xterm window
-case $TERM in
+case ${TERM} in
    xterm*)
        precmd () {print -Pn "\e]0;%n@%m: %~\a"}
        ;;
 esac
 
 # Color management for `ls` (exporting LS_COLORS)
-if [ -x /usr/bin/dircolors ]
+if [[ -x /usr/bin/dircolors ]]
 then
-    if [ -r ~/.dir_colors ]
+    if [[ -r ~/.dir_colors ]]
     then
-        eval "`dircolors ~/.dir_colors`"
-    elif [ -r /etc/dir_colors ]
+        eval $(dircolors ~/.dir_colors)
+    elif [[ -r /etc/dir_colors ]]
     then
-        eval "`dircolors /etc/dir_colors`"
+        eval $(dircolors /etc/dir_colors)
     else
-        eval "`dircolors`"
+        eval $(dircolors)
     fi
 fi
 
@@ -222,7 +222,7 @@ setopt pushd_ignore_dups
 # Don't print the stack after a "pushd" or "popd"
 setopt pushd_silent
 
-# `pushd` without argument = `pushd $HOME`
+# `pushd` without argument = `pushd ${HOME}`
 setopt pushd_to_home
 
 # Background jobs get a `nice 0`
@@ -245,7 +245,7 @@ export HISTSIZE=10000
 export SAVEHIST=10000
 
 # File where the history is stored
-export HISTFILE=$HOME/.history
+export HISTFILE="${HOME}/.history"
 
 # Append history to the end of the old file
 #setopt append_history
@@ -275,11 +275,11 @@ setopt hist_find_no_dups
 #-----------------------------------------------------------
 
 # Always pick single-user RVM installs over multi-user ones.
-if [[ -d "/usr/local/rvm" ]] && [[ ! -d "$HOME/.rvm" ]]
+if [[ -d "/usr/local/rvm" ]] && [[ ! -d "${HOME}/.rvm" ]]
 then
     export __RVM_INSTALL_PATH="/usr/local/rvm"
 else
-    export __RVM_INSTALL_PATH="$HOME/.rvm"
+    export __RVM_INSTALL_PATH="${HOME}/.rvm"
 fi
 
 # Clear stale rvm environment variables when rvm is not loaded and 
@@ -289,38 +289,38 @@ fi
 # and aliases.
 if [[ -n "${rvm_path:-}" ]] && [[ "${rvm_path}" != "${RVM_INSTALL_PATH}" ]] && ! typeset -f rvm >/dev/null 2>&1
 then
-    for home_directory in `grep ":/usr/local/bin/zsh$" /etc/passwd | cut -d ":" -f 6`
+    for __home_directory in $(grep ":/usr/local/bin/zsh$" /etc/passwd | cut -d ":" -f 6)
     do
-        if [[ "${home_directory}/.rvm" == "${rvm_path}" ]]
+        if [[ "${__home_directory}/.rvm" == "${rvm_path}" ]]
         then
             # Taken from __rvm_unload in scripts/functions/env
-            stale_rvm_variables=( $( set |
+            __stale_rvm_variables=( $( set |
                 awk -F"=" 'BEGIN{v=0;} /^[a-zA-Z_][a-zA-Z0-9_]*=/{v=1;} v==1&&$2~/^['\''\$]/{v=2;}
                   v==1&&$2~/^\(/{v=3;} v==2&&/'\''$/&&!/'\'\''$/{v=1;} v==3&&/\)$/{v=1;} v{print;} v==1{v=0;}' |
                 awk -F"=" '/^[^ ]*(RUBY|GEM|IRB|gem|rubies|rvm)[^ ]*=/ {print $1} /^[^ ]*=.*rvm/ {print $1}' |
                 \grep -vE "^PROMPT|^prompt|^PS|^BASH_SOURCE" | uniq ) )
-            for stale_rvm_variable in "${stale_rvm_variables[@]}"
+            for __stale_rvm_variable in "${__stale_rvm_variables[@]}"
             do
-                unset "${stale_rvm_variable}"
+                unset "${__stale_rvm_variable}"
             done
-            unset stale_rvm_variable
-            unset stale_rvm_variables
+            unset __stale_rvm_variable
+            unset __stale_rvm_variables
             break
         fi
     done
-    unset home_directory
+    unset __home_directory
 fi
 
 # Load any user rvm configuration
-if [[ -f "$HOME/.rvmrc" ]] && [[ -r "$HOME/.rvmrc" ]]
+if [[ -f "${HOME}/.rvmrc" ]] && [[ -r "${HOME}/.rvmrc" ]]
 then
-    source "$HOME/.rvmrc"
+    source "${HOME}/.rvmrc"
     [[ -n "${rvm_path:-}" ]] && export __RVM_INSTALL_PATH="${rvm_path}"
 fi
 
 # Load RVM into a shell session *as a function*
-[[ -s "$__RVM_INSTALL_PATH/scripts/rvm" ]] && source "$__RVM_INSTALL_PATH/scripts/rvm"
-[[ -s "$__RVM_INSTALL_PATH/scripts/completion" ]] && source "$__RVM_INSTALL_PATH/scripts/completion"
+[[ -s "${__RVM_INSTALL_PATH}/scripts/rvm" ]] && source "${__RVM_INSTALL_PATH}/scripts/rvm"
+[[ -s "${__RVM_INSTALL_PATH}/scripts/completion" ]] && source "${__RVM_INSTALL_PATH}/scripts/completion"
 unset __RVM_INSTALL_PATH
 
 
@@ -328,9 +328,9 @@ unset __RVM_INSTALL_PATH
 # Option commands completion
 #-----------------------------------------------------------
 
-zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}'
-zstyle ':completion:*' max-errors 3 numeric
-zstyle ':completion:*' use-compctl false
+zstyle ":completion:*" matcher-list "" "m:{a-z}={A-Z}"
+zstyle ":completion:*" max-errors 3 numeric
+zstyle ":completion:*" use-compctl false
 
 autoload -Uz compinit
 compinit
@@ -345,27 +345,27 @@ then
     
     # When coming from some user's home, automatically move to the new 
     # user's home directory.
-    for home_directory in `grep ":/usr/local/bin/zsh$" /etc/passwd | cut -d ":" -f 6`
+    for __home_directory in $(grep ":/usr/local/bin/zsh$" /etc/passwd | cut -d ":" -f 6)
     do
-        if [[ "`pwd`" == "${home_directory}" ]]
+        if [[ "${__home_directory}" == $(pwd) ]]
         then
             cd ~
             break
         fi
     done
-    unset home_directory
+    unset __home_directory
     
     # Welcome message
-    [[ -z "${LOGIN_GREETING_NAME:-}" ]] && export LOGIN_GREETING_NAME="$USER"
-    login_greeting_figlet_options=""
-    (( ${LOGIN_GREETING_SLANTED_TEXT_DISABLED:=0} == 0 )) && login_greeting_figlet_options=("-f" "slant")
+    [[ -z "${LOGIN_GREETING_NAME:-}" ]] && export LOGIN_GREETING_NAME="${USER}"
+    __login_greeting_figlet_options=()
+    [[ ${LOGIN_GREETING_SLANTED_TEXT_DISABLED:=0} -eq 0 ]] && __login_greeting_figlet_options=("-f" "slant")
     echo
-    figlet -c -t ${login_greeting_figlet_options[@]} "Hey ${LOGIN_GREETING_NAME}"
+    figlet -c -t ${__login_greeting_figlet_options[@]} "Hey ${LOGIN_GREETING_NAME}"
     echo
-    unset login_greeting_figlet_options
+    unset __login_greeting_figlet_options
     
     # Fortune
-    if (( ${FORTUNE_UPON_LOGIN_DISABLED:=0} == 0 ))
+    if [[ ${FORTUNE_UPON_LOGIN_DISABLED:=0} -eq 0 ]]
     then
         fortune
         echo
