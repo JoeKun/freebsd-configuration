@@ -1,4 +1,4 @@
-# /etc/postfix/sql/virtual_alias/maps.cf
+# /usr/local/etc/postfix/sql/virtual_alias/maps.cf
 
 user = postfix
 password = SomeThing@1234!

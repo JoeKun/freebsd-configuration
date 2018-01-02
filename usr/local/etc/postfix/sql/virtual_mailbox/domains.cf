@@ -1,4 +1,4 @@
-# /etc/postfix/sql/virtual_alias/domains.cf
+# /usr/local/etc/postfix/sql/virtual_mailbox/domains.cf
 
 user = postfix
 password = SomeThing@1234!
