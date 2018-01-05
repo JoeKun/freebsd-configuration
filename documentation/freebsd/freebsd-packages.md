@@ -555,7 +555,7 @@ $ rm -f ~/.psql_history
 ### `dovecot`
 
 ```
-# cd /usr/ports/mail/dovecot2
+# cd /usr/ports/mail/dovecot
 # make config
 ```
 
@@ -576,11 +576,11 @@ If any, install the dependency using `pkg`. For example:
 # pkg install devel/pkgconf
 ```
 
-Then proceed to installing `dovecot2`:
+Then proceed to installing `dovecot`:
 
 ```
 # make all install clean
-# pkg lock dovecot2
+# pkg lock dovecot
 ```
 
 Prepare storage for virtual mailboxes:
