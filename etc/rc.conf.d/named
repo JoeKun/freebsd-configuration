@@ -1,5 +1,7 @@
 # /etc/rc.conf.d/named: system configuration for named
 
+. /etc/rc.conf.d/syslogd
+
 named_enable="YES"
 named_chrootdir="/var/named"
 

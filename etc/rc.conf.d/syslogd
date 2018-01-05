@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/syslogd: system configuration for syslogd
+
+altlog_proglist="named"
+

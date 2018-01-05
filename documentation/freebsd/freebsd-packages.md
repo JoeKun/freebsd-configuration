@@ -1044,7 +1044,7 @@ Enable `bind`:
 
 ```
 # cd /etc/rc.conf.d
-# ln -s ../../freebsd-configuration/etc/rc.conf.d/named
+# for file_name in named syslogd; do ln -s ../../freebsd-configuration/etc/rc.conf.d/${file_name}; done
 # service named start
 ```
 
