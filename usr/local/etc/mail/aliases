@@ -18,4 +18,5 @@ virusalert:             admin
 # Web
 webadmin:               admin
 webmaster:              webadmin
+www:                    webadmin
 
