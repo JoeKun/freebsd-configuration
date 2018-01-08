@@ -233,7 +233,7 @@ Manually edit `hostname` in `/etc/rc.conf.d/hostname`.
 ## Minor improvements to password prompts
 
 ```
-# cd /freebsd-configuration/patches/password_prompts
+# cd /freebsd-configuration/patches/password-prompts
 # ./adjust_password_prompts
 ```
 
