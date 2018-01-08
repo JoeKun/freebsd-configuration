@@ -1,0 +1,11 @@
+--- a/login.conf	2017-07-27 22:46:58.564243000 -0700
++++ b/login.conf	2018-01-07 17:49:14.296161000 -0800
+@@ -26,7 +26,7 @@
+ 	:passwd_format=sha512:\
+ 	:copyright=/etc/COPYRIGHT:\
+ 	:welcome=/etc/motd:\
+-	:setenv=MAIL=/var/mail/$,BLOCKSIZE=K,LC_COLLATE=C:\
++	:setenv=MAIL=/var/mail/local/$,BLOCKSIZE=K,LC_COLLATE=C:\
+ 	:path=/sbin /bin /usr/sbin /usr/bin /usr/local/sbin /usr/local/bin ~/bin:\
+ 	:nologin=/var/run/nologin:\
+ 	:cputime=unlimited:\

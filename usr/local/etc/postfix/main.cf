@@ -17,6 +17,7 @@ setgid_group = maildrop
 # Local path
 #-----------------------------------------------------------
 
+mail_spool_directory = /var/mail/local
 queue_directory = /var/spool/postfix
 command_directory = /usr/local/sbin
 daemon_directory = /usr/local/libexec/postfix

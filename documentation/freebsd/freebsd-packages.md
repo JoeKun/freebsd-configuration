@@ -743,6 +743,14 @@ Update all map files:
 # newaliases
 ```
 
+Prepare container directory for users' local mailboxes at `/var/mail/local`:
+
+```
+# mkdir -p /var/mail/local
+# chown root:mail /var/mail/local
+# chmod 775 /var/mail/local
+```
+
 Enable `postfix`:
 
 ```
@@ -750,6 +758,16 @@ Enable `postfix`:
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/postfix
 # service postfix start
 ```
+
+Adjust login configuration with the more specific location of users' local mailboxes in `/var/mail/local` as defined in `postfix`'s `main.cf` configuration file:
+
+```
+# cd /etc
+# patch --posix -p1 -i /freebsd-configuration/patches/user-mailbox-location/login-adjusted-user-mailbox-location-in-var-mail-local.diff
+# cap_mkdb /etc/login.conf
+```
+
+Log out and log back in.
 
 
 ### Additional notes
