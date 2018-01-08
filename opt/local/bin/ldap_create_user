@@ -1,0 +1,268 @@
+#! /usr/bin/env bash
+# 
+# ldap_create_user
+# 
+# Created by Joel Lopes Da Silva on 1/1/18.
+# Copyright © 2018 Joel Lopes Da Silva. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+
+# Capture script container directory
+pushd $(dirname "${0}") > /dev/null
+script_container_directory=$(pwd)
+popd > /dev/null
+
+# Imports
+. "${script_container_directory}/../lib/ldap_standard_utilities"
+
+
+did_prompt_for_any_option=0
+domain_name=""
+is_system_user=0
+is_virtual_mail_alias_only=0
+user_cn=""
+user_uid=""
+user_given_name=""
+user_surname=""
+user_mail=""
+user_virtual_mail_aliases=()
+user_virtual_mail_destination=""
+user_virtual_mailbox_enabled=0
+user_password=""
+
+number_of_arguments=$#
+for ((i = 1; i <= ${number_of_arguments}; i++))
+do
+    current_argument="${!i}"
+    case "${current_argument}" in
+        "--cn")
+            i=$((i + 1))
+            user_cn="${!i}"
+            ;;
+        "--domain")
+            i=$((i + 1))
+            domain_name="${!i}"
+            ;;
+        "--uid")
+            i=$((i + 1))
+            user_uid="${!i}"
+            ;;
+        "--given-name")
+            i=$((i + 1))
+            user_given_name="${!i}"
+            ;;
+        "--surname")
+            i=$((i + 1))
+            user_surname="${!i}"
+            ;;
+        "--mail")
+            i=$((i + 1))
+            user_mail="${!i}"
+            ;;
+        "--virtual-mail-alias")
+            i=$((i + 1))
+            user_virtual_mail_aliases+=("${!i}")
+            ;;
+        "--virtual-mail-destination")
+            i=$((i + 1))
+            user_virtual_mail_destination="${!i}"
+            ;;
+        "--virtual-mailbox")
+            user_virtual_mailbox_enabled=1
+            ;;
+        "--virtual-mail-alias-only")
+            is_virtual_mail_alias_only=1
+            ;;
+        "--user-password")
+            i=$((i + 1))
+            user_password="${!i}"
+            ;;
+        "--system")
+            is_system_user=1
+            ;;
+    esac
+done
+number_of_user_virtual_mail_aliases=${#user_virtual_mail_aliases[@]}
+
+
+user_dn=""
+user_rdn_attribute_name=""
+user_rdn_attribute_value=""
+user_object_class_attributes=()
+user_object_class_attributes+=("objectClass: top")
+user_object_class_attributes+=("objectClass: person")
+user_additional_attributes=()
+if [[ -z "${domain_name}" ]] && [[ ${is_system_user} -eq 0 ]]
+then
+    read -p "Name of domain to add user under (i.e. the \"dc\" component of the LDAP distinguished name): " -r domain_name
+    did_prompt_for_any_option=1
+fi
+if [[ ${is_virtual_mail_alias_only} -eq 0 ]] && [[ ${is_system_user} -eq 0 ]]
+then
+    if [[ -z "${user_uid}" ]]
+    then
+        read -p "Identifier of user (i.e. the value of the \"uid\" component of the LDAP distinguished name): " -r user_uid
+        did_prompt_for_any_option=1
+    fi
+    user_dn="uid=${user_uid},ou=users,dc=${domain_name},ou=directory"
+    user_rdn_attribute_name="uid"
+    user_rdn_attribute_value="${user_uid}"
+else
+    if [[ -z "${user_cn}" ]]
+    then
+        user_description_qualifier="alias"
+        if [[ ${is_system_user} -ne 0 ]]
+        then
+            user_description_qualifier="system"
+        fi
+        read -p "Common name of ${user_description_qualifier} user (i.e. the value of the \"cn\" component of the LDAP distinguished name): " -r user_cn
+        did_prompt_for_any_option=1
+    fi
+    if [[ ${is_system_user} -ne 0 ]]
+    then
+        user_dn="cn=${user_cn},ou=users,ou=system,ou=directory"
+    else
+        user_dn="cn=${user_cn},ou=users,dc=${domain_name},ou=directory"
+    fi
+    user_rdn_attribute_name="cn"
+    user_rdn_attribute_value="${user_cn}"
+fi
+if [[ -z "${user_surname}" ]]
+then
+    if [[ ${is_system_user} -ne 0 ]]
+    then
+        user_surname="daemon"
+    elif [[ ${is_virtual_mail_alias_only} -ne 0 ]]
+    then
+        user_surname="alias"
+    fi
+fi
+if [[ ${did_prompt_for_any_option} -ne 0 ]] || [[ -z "${user_surname}" ]]
+then
+    if [[ ${is_virtual_mail_alias_only} -eq 0 ]] && [[ ${is_system_user} -eq 0 ]]
+    then
+        read -p "Given name (also known as first name): " -r user_given_name
+        did_prompt_for_any_option=1
+    fi
+fi
+if [[ -z "${user_surname}" ]]
+then
+    read -p "Surname (also known as family name): " -r user_surname
+    did_prompt_for_any_option=1
+fi
+if [[ ${did_prompt_for_any_option} -ne 0 ]] && [[ ${number_of_user_virtual_mail_aliases} -eq 0 ]] && [[ -z "${user_virtual_mail_destination}" ]] && [[ ${user_virtual_mailbox_enabled} -eq 0 ]]
+then
+    user_virtual_mail_alias_from_prompting=""
+    should_prompt_for_virtual_mail_alias=1
+    while [[ ${should_prompt_for_virtual_mail_alias} -ne 0 ]]
+    do
+        if [[ -z "${user_virtual_mail_alias_from_prompting}" ]]
+        then
+            read -p "Virtual mail alias (leave empty if no virtual mail alias is required): " -r user_virtual_mail_alias_from_prompting
+        else
+            read -p "Additional virtual mail alias (leave empty if no additional virtual mail alias is required): " -r user_virtual_mail_alias_from_prompting
+        fi
+        if [[ -n "${user_virtual_mail_alias_from_prompting}" ]]
+        then
+            user_virtual_mail_aliases+=("${user_virtual_mail_alias_from_prompting}")
+        else
+            should_prompt_for_virtual_mail_alias=0
+        fi
+    done
+    number_of_user_virtual_mail_aliases=${#user_virtual_mail_aliases[@]}
+    read -p "Virtual mail destination (leave empty if mail should not be redirected to an external account): " -r user_virtual_mail_destination
+    if [[ -z "${user_virtual_mail_destination}" ]] && [[ ${is_virtual_mail_alias_only} -eq 0 ]] && [[ ${is_system_user} -eq 0 ]]
+    then
+        should_enable_virtual_mailbox=""
+        read -p "Do you want a local virtual mailbox to be created for ${user_rdn_attribute_value}@${domain_name}? (please answer yes or no): " should_enable_virtual_mailbox
+        should_enable_virtual_mailbox=$(echo "${should_enable_virtual_mailbox}" | tr "[:upper:]" "[:lower:]")
+        if [[ "${should_enable_virtual_mailbox}" == "y"* ]] || [[ "${should_enable_virtual_mailbox}" == "t"* ]]
+        then
+            user_virtual_mailbox_enabled=1
+        fi
+    fi
+fi
+if [[ ${is_virtual_mail_alias_only} -eq 0 ]] && [[ ${is_system_user} -eq 0 ]]
+then
+    if [[ -n "${user_cn}" ]]
+    then
+        user_additional_attributes+=("cn: ${user_cn}")
+    elif [[ -n "${user_given_name}" ]]
+    then
+        user_additional_attributes+=("cn: ${user_given_name} ${user_surname}")
+    else
+        user_additional_attributes+=("cn: ${user_uid}")
+    fi
+fi
+if [[ -n "${user_given_name}" ]]
+then
+    user_additional_attributes+=("givenName: ${user_given_name}")
+fi
+user_additional_attributes+=("surname: ${user_surname}")
+if [[ -z "${user_mail}" ]] && [[ ${is_system_user} -eq 0 ]]
+then
+    user_mail="${user_rdn_attribute_value}@${domain_name}"
+fi
+if [[ -n "${user_mail}" ]]
+then
+    user_object_class_attributes+=("objectClass: inetOrgPerson")
+    user_additional_attributes+=("mail: ${user_mail}")
+fi
+if [[ ${number_of_user_virtual_mail_aliases} -gt 0 ]] || [[ -n "${user_virtual_mail_destination}" ]] || [[ ${user_virtual_mailbox_enabled} -ne 0 ]]
+then
+    user_object_class_attributes+=("objectClass: virtualMailRecipient")
+    for ((i = 0; i < ${number_of_user_virtual_mail_aliases}; i++))
+    do
+        user_virtual_mail_alias="${user_virtual_mail_aliases[${i}]}"
+        user_additional_attributes+=("virtualMailAlias: ${user_virtual_mail_alias}")
+    done
+    if [[ -n "${user_virtual_mail_destination}" ]]
+    then
+        user_additional_attributes+=("virtualMailDestination: ${user_virtual_mail_destination}")
+    fi
+    if [[ ${user_virtual_mailbox_enabled} -ne 0 ]]
+    then
+        user_additional_attributes+=("virtualMailboxEnabled: TRUE")
+    fi
+fi
+
+if [[ ${is_virtual_mail_alias_only} -eq 0 ]]
+then
+    if [[ -z "${user_password}" ]]
+    then
+        read -p "Password of user ${user_dn}: " -r -s user_password
+        echo
+        read -p "Re-enter password of user ${user_dn}: " -r -s confirmation_entry_of_user_password
+        echo
+        if [[ "${user_password}" != "${confirmation_entry_of_user_password}" ]]
+        then
+            echo "Password values do not match."
+            exit 1
+        fi
+        did_prompt_for_any_option=1
+    fi
+    encrypted_user_password=$(slappasswd -h "{CRYPT}" -c '$6$%.12s' -s "${user_password}")
+    user_additional_attributes+=("userPassword: ${encrypted_user_password}")
+fi
+
+user_combined_object_class_attributes=$(ldap_combine_attributes "${user_object_class_attributes[@]}")
+user_combined_additional_attributes=$(ldap_combine_attributes "${user_additional_attributes[@]}")
+
+ldap_perform_standard_add $* ${did_prompt_for_any_option} "
+dn: ${user_dn}
+${user_combined_object_class_attributes}
+${user_rdn_attribute_name}: ${user_rdn_attribute_value}
+${user_combined_additional_attributes}
+"
+

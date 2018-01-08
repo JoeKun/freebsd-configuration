@@ -1,0 +1,88 @@
+#! /usr/bin/env bash
+# 
+# ldap_create_mailing_list
+# 
+# Created by Joel Lopes Da Silva on 1/7/18.
+# Copyright © 2018 Joel Lopes Da Silva. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+
+# Capture script container directory
+pushd $(dirname "${0}") > /dev/null
+script_container_directory=$(pwd)
+popd > /dev/null
+
+# Imports
+. "${script_container_directory}/../lib/ldap_standard_utilities"
+
+
+did_prompt_for_any_option=0
+name=""
+domain_name=""
+relay_domain_name=""
+
+number_of_arguments=$#
+for ((i = 1; i <= ${number_of_arguments}; i++))
+do
+    current_argument="${!i}"
+    case "${current_argument}" in
+        "--name")
+            i=$((i + 1))
+            name="${!i}"
+            ;;
+        "--domain")
+            i=$((i + 1))
+            domain_name="${!i}"
+            ;;
+        "--relay-domain")
+            i=$((i + 1))
+            relay_domain_name="${!i}"
+            ;;
+    esac
+done
+
+if [[ -z "${name}" ]]
+then
+    read -p "Name of mailing list: " -r name
+    did_prompt_for_any_option=1
+fi
+
+if [[ -z "${domain_name}" ]]
+then
+    read -p "Name of domain for mailing list: " -r domain_name
+    did_prompt_for_any_option=1
+fi
+
+if [[ -z "${relay_domain_name}" ]]
+then
+    read -p "Name of relay domain for mailing list: " -r relay_domain_name
+    did_prompt_for_any_option=1
+fi
+
+mailing_list_object_attributes=()
+mailing_list_object_attributes+=("dn: cn=${name},ou=lists,dc=${domain_name},ou=directory")
+mailing_list_object_attributes+=("objectClass: top")
+mailing_list_object_attributes+=("objectClass: mailingList")
+mailing_list_object_attributes+=("cn: ${name}")
+for command_name in admin bounces confirm join leave owner request subscribe unsubscribe
+do
+    mailing_list_object_attributes+=("mailingListCommand: ${name}-${command_name}")
+done
+mailing_list_object_attributes+=("mailingListRelayDomain: ${relay_domain_name}")
+mailing_list_object_combined_attributes=$(ldap_combine_attributes "${mailing_list_object_attributes[@]}")
+
+ldap_perform_standard_add $* ${did_prompt_for_any_option} "
+${mailing_list_object_combined_attributes}
+"
+

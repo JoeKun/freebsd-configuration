@@ -1,0 +1,103 @@
+#! /usr/bin/env bash
+# 
+# ldap_create_domain
+# 
+# Created by Joel Lopes Da Silva on 1/1/18.
+# Copyright © 2018 Joel Lopes Da Silva. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+
+# Capture script container directory
+pushd $(dirname "${0}") > /dev/null
+script_container_directory=$(pwd)
+popd > /dev/null
+
+# Imports
+. "${script_container_directory}/../lib/ldap_standard_utilities"
+
+
+did_prompt_for_any_option=0
+domain_name=""
+virtual_mail_alias_enabled=0
+virtual_mailbox_enabled=0
+mailing_list_enabled=0
+
+number_of_arguments=$#
+for ((i = 1; i <= ${number_of_arguments}; i++))
+do
+    current_argument="${!i}"
+    case "${current_argument}" in
+        "--domain")
+            i=$((i + 1))
+            domain_name="${!i}"
+            ;;
+        "--virtual-mail-alias")
+            virtual_mail_alias_enabled=1
+            ;;
+        "--virtual-mailbox")
+            virtual_mailbox_enabled=1
+            ;;
+        "--mailing-list")
+            mailing_list_enabled=1
+            ;;
+    esac
+done
+
+if [[ -z "${domain_name}" ]]
+then
+    read -p "Name of domain to add to LDAP directory: " -r domain_name
+    did_prompt_for_any_option=1
+fi
+
+domain_object_attributes=()
+domain_object_attributes+=("dn: dc=${domain_name},ou=directory")
+domain_object_attributes+=("objectClass: top")
+domain_object_attributes+=("objectClass: domain")
+if [[ ${virtual_mail_alias_enabled} -ne 0 ]] || [[ ${virtual_mailbox_enabled} -ne 0 ]]
+then
+    domain_object_attributes+=("objectClass: virtualMailDomain")
+    if [[ ${virtual_mail_alias_enabled} -ne 0 ]]
+    then
+        domain_object_attributes+=("virtualMailAliasEnabled: TRUE")
+    fi
+    if [[ ${virtual_mailbox_enabled} -ne 0 ]]
+    then
+        domain_object_attributes+=("virtualMailboxEnabled: TRUE")
+    fi
+fi
+domain_object_attributes+=("dc: ${domain_name}")
+domain_object_combined_attributes=$(ldap_combine_attributes "${domain_object_attributes[@]}")
+
+mailing_lists_object_combined_attributes=""
+if [[ ${mailing_list_enabled} -ne 0 ]]
+then
+    mailing_lists_object_attributes=()
+    mailing_lists_object_attributes+=("dn: ou=lists,dc=${domain_name},ou=directory")
+    mailing_lists_object_attributes+=("objectClass: top")
+    mailing_lists_object_attributes+=("objectClass: organizationalUnit")
+    mailing_lists_object_attributes+=("ou: lists")
+    mailing_lists_object_combined_attributes=$(ldap_combine_attributes "${mailing_lists_object_attributes[@]}")
+fi
+
+ldap_perform_standard_add $* ${did_prompt_for_any_option} "
+${domain_object_combined_attributes}
+
+dn: ou=users,dc=${domain_name},ou=directory
+objectClass: top
+objectClass: organizationalUnit
+ou: users
+
+${mailing_lists_object_combined_attributes}
+"
+

@@ -1,0 +1,92 @@
+#! /usr/bin/env bash
+# 
+# ldap_standard_utilities
+# 
+# Created by Joel Lopes Da Silva on 1/1/18.
+# Copyright © 2018 Joel Lopes Da Silva. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+function ldap_combine_attributes() {
+    local attributes=""
+    local number_of_arguments=$#
+    local i
+    for ((i = 1; i <= ${number_of_arguments}; i++))
+    do
+        local current_argument="${!i}"
+        if [[ -n "${attributes}" ]]
+        then
+            attributes+=$'\n'
+        fi
+        attributes+="${current_argument}"
+    done
+    echo "${attributes}"
+}
+
+function ldap_normalize_entries() {
+    local ldap_entries="${1}"
+    
+    # Remove leading whitespace characters.
+    ldap_entries="${ldap_entries#${ldap_entries%%[![:space:]]*}}"
+    
+    # Remove trailing whitespace characters.
+    ldap_entries="${ldap_entries%${ldap_entries##*[![:space:]]}}"
+    
+    echo -n "${ldap_entries}"
+}
+
+function ldap_perform_standard_add() {
+    local number_of_arguments=$#
+    local number_of_regular_arguments=${number_of_arguments}
+    
+    local ldap_entries=$(ldap_normalize_entries "${!number_of_regular_arguments}")
+    number_of_regular_arguments=$((number_of_regular_arguments - 1))
+    
+    local did_prompt_for_any_option=${!number_of_regular_arguments}
+    number_of_regular_arguments=$((number_of_regular_arguments - 1))
+    
+    local root_dn="cn=admin,ou=users,ou=system,ou=directory"
+    local root_dn_password=""
+    
+    local i
+    for ((i = 1; i <= ${number_of_regular_arguments}; i++))
+    do
+        local current_argument="${!i}"
+        case "${current_argument}" in
+            "-D"|"--root-dn")
+                i=$((i + 1))
+                root_dn="${!i}"
+                ;;
+            "-w"|"--root-dn-password")
+                i=$((i + 1))
+                root_dn_password="${!i}"
+                ;;
+        esac
+    done
+    
+    if [[ -z "${root_dn_password}" ]]
+    then
+        read -p "LDAP password for root DN ${root_dn}: " -r -s root_dn_password
+        did_prompt_for_any_option=1
+        echo
+    fi
+    
+    if [[ ${did_prompt_for_any_option:-0} -ne 0 ]]
+    then
+        echo
+    fi
+    
+    ldapadd -Z -D "${root_dn}" -w "${root_dn_password}" < <(echo "${ldap_entries}")
+}
+

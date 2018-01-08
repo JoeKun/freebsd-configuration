@@ -1,0 +1,69 @@
+# /usr/local/etc/openldap/schema/virtual_mail.schema
+
+#-----------------------------------------------------------------------
+# Schema OID
+#-----------------------------------------------------------------------
+
+objectIdentifier virtualMailSchemaOID 1.3.6.1.4.1.4203.666.49
+
+
+#-----------------------------------------------------------------------
+# Attributes for virtual mail aliases
+#-----------------------------------------------------------------------
+
+attributeType ( virtualMailSchemaOID:1.0.0
+    NAME 'virtualMailAliasEnabled'
+    DESC 'Flag that controls whether simple mail aliases are allowed for a domain'
+    EQUALITY booleanMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+    SINGLE-VALUE )
+
+attributeType ( virtualMailSchemaOID:1.1.0
+    NAME 'virtualMailAlias'
+    DESC 'Mail address (or account name with contextually implied domain name) for a simple alias'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256} )
+
+attributeType ( virtualMailSchemaOID:1.1.2
+    NAME 'virtualMailDestination'
+    DESC 'Mail address (or account name with contextually implied domain name) for the destination of virtual mail aliases'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256}
+    SINGLE-VALUE )
+
+
+#-----------------------------------------------------------------------
+# Attributes for virtual mailboxes
+#-----------------------------------------------------------------------
+
+attributeType ( virtualMailSchemaOID:2.0.0
+    NAME 'virtualMailboxEnabled'
+    DESC 'Flag that controls whether delivery to a local mailbox is allowed for a domain or recipient'
+    EQUALITY booleanMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+    SINGLE-VALUE )
+
+
+#-----------------------------------------------------------------------
+# Domain class
+#-----------------------------------------------------------------------
+
+objectClass ( virtualMailSchemaOID:100
+    NAME 'virtualMailDomain'
+    SUP domain STRUCTURAL
+    DESC 'Domain that includes virtual mail behavior policy'
+    MAY ( virtualMailAliasEnabled $ virtualMailboxEnabled ) )
+
+
+#-----------------------------------------------------------------------
+# Recipient class
+#-----------------------------------------------------------------------
+
+objectClass ( virtualMailSchemaOID:101
+    NAME 'virtualMailRecipient'
+    SUP inetOrgPerson STRUCTURAL
+    DESC 'Recipient of virtual mail'
+    MAY ( virtualMailAlias $ virtualMailDestination $ virtualMailboxEnabled ) )
+

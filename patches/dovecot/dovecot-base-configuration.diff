@@ -1,6 +1,6 @@
 diff -ru a/conf.d/10-auth.conf b/conf.d/10-auth.conf
---- a/conf.d/10-auth.conf	2016-08-24 15:41:17.185864000 -0700
-+++ b/conf.d/10-auth.conf	2016-08-25 00:50:27.152104000 -0700
+--- a/conf.d/10-auth.conf	2018-01-04 16:50:20.450051000 -0800
++++ b/conf.d/10-auth.conf	2018-01-01 17:04:36.998758000 -0800
 @@ -7,7 +7,7 @@
  # matches the local IP (ie. you're connecting from the same computer), the
  # connection is considered secure and plaintext authentication is allowed.
@@ -10,6 +10,15 @@ diff -ru a/conf.d/10-auth.conf b/conf.d/10-auth.conf
  
  # Authentication cache size (e.g. 10M). 0 means it's disabled. Note that
  # bsdauth, PAM and vpopmail require cache_key to be set for caching to be used.
+@@ -48,7 +48,7 @@
+ # the standard variables here, eg. %Lu would lowercase the username, %n would
+ # drop away the domain if it was given, or "%n-AT-%d" would change the '@' into
+ # "-AT-". This translation is done after auth_username_translation changes.
+-#auth_username_format = %Lu
++auth_username_format = %Lu
+ 
+ # If you want to allow master users to log in by specifying the master
+ # username within the normal username string (ie. not using SASL mechanism's
 @@ -97,7 +97,7 @@
  #   plain login digest-md5 cram-md5 ntlm rpa apop anonymous gssapi otp skey
  #   gss-spnego
@@ -19,20 +28,21 @@ diff -ru a/conf.d/10-auth.conf b/conf.d/10-auth.conf
  
  ##
  ## Password and user databases
-@@ -119,8 +119,8 @@
+@@ -119,9 +119,9 @@
  #!include auth-deny.conf.ext
  #!include auth-master.conf.ext
  
 -!include auth-system.conf.ext
--#!include auth-sql.conf.ext
 +#!include auth-system.conf.ext
-+!include auth-sql.conf.ext
- #!include auth-ldap.conf.ext
+ #!include auth-sql.conf.ext
+-#!include auth-ldap.conf.ext
++!include auth-ldap.conf.ext
  #!include auth-passwdfile.conf.ext
  #!include auth-checkpassword.conf.ext
+ #!include auth-vpopmail.conf.ext
 diff -ru a/conf.d/10-mail.conf b/conf.d/10-mail.conf
---- a/conf.d/10-mail.conf	2016-08-24 15:41:17.186071000 -0700
-+++ b/conf.d/10-mail.conf	2016-08-25 01:38:43.547488000 -0700
+--- a/conf.d/10-mail.conf	2018-01-04 16:50:20.450257000 -0800
++++ b/conf.d/10-mail.conf	2018-01-01 17:57:47.212761000 -0800
 @@ -27,7 +27,7 @@
  #
  # <doc/wiki/MailLocation.txt>
@@ -68,9 +78,21 @@ diff -ru a/conf.d/10-mail.conf b/conf.d/10-mail.conf
  #last_valid_uid = 0
  
  # Valid GID range for users, defaults to non-root/wheel. Users having
+diff -ru a/conf.d/10-master.conf b/conf.d/10-master.conf
+--- a/conf.d/10-master.conf	2018-01-04 16:50:20.450321000 -0800
++++ b/conf.d/10-master.conf	2018-01-01 18:50:35.447346000 -0800
+@@ -105,7 +114,7 @@
+   # Auth worker process is run as root by default, so that it can access
+   # /etc/shadow. If this isn't necessary, the user should be changed to
+   # $default_internal_user.
+-  #user = root
++  user = virtual_mail
+ }
+ 
+ service dict {
 diff -ru a/conf.d/10-ssl.conf b/conf.d/10-ssl.conf
---- a/conf.d/10-ssl.conf	2016-08-24 15:41:17.186208000 -0700
-+++ b/conf.d/10-ssl.conf	2016-08-25 00:58:22.150381000 -0700
+--- a/conf.d/10-ssl.conf	2018-01-04 16:50:20.450385000 -0800
++++ b/conf.d/10-ssl.conf	2018-01-01 17:55:26.471491000 -0800
 @@ -3,14 +3,14 @@
  ##
  
@@ -89,82 +111,157 @@ diff -ru a/conf.d/10-ssl.conf b/conf.d/10-ssl.conf
  
  # If key file is password protected, give the password here. Alternatively
  # give it when starting dovecot with -p parameter. Since this file is often
-diff -ru a/dovecot-sql.conf.ext b/dovecot-sql.conf.ext
---- a/dovecot-sql.conf.ext	2016-08-24 15:41:17.194626000 -0700
-+++ b/dovecot-sql.conf.ext	2016-08-25 01:10:18.141081000 -0700
-@@ -29,7 +29,7 @@
- # );
+diff -ru a/conf.d/auth-ldap.conf.ext b/conf.d/auth-ldap.conf.ext
+--- a/conf.d/auth-ldap.conf.ext	2018-01-04 16:50:20.449590000 -0800
++++ b/conf.d/auth-ldap.conf.ext	2018-01-01 18:44:13.102110000 -0800
+@@ -16,12 +16,17 @@
+ #  driver = prefetch
+ #}
  
- # Database driver: mysql, pgsql, sqlite
--#driver = 
-+driver = pgsql
++# Using the LDAP driver for userdb because it's the only way we can
++# have a functional iterate_filter, which is required for using the
++# administrative commands from doveadm that act on all mailboxes.
++# If it weren't for that, we could easily have gone with with the
++# static driver for userdb.
+ userdb {
+   driver = ldap
+-  args = /usr/local/etc/dovecot/dovecot-ldap.conf.ext
++  args = /usr/local/etc/dovecot/dovecot-ldap-userdb.conf.ext
+   
+   # Default fields can be used to specify defaults that LDAP may override
+-  #default_fields = home=/home/virtual/%u
++  default_fields = uid=virtual_mail gid=virtual_mail home=/var/mail/virtual/%d/%n
+ }
  
- # Database connection string. This is driver-specific setting.
+ # If you don't have any user-specific settings, you can avoid the userdb LDAP
+diff -ru a/dovecot-ldap.conf.ext b/dovecot-ldap.conf.ext
+--- a/dovecot-ldap.conf.ext	2018-01-04 16:50:20.458715000 -0800
++++ b/dovecot-ldap.conf.ext	2018-01-02 00:43:51.133799000 -0800
+@@ -17,7 +17,7 @@
+ #        by * none
+ 
+ # Space separated list of LDAP hosts to use. host:port is allowed too.
+-#hosts =
++hosts = localhost
+ 
+ # LDAP URIs to use. You can use this instead of hosts list. Note that this
+ # setting isn't supported by all LDAP libraries.
+@@ -25,10 +25,10 @@
+ 
+ # Distinguished Name - the username used to login to the LDAP server.
+ # Leave it commented out to bind anonymously (useful with auth_bind=yes).
+-#dn = 
++dn = cn=dovecot,ou=users,ou=system,ou=directory
+ 
+ # Password for LDAP server, if dn is specified.
+-#dnpass = 
++dnpass = SomeThing@1234
+ 
+ # Use SASL binding instead of the simple binding. Note that this changes
+ # ldap_version automatically to be 3 if it's lower.
+@@ -42,7 +42,7 @@
+ #sasl_authz_id =
+ 
+ # Use TLS to connect to the LDAP server.
+-#tls = no
++tls = yes
+ # TLS options, currently supported only with OpenLDAP:
+ #tls_ca_cert_file =
+ #tls_ca_cert_dir =
+@@ -66,7 +66,7 @@
+ # The pass_filter is used to find the DN for the user. Note that the pass_attrs
+ # is still used, only the password field is ignored in it. Before doing any
+ # search, the binding is switched back to the default DN.
+-#auth_bind = no
++auth_bind = yes
+ 
+ # If authentication binding is used, you can save one LDAP request per login
+ # if users' DN can be specified with a common template. The template can use
+@@ -82,20 +82,33 @@
+ # For example:
+ #   auth_bind_userdn = cn=%u,ou=people,o=org
  #
-@@ -68,14 +68,14 @@
- #   connect = host=sql.example.com dbname=virtual user=virtual password=blarg
- #   connect = /etc/dovecot/authdb.sqlite
- #
--#connect =
-+connect = host=localhost dbname=mail user=dovecot password=SomeThing@1234
+-#auth_bind_userdn =
++# Not using this after all, because "If you're using DN template, pass_attrs
++# and pass_filter settings are completely ignored."
++# See https://wiki2.dovecot.org/AuthDatabase/LDAP/AuthBinds
++#auth_bind_userdn = uid=%n,ou=users,dc=%d,ou=directory
  
- # Default password scheme.
- #
- # List of supported schemes is in
- # http://wiki2.dovecot.org/Authentication/PasswordSchemes
- #
--#default_pass_scheme = MD5
-+default_pass_scheme = BLF-CRYPT
+ # LDAP protocol version to use. Likely 2 or 3.
+-#ldap_version = 3
++ldap_version = 3
  
- # passdb query to retrieve the password. It can return fields:
- #   password - The user's password. This field must be returned.
-@@ -104,9 +104,12 @@
- #   password_query = SELECT userid AS user, pw AS password \
- #     FROM users WHERE userid = '%u' AND active = 'Y'
+ # LDAP base. %variables can be used here.
+ # For example: dc=mail, dc=example, dc=org
+-base =
++# Theoretically, we could use something rather specific like:
++# base = ou=users,dc=%d,ou=directory
++# except for the fact that it won't work with the iterate_filter, which
++# prevents us from using the administrative commands from doveadm that
++# act on all mailboxes. So, instead, we intentionally use a very high
++# level base DN which doesn't require any %variables.
++# As a consequence of that decision, we have to include the (mail=%u)
++# predicate in *_filter settings down below; if we could use the
++# per-domain base DN, then (uid=%n) would be sufficient, and we could
++# replace mail=user for *_attrs settings with uid=username.
++base = ou=directory
+ 
+ # Dereference: never, searching, finding, always
+-#deref = never
++deref = never
+ 
+ # Search scope: base, onelevel, subtree
+-#scope = subtree
++scope = subtree
+ 
+ # User attributes are given in LDAP-name=dovecot-internal-name list. The
+ # internal names are:
+@@ -106,14 +119,14 @@
  #
--#password_query = \
--#  SELECT username, domain, password \
--#  FROM users WHERE username = '%n' AND domain = '%d'
-+password_query = \
-+    SELECT address AS user, password \
-+    FROM mailboxes \
-+    INNER JOIN domains \
-+        ON domains.domain = '%L{domain}' AND domains.active = true AND domains.mailboxes = true \
-+    WHERE address = '%L{user}' AND mailboxes.active = true
+ # There are also other special fields which can be returned, see
+ # http://wiki2.dovecot.org/UserDatabase/ExtraFields
+-#user_attrs = homeDirectory=home,uidNumber=uid,gidNumber=gid
++user_attrs = mail=user
  
- # userdb query to retrieve the user information. It can return fields:
- #   uid - System UID (overrides mail_uid setting)
-@@ -124,9 +127,12 @@
- #   user_query = SELECT dir AS home, user AS uid, group AS gid FROM users where userid = '%u'
- #   user_query = SELECT home, 501 AS uid, 501 AS gid FROM users WHERE userid = '%u'
- #
--#user_query = \
--#  SELECT home, uid, gid \
--#  FROM users WHERE username = '%n' AND domain = '%d'
-+user_query = \
-+    SELECT concat_ws('/', '/var/mail/virtual', '%L{domain}', '%L{username}') AS home, 'virtual_mail' AS uid, 'virtual_mail' AS gid \
-+    FROM mailboxes \
-+    INNER JOIN domains \
-+        ON domains.domain = '%L{domain}' AND domains.active = true AND domains.mailboxes = true \
-+    WHERE address = '%L{user}' AND mailboxes.active = true
+ # Filter for user lookup. Some variables can be used (see
+ # http://wiki2.dovecot.org/Variables for full list):
+ #   %u - username
+ #   %n - user part in user@domain, same as %u if there's no domain
+ #   %d - domain part in user@domain, empty if user there's no domain
+-#user_filter = (&(objectClass=posixAccount)(uid=%u))
++user_filter = (&(objectClass=virtualMailRecipient)(virtualMailboxEnabled=TRUE)(uid=%n)(mail=%u))
  
- # If you wish to avoid two SQL lookups (passdb + userdb), you can use
- # userdb prefetch instead of userdb sql in dovecot.conf. In that case you'll
-@@ -138,4 +144,10 @@
- #  FROM users WHERE userid = '%u'
+ # Password checking attributes:
+ #  user: Virtual user name (user@domain), if you wish to change the
+@@ -121,7 +134,9 @@
+ #  password: Password, may optionally start with {type}, eg. {crypt}
+ # There are also other special fields which can be returned, see
+ # http://wiki2.dovecot.org/PasswordDatabase/ExtraFields
+-#pass_attrs = uid=user,userPassword=password
++# Intentionally not fetching password, because we use authentication
++# binds. See https://wiki2.dovecot.org/AuthDatabase/LDAP/AuthBinds
++pass_attrs = mail=user
  
- # Query to get a list of all usernames.
--#iterate_query = SELECT username AS user FROM users
-+iterate_query = \
-+    SELECT address AS user \
-+    FROM mailboxes \
-+    INNER JOIN domains \
-+        ON domain = split_part(address, '@', 2) AND domains.active = true AND domains.mailboxes = true \
-+    WHERE mailboxes.active = true
-+
+ # If you wish to avoid two LDAP lookups (passdb + userdb), you can use
+ # userdb prefetch instead of userdb ldap in dovecot.conf. In that case you'll
+@@ -131,11 +146,11 @@
+ #  homeDirectory=userdb_home,uidNumber=userdb_uid,gidNumber=userdb_gid
+ 
+ # Filter for password lookups
+-#pass_filter = (&(objectClass=posixAccount)(uid=%u))
++pass_filter = (&(objectClass=virtualMailRecipient)(virtualMailboxEnabled=TRUE)(uid=%n)(mail=%u))
+ 
+ # Attributes and filter to get a list of all users
+-#iterate_attrs = uid=user
+-#iterate_filter = (objectClass=posixAccount)
++iterate_attrs = mail=user
++iterate_filter = (&(objectClass=virtualMailRecipient)(virtualMailboxEnabled=TRUE))
+ 
+ # Default password scheme. "{scheme}" before password overrides this.
+ # List of supported schemes is in: http://wiki2.dovecot.org/Authentication
 diff -ru a/dovecot.conf b/dovecot.conf
---- a/dovecot.conf	2016-08-24 15:41:17.194338000 -0700
-+++ b/dovecot.conf	2016-08-25 00:47:18.684375000 -0700
+--- a/dovecot.conf	2018-01-04 16:50:20.458509000 -0800
++++ b/dovecot.conf	2016-08-26 00:33:50.254981000 -0700
 @@ -21,7 +21,7 @@
  # --sysconfdir=/usr/local/etc --localstatedir=/var
  

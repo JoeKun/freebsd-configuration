@@ -1,0 +1,32 @@
+# /usr/local/etc/openldap/schema/virtual_mail.ldif
+
+# This file was automatically generated from virtual_mail.schema;
+# see that file for complete references.
+
+dn: cn=virtual_mail,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: virtual_mail
+olcObjectIdentifier: {0}virtualMailSchemaOID 1.3.6.1.4.1.4203.666.49
+olcAttributeTypes: {0}( virtualMailSchemaOID:1.0.0 NAME 'virtualMailAliasEna
+ bled' DESC 'Flag that controls whether simple mail aliases are allowed for 
+ a domain' EQUALITY booleanMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 SINGLE-
+ VALUE )
+olcAttributeTypes: {1}( virtualMailSchemaOID:1.1.0 NAME 'virtualMailAlias' D
+ ESC 'Mail address (or account name with contextually implied domain name) f
+ or a simple alias' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatc
+ h SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256} )
+olcAttributeTypes: {2}( virtualMailSchemaOID:1.1.2 NAME 'virtualMailDestinat
+ ion' DESC 'Mail address (or account name with contextually implied domain n
+ ame) for the destination of virtual mail aliases' EQUALITY caseIgnoreMatch 
+ SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256} 
+ SINGLE-VALUE )
+olcAttributeTypes: {3}( virtualMailSchemaOID:2.0.0 NAME 'virtualMailboxEnabl
+ ed' DESC 'Flag that controls whether delivery to a local mailbox is allowed
+  for a domain or recipient' EQUALITY booleanMatch SYNTAX 1.3.6.1.4.1.1466.1
+ 15.121.1.7 SINGLE-VALUE )
+olcObjectClasses: {0}( virtualMailSchemaOID:100 NAME 'virtualMailDomain' DES
+ C 'Domain that includes virtual mail behavior policy' SUP domain STRUCTURAL
+  MAY ( virtualMailAliasEnabled $ virtualMailboxEnabled ) )
+olcObjectClasses: {1}( virtualMailSchemaOID:101 NAME 'virtualMailRecipient' 
+ DESC 'Recipient of virtual mail' SUP inetOrgPerson STRUCTURAL MAY ( virtual
+ MailAlias $ virtualMailDestination $ virtualMailboxEnabled ) )

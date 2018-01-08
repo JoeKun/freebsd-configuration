@@ -514,6 +514,72 @@ Enable `phpPgAdmin` configuration for `nginx`.
 ```
 
 
+## OpenLDAP
+
+```
+# pkg install openldap-server
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/slapd
+# cd /usr/local/etc/openldap
+# rm -f slapd.ldif
+# ln -s ../../../../freebsd-configuration/usr/local/etc/openldap/slapd.ldif
+# cd schema
+# for file_name in virtual_mail.schema virtual_mail.ldif mailing_list.schema mailing_list.ldif; do ln -s ../../../../../../freebsd-configuration/usr/local/etc/openldap/schema/${file_name}; done
+# cd /freebsd-configuration/usr/local/etc/openldap
+# chmod 444 schema/*.{schema,ldif}
+# chmod 600 slapd.ldif
+# pw group mod ssl -m ldap
+```
+
+Manually edit the following keys in `/usr/local/etc/openldap/slapd.ldif`:
+
+ * `olcTLSCACertificateFile`;
+ * `olcTLSCertificateFile`;
+ * `olcTLSCertificateKeyFile`;
+ * `olcRootPW`.
+
+Specifically, this last key, `olcRootPW`, is for the password of the root DN. Here's how you can generate a suitable SHA512 password hash to avoid keeping it in clear text in the configuration file:
+
+```
+# slappasswd -h '{CRYPT}' -c '$6$%.12s'
+```
+
+Import definitions from `slapd.ldif` as a `cn=config` OpenLDAP configuration, and start the `slapd` service:
+
+```
+# /usr/local/sbin/slapadd -n0 -F /usr/local/etc/openldap/slapd.d/ -l /usr/local/etc/openldap/slapd.ldif
+# service slapd start
+```
+
+To populate the LDAP directory, you may use some scripts provided as part of this repository, which take advantage of the custom schemas used above, namely `virtual_mail` and `mailing_list`.
+
+```
+# mkdir -p /opt/local/lib
+# cd /opt/local/lib
+# for file_name in ../../../freebsd-configuration/opt/local/lib/ldap_*; do ln -s "${file_name}"; done
+# mkdir -p /opt/local/bin
+# cd /opt/local/bin
+# for file_name in ../../../freebsd-configuration/opt/local/bin/ldap_*; do ln -s "${file_name}"; done
+```
+
+Some examples of how you can use these scripts to populate the LDAP directory can be found at `/freebsd-configuration/documentation/ldap/ldap_setup_multi_domain_directory_with_sample_entries`.
+
+
+## `phpLDAPAdmin`
+
+```
+# pkg install phpldapadmin
+```
+
+Enable `phpLDAPAdmin` configuration for `nginx`.
+
+```
+# cd /usr/local/etc/nginx/sites-enabled/admin.foo.com.conf.d
+# ln -s ../../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf.d/phpldapadmin.conf
+# service nginx restart
+```
+
+
 ## `ports` tree
 
 ```
@@ -536,22 +602,6 @@ The following is heavily inspired from [Kliment Andreev's amazing howto guide](h
 ```
 
 
-### Create `mail` SQL database and users
-
-```
-# su pgsql
-$ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt mail
-$ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt dovecot
-$ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt postfix
-$ createdb --owner=mail mail "Mail aliases and accounts information"
-$ psql postgres
-postgres=# GRANT ALL PRIVILEGES ON DATABASE mail TO mail;
-postgres=# \q
-$ psql --host=localhost --username=mail --dbname=mail < /freebsd-configuration/documentation/mail/mail-database-schema.sql
-$ rm -f ~/.psql_history
-```
-
-
 ### `dovecot`
 
 ```
@@ -561,6 +611,8 @@ $ rm -f ~/.psql_history
 
 Keep all options enabled by default, and additionally enable the following:
 
+ * `LZ4` in first section;
+ * `LDAP` in *Database support* section;
  * `PGSQL` in *Database support* section;
  * `ICU` in *Full text search plugins* section.
 
@@ -603,7 +655,7 @@ Apply basic `dovecot` configuration:
 Manually edit server dependent configuration:
 
  * `ssl_cert` and `ssl_key` in `/usr/local/etc/dovecot/conf.d/10-ssl.conf` to point to your own SSL certificate;
- * password in `connect` configuration in `/usr/local/etc/dovecot/dovecot-sql.conf.ext`.
+ * `dnpass` in `/usr/local/etc/dovecot/dovecot-ldap.conf.ext`.
 
 Enable `dovecot`:
 
@@ -676,6 +728,7 @@ TODO: Look into `pyzor`, `razor`, `SPF`, `DKIM`.
 
 Keep all options enabled by default, and additionally enable the following:
 
+ * `LDAP`;
  * `PGSQL`.
 
 See if any dependency is missing:
@@ -701,8 +754,8 @@ Configure `postfix`:
 # rm -f main.cf
 # ln -s ../../../../freebsd-configuration/usr/local/etc/postfix/main.cf
 # ln -s ../../../../freebsd-configuration/usr/local/etc/postfix/transport
-# ln -s ../../../../freebsd-configuration/usr/local/etc/postfix/sql
-# cd /usr/local/etc/postfix/sql
+# ln -s ../../../../freebsd-configuration/usr/local/etc/postfix/ldap
+# cd /usr/local/etc/postfix/ldap
 # chown -R root:postfix .
 # find . -type d -exec chmod 710 {} \;
 # find . -type f -exec chmod 640 {} \;
@@ -721,11 +774,7 @@ Manually edit the following keys in `/usr/local/etc/postfix/main.cf`:
 
 Manually edit the entry for `root` in `/usr/local/etc/mail/aliases`.
 
-Manually edit the `password` entry in the following files:
-
- * `/usr/local/etc/postfix/sql/virtual_alias/domains.cf`;
- * `/usr/local/etc/postfix/sql/virtual_alias/maps.cf`;
- * `/usr/local/etc/postfix/sql/virtual_mailbox/domains.cf`.
+Manually edit the `bind_pw` entry in each of the files in `/usr/local/etc/postfix/ldap`.
 
 Add listeners for `postfix` in `dovecot` configuration files:
 
@@ -738,7 +787,7 @@ Add listeners for `postfix` in `dovecot` configuration files:
 Update all map files:
 
 ```
-# postalias /usr/local/etc/postfix/transport
+# postmap /usr/local/etc/postfix/transport
 # postalias /usr/local/etc/mail/aliases
 # newaliases
 ```
@@ -768,15 +817,6 @@ Adjust login configuration with the more specific location of users' local mailb
 ```
 
 Log out and log back in.
-
-
-### Additional notes
-
-For the password field in the mailboxes table, you should use the following command:
-
-```
-# doveadm pw -s BLF-CRYPT
-```
 
 
 ### Roundcube

@@ -1,0 +1,19 @@
+# /usr/local/etc/openldap/schema/mailing_list.ldif
+
+# This file was automatically generated from mailing_list.schema;
+# see that file for complete references.
+
+dn: cn=mailing_list,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: mailing_list
+olcObjectIdentifier: {0}mailingListSchemaOID 1.3.6.1.4.1.4203.666.72
+olcAttributeTypes: {0}( mailingListSchemaOID:1.0 NAME 'mailingListRelayDomai
+ n' DESC 'Domain for relaying to mailing list service' EQUALITY caseIgnoreMa
+ tch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{2
+ 56} SINGLE-VALUE )
+olcAttributeTypes: {1}( mailingListSchemaOID:1.1 NAME 'mailingListCommand' D
+ ESC 'Command for mailing list' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSu
+ bstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256} )
+olcObjectClasses: {0}( mailingListSchemaOID:100 NAME 'mailingList' DESC 'Mai
+ ling list' SUP top STRUCTURAL MUST ( cn $ mailingListRelayDomain ) MAY ( de
+ scription $ mailingListCommand ) )

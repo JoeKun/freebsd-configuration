@@ -1,0 +1,7 @@
+# /etc/rc.conf.d/slapd: system configuration for slapd
+
+slapd_enable="YES"
+slapd_flags="-h \"ldapi://%2fvar%2frun%2fopenldap%2fldapi/ ldap:/// ldaps:///\""
+slapd_sockets="/var/run/openldap/ldapi"
+slapd_cn_config="YES"
+

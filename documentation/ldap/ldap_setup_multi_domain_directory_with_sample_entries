@@ -1,0 +1,22 @@
+#! /usr/bin/env bash
+
+root_dn_password="secret"
+
+ldap_create_top_level_directory_and_system_entries --root-dn-password "${root_dn_password}"
+ldap_create_user --root-dn-password "${root_dn_password}" --system --cn "admin" --surname "system" --virtual-mail-alias "postmaster" --virtual-mail-alias "abuse" --virtual-mail-alias "webmaster" --virtual-mail-alias "webadmin" --virtual-mail-alias "contact" --virtual-mail-destination "foo@external-domain.tld" --virtual-mail-alias-only
+ldap_create_user --root-dn-password "${root_dn_password}" --system --cn "postfix" --user-password "SomeThing@1234!"
+ldap_create_user --root-dn-password "${root_dn_password}" --system --cn "dovecot" --user-password "SomeThing@1234"
+
+ldap_create_domain --root-dn-password "${root_dn_password}" --domain "foo.com" --virtual-mail-alias --virtual-mailbox --mailing-list
+ldap_create_user   --root-dn-password "${root_dn_password}" --domain "foo.com" --uid "user1" --given-name "First"  --surname "Foo" --virtual-mailbox --user-password "user1_foo_password"
+ldap_create_user   --root-dn-password "${root_dn_password}" --domain "foo.com" --uid "user2" --given-name "Second" --surname "Foo" --virtual-mail-destination "user2@external-domain.tld" --user-password "user2_foo_password"
+ldap_create_user   --root-dn-password "${root_dn_password}" --domain "foo.com" --uid "user3" --given-name "Third"  --surname "Foo" --virtual-mail-destination "user3@external-domain.tld" --user-password "user3_foo_password"
+ldap_create_user   --root-dn-password "${root_dn_password}" --domain "foo.com" --cn "contact" --virtual-mail-alias "outreach" --virtual-mail-alias "contribute" --virtual-mail-destination "user1" --virtual-mail-alias-only
+ldap_create_user   --root-dn-password "${root_dn_password}" --domain "foo.com" --cn "git" --virtual-mail-alias "gitlab" --virtual-mail-alias "ci" --virtual-mail-destination "admin" --virtual-mail-alias-only
+ldap_create_mailing_list --root-dn-password "${root_dn_password}" --domain "foo.com" --name "mailman" --relay-domain "lists.foo.com"
+ldap_create_mailing_list --root-dn-password "${root_dn_password}" --domain "foo.com" --name "project" --relay-domain "lists.foo.com"
+ldap_create_mailing_list --root-dn-password "${root_dn_password}" --domain "foo.com" --name "project-core" --relay-domain "lists.foo.com"
+
+ldap_create_domain --root-dn-password "${root_dn_password}" --domain "bar.com" --virtual-mail-alias
+ldap_create_user   --root-dn-password "${root_dn_password}" --domain "bar.com" --cn "user1" --virtual-mail-destination "user1@foo.com" --virtual-mail-alias-only
+

@@ -1,0 +1,13 @@
+# /usr/local/etc/postfix/ldap/virtual_alias/explicit_system_maps_with_implied_domain.cf
+
+server_host = ldapi://%2fvar%2frun%2fopenldap%2fldapi/
+search_base = ou=users,ou=system,ou=directory
+version = 3
+bind = simple
+bind_dn = cn=postfix,ou=users,ou=system,ou=directory
+bind_pw = SomeThing@1234!
+start_tls = yes
+query_filter = (&(objectClass=virtualMailRecipient)(|(mail=%s)(virtualMailAlias=%s)(virtualMailAlias=%u)(cn=%u))(virtualMailDestination=*)(!(virtualMailDestination=*@*))(!(virtualMailDestination=%s)))
+result_attribute = virtualMailDestination
+result_format = %s@%D
+

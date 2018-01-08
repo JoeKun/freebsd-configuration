@@ -1,0 +1,13 @@
+# /usr/local/etc/postfix/ldap/virtual_alias/mailing_lists_maps.cf
+
+server_host = ldapi://%2fvar%2frun%2fopenldap%2fldapi/
+search_base = ou=lists,dc=%d,ou=directory
+version = 3
+bind = simple
+bind_dn = cn=postfix,ou=users,ou=system,ou=directory
+bind_pw = SomeThing@1234!
+start_tls = yes
+query_filter = (&(objectClass=mailingList)(|(cn=%u)(mailingListCommand=%u)))
+result_attribute = mailingListRelayDomain
+result_format = %U@%s
+

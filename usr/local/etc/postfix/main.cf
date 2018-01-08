@@ -48,11 +48,11 @@ mydestination = server.foo.com
 
 # List of domains this server accepts email for as long as proper 
 # aliases are defined
-virtual_alias_domains = proxy:pgsql:/usr/local/etc/postfix/sql/virtual_alias/domains.cf
+virtual_alias_domains = proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/domains.cf
 
 # List of domains this server accepts email for and delivers it into 
 # local mailboxes without requiring any Unix account
-virtual_mailbox_domains = proxy:pgsql:/usr/local/etc/postfix/sql/virtual_mailbox/domains.cf
+virtual_mailbox_domains = proxy:ldap:/usr/local/etc/postfix/ldap/virtual_mailbox/domains.cf
 
 # List of domains this server accepts email for and relays it to 
 # other mail servers or handlers.
@@ -64,19 +64,32 @@ relay_domains = lists.foo.com
 #-----------------------------------------------------------
 
 # Aliases files
-alias_maps     = hash:/etc/mail/aliases hash:/usr/local/etc/mail/aliases
+alias_maps = hash:/etc/mail/aliases hash:/usr/local/etc/mail/aliases
 alias_database = $alias_maps
 
 # Virtual aliases mapping
-virtual_alias_maps = proxy:pgsql:/usr/local/etc/postfix/sql/virtual_alias/maps.cf
+virtual_alias_maps = proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/explicit_maps.cf
+                     proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/explicit_maps_with_implied_domain.cf
+                     proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/implicit_maps_to_mail_attribute.cf
+                     proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/implicit_maps_to_mail_attribute_with_implied_domain.cf
+                     proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/implicit_maps_to_virtual_mailbox.cf
+                     proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/mailing_lists_maps.cf
+                     proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/explicit_system_maps.cf
+                     proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/explicit_system_maps_with_implied_domain.cf
+                     proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/implicit_system_maps_to_mail_attribute.cf
+                     proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/implicit_system_maps_to_mail_attribute_with_implied_domain.cf
+                     proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/implicit_system_maps_to_cn_attribute_with_implied_domain.cf
 
 # Relay domains mapping
 transport_maps = hash:/usr/local/etc/postfix/transport
 
 
 #-----------------------------------------------------------
-# Virtual delivery parameters
+# Virtual mailbox delivery parameters
 #-----------------------------------------------------------
+
+# Virtual mailboxes
+virtual_mailbox_maps = proxy:ldap:/usr/local/etc/postfix/ldap/virtual_mailbox/maps.cf
 
 # Delegate virtual mailbox delivery to dovecot
 virtual_transport = lmtp:unix:private/dovecot-lmtp
