@@ -862,10 +862,6 @@ $ psql postgres
 postgres=# GRANT ALL PRIVILEGES ON DATABASE roundcube TO roundcube;
 postgres=# \q
 $ psql --host=localhost --username=roundcube --dbname=roundcube < /usr/local/www/roundcube/SQL/postgres.initial.sql
-$ psql --host=localhost --username=mail --dbname=mail
-mail=> GRANT CONNECT ON DATABASE mail TO roundcube;
-mail=> GRANT SELECT, UPDATE ON TABLE mailboxes TO roundcube;
-mail=> \q
 $ rm -f ~/.psql_history
 ```
 
