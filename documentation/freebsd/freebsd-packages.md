@@ -1069,7 +1069,7 @@ To launch `irssi` in a `screen` upon rebooting, add the following entry to the u
 ## `bind`
 
 ```
-# pkg install bind910
+# pkg install bind911
 
 # mkdir /var/named
 # cd /var/named
