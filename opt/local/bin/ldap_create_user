@@ -252,7 +252,13 @@ then
         fi
         did_prompt_for_any_option=1
     fi
-    encrypted_user_password=$(slappasswd -h "{CRYPT}" -c '$2a$12$%.22s' -s "${user_password}")
+    encrypted_user_password=""
+    if [[ "${user_password}" == '$2a$'* ]]
+    then
+        encrypted_user_password="{CRYPT}${user_password}"
+    else
+        encrypted_user_password=$(slappasswd -h "{CRYPT}" -c '$2a$12$%.22s' -s "${user_password}")
+    fi
     user_additional_attributes+=("userPassword: ${encrypted_user_password}")
 fi
 
