@@ -538,10 +538,10 @@ Manually edit the following keys in `/usr/local/etc/openldap/slapd.ldif`:
  * `olcTLSCertificateKeyFile`;
  * `olcRootPW`.
 
-Specifically, this last key, `olcRootPW`, is for the password of the root DN. Here's how you can generate a suitable SHA512 password hash to avoid keeping it in clear text in the configuration file:
+Specifically, this last key, `olcRootPW`, is for the password of the root DN. Here's how you can generate a suitable blowfish password hash to avoid keeping it in clear text in the configuration file:
 
 ```
-# slappasswd -h '{CRYPT}' -c '$6$%.12s'
+# slappasswd -h "{CRYPT}" -c '$2a$12$%.22s'
 ```
 
 Import definitions from `slapd.ldif` as a `cn=config` OpenLDAP configuration, and start the `slapd` service:
