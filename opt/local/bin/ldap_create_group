@@ -1,0 +1,112 @@
+#! /usr/bin/env bash
+# 
+# ldap_create_group
+# 
+# Created by Joel Lopes Da Silva on 1/28/18.
+# Copyright © 2018 Joel Lopes Da Silva. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+
+# Capture script container directory
+pushd $(dirname "${0}") > /dev/null
+script_container_directory=$(pwd)
+popd > /dev/null
+
+# Imports
+. "${script_container_directory}/../lib/ldap_standard_utilities"
+
+
+did_prompt_for_any_option=0
+domain_name=""
+group_cn=""
+group_members=()
+
+number_of_arguments=$#
+for ((i = 1; i <= ${number_of_arguments}; i++))
+do
+    current_argument="${!i}"
+    case "${current_argument}" in
+        "--cn")
+            i=$((i + 1))
+            group_cn="${!i}"
+            ;;
+        "--domain")
+            i=$((i + 1))
+            domain_name="${!i}"
+            ;;
+        "--member")
+            i=$((i + 1))
+            group_members+=("${!i}")
+            ;;
+    esac
+done
+number_of_group_members=${#group_members[@]}
+
+if [[ -z "${domain_name}" ]]
+then
+    read -p "Name of domain for group: " -r domain_name
+    did_prompt_for_any_option=1
+fi
+
+if [[ -z "${group_cn}" ]]
+then
+    read -p "Name of group to add to LDAP directory: " -r group_cn
+    did_prompt_for_any_option=1
+fi
+
+if [[ ${number_of_group_members} -eq 0 ]]
+then
+    group_member_for_prompting=""
+    should_prompt_for_group_member=1
+    while [[ ${should_prompt_for_group_member} -ne 0 ]]
+    do
+        if [[ -z "${group_member_for_prompting}" ]]
+        then
+            read -p "Group member: " -r group_member_for_prompting
+        else
+            read -p "Additional group member (leave empty if no additional member is required): " -r group_member_for_prompting
+        fi
+        if [[ -n "${group_member_for_prompting}" ]]
+        then
+            group_members+=("${group_member_for_prompting}")
+        else
+            should_prompt_for_group_member=0
+        fi
+    done
+    number_of_group_members=${#group_members[@]}
+fi
+
+group_object_attributes=()
+group_object_attributes+=("dn: cn=${group_cn},ou=groups,dc=${domain_name},ou=directory")
+group_object_attributes+=("objectClass: top")
+group_object_attributes+=("objectClass: groupOfNames")
+group_object_attributes+=("cn: ${group_cn}")
+for ((i = 0; i < ${number_of_group_members}; i++))
+do
+    group_member="${group_members[${i}]}"
+    case "${group_member}" in
+        "cn="*|"uid="*)
+            ;;
+        *)
+            group_member="uid=${group_member},ou=users,dc=${domain_name},ou=directory"
+            ;;
+    esac
+    group_object_attributes+=("member: ${group_member}")
+done
+group_object_combined_attributes=$(ldap_combine_attributes "${group_object_attributes[@]}")
+
+ldap_perform_standard_add $* ${did_prompt_for_any_option} "
+${group_object_combined_attributes}
+"
+

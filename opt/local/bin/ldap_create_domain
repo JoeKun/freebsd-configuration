@@ -29,6 +29,7 @@ popd > /dev/null
 
 did_prompt_for_any_option=0
 domain_name=""
+group_enabled=0
 virtual_mail_alias_enabled=0
 virtual_mailbox_enabled=0
 mailing_list_enabled=0
@@ -41,6 +42,9 @@ do
         "--domain")
             i=$((i + 1))
             domain_name="${!i}"
+            ;;
+        "--group")
+            group_enabled=1
             ;;
         "--virtual-mail-alias")
             virtual_mail_alias_enabled=1
@@ -79,6 +83,17 @@ fi
 domain_object_attributes+=("dc: ${domain_name}")
 domain_object_combined_attributes=$(ldap_combine_attributes "${domain_object_attributes[@]}")
 
+groups_object_combined_attributes=""
+if [[ ${group_enabled} -ne 0 ]]
+then
+    groups_object_attributes=()
+    groups_object_attributes+=("dn: ou=groups,dc=${domain_name},ou=directory")
+    groups_object_attributes+=("objectClass: top")
+    groups_object_attributes+=("objectClass: organizationalUnit")
+    groups_object_attributes+=("ou: groups")
+    groups_object_combined_attributes=$(ldap_combine_attributes "${groups_object_attributes[@]}")
+fi
+
 mailing_lists_object_combined_attributes=""
 if [[ ${mailing_list_enabled} -ne 0 ]]
 then
@@ -97,6 +112,8 @@ dn: ou=users,dc=${domain_name},ou=directory
 objectClass: top
 objectClass: organizationalUnit
 ou: users
+
+${groups_object_combined_attributes}
 
 ${mailing_lists_object_combined_attributes}
 "
