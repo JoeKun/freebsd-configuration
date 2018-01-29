@@ -1,0 +1,132 @@
+#! /bin/sh
+
+#-----------------------------------------------------------------------
+# Parameters
+#-----------------------------------------------------------------------
+
+original_file_path="${1}"
+
+
+#-----------------------------------------------------------------------
+# Setup logging
+#-----------------------------------------------------------------------
+
+script_name=$(basename "${0}")
+log_file_path="/var/log/plex/${script_name}.log"
+touch "${log_file_path}"
+
+log() {
+    local date_and_time=$(date +'%Y:%m:%d %H:%M:%S')
+    if [ -n "${log_file_path}" ]
+    then
+        echo "${date_and_time}"$'\t'"${script_name}"$':\t' $* >> "${log_file_path}"
+    else
+        echo "${date_and_time}"$'\t'"${script_name}"$':\t' $*
+    fi
+}
+
+
+#-----------------------------------------------------------------------
+# Ensure environment is correctly set up
+#-----------------------------------------------------------------------
+
+prepend_to_path_if_needed() {
+    local executable_path="${1}"
+
+    if [ -d "${executable_path}" ]
+    then
+        case "${PATH}" in
+            "${executable_path}:"*|*":${executable_path}"|*":${executable_path}:"*)
+                ;;
+            *)
+                export PATH="${executable_path}:${PATH}"
+                ;;
+        esac
+    fi
+}
+
+prepend_to_path_if_needed /usr/local/sbin
+prepend_to_path_if_needed /usr/local/bin
+prepend_to_path_if_needed /opt/local/sbin
+prepend_to_path_if_needed /opt/local/bin
+
+
+#-----------------------------------------------------------------------
+# Find required commands and configuration file
+#-----------------------------------------------------------------------
+
+ffmpeg_executable_path=$(which ffmpeg)
+comskip_executable_path=$(which comskip)
+
+comskip_configuration_file_name="comskip.ini"
+comskip_configuration_file_path=""
+comskip_executable_containing_directory_path=$(dirname "${comskip_executable_path}")
+if [ -f "${comskip_executable_containing_directory_path}/${comskip_configuration_file_name}" ]
+then
+    comskip_configuration_file_path="${comskip_executable_containing_directory_path}/${comskip_configuration_file_name}"
+fi
+if [ -z "${comskip_configuration_file_path}" ]
+then
+    case "${comskip_executable_containing_directory_path}" in
+        *"/bin")
+            comskip_install_prefix=$(dirname "${comskip_executable_containing_directory_path}")
+            if [ -f "${comskip_install_prefix}/etc/${comskip_configuration_file_name}" ]
+            then
+                comskip_configuration_file_path="${comskip_install_prefix}/etc/${comskip_configuration_file_name}"
+            fi
+            ;;
+    esac
+fi
+if [ -z "${comskip_configuration_file_path}" ]
+then
+    if [ -f "/etc/${comskip_configuration_file_name}" ]
+    then
+        comskip_configuration_file_path="/etc/${comskip_configuration_file_name}"
+    fi
+fi
+
+
+#-----------------------------------------------------------------------
+# Generate file path for post processed output
+#-----------------------------------------------------------------------
+
+original_file_containing_directory_path=$(dirname "${original_file_path}")
+original_file_name=$(basename "${original_file_path}")
+original_file_extension=$(echo "${original_file_name}" | rev | cut -d "." -f 1 | rev)
+original_file_name_without_extension=$(basename "${original_file_name}" ".${original_file_extension}")
+post_processed_file_path="${original_file_containing_directory_path}/${original_file_name_without_extension}_post_processing_commercials_in_progress.${original_file_extension}"
+
+
+#-----------------------------------------------------------------------
+# Invoke comcut
+#-----------------------------------------------------------------------
+
+lock_file_path="/tmp/${script_name}.lock"
+if [ -n "${log_file_path}" ]
+then
+    comcut --ffmpeg="${ffmpeg_executable_path}" --comskip="${comskip_executable_path}" --comskip-ini="${comskip_configuration_file_path}" --lockfile="${lock_file_path}" "${original_file_path}" "${post_processed_file_path}" >> "${log_file_path}"
+else
+    comcut --ffmpeg="${ffmpeg_executable_path}" --comskip="${comskip_executable_path}" --comskip-ini="${comskip_configuration_file_path}" --lockfile="${lock_file_path}" "${original_file_path}" "${post_processed_file_path}"
+fi
+
+
+#-----------------------------------------------------------------------
+# Replace input file with post processed output file
+#-----------------------------------------------------------------------
+
+post_processing_status_code=$?
+if [ ${post_processing_status_code} -ne 0 ]
+then
+    rm -f "${post_processed_file_path}"
+    log "error: encountered unexpected error while processing ${original_file_path} with error code: ${post_processing_status_code}."
+elif [ ! -f "${post_processed_file_path}" ]
+then
+    log "error: supposedly did not encounter error while processing ${original_file_path}, but post processed file was missing at ${post_processed_file_path}."
+else
+    rm -f "${original_file_path}"
+    mv -v "${post_processed_file_path}" "${original_file_path}"
+    log "info: successfully processed ${original_file_path}."
+fi
+
+exit ${post_processing_status_code}
+

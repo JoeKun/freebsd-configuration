@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/plexmediaserver_plexpass: system configuration for Plex Media Server with Plex Pass
+
+plexmediaserver_plexpass_enable="YES"
+
