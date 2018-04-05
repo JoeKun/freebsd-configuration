@@ -1148,7 +1148,7 @@ Install some important dependencies of GateOne:
 ```
 # pkg install sudo
 # pkg install dtach
-# pkg install py27-tornado
+# pkg install py27-tornado4
 ```
 
 Make sure to load the `pty` kernel module for pseudo-terminal support:
