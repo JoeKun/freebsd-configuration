@@ -2,4 +2,5 @@
 
 fcgiwrap_enable="YES"
 fcgiwrap_user="www"
+fcgiwrap_socket_owner="www"
 
