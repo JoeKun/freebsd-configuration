@@ -5,5 +5,5 @@
 #-----------------------------------------------------------
 
 # Frequently used applications
-alias irc='screen -x irc'
+alias irc="screen -x irc"
 
