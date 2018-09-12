@@ -1,9 +1,20 @@
 [user]
 	name = GitLab
 	email = gitlab@foo.com
+[apply]
+	whitespace = nowarn
 [color]
 	ui = true
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
 [core]
+	abbrev = 12
 	autocrlf = input
+	pager = /usr/local/share/git-core/contrib/diff-highlight/diff-highlight | vimpager
 [gc]
 	auto = 0
+[push]
+	default = simple
