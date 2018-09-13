@@ -18,3 +18,5 @@
 	auto = 0
 [push]
 	default = simple
+[repack]
+	writeBitmaps = true
