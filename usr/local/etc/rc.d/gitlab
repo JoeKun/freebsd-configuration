@@ -330,8 +330,8 @@ start_gitlab() {
     if [ "$gitaly_status" = "0" ]; then
       echo "Gitaly is already running with pid $gapid, not restarting"
     else
-      $app_root/bin/daemon_with_pidfile $gitaly_pid_path \
-          $gitaly_dir/gitaly $gitaly_dir/config.toml >> $gitaly_log 2>&1 &
+      su - $gitlab_user -c "$app_root/bin/daemon_with_pidfile $gitaly_pid_path \
+          $gitaly_dir/gitaly $gitaly_dir/config.toml >> $gitaly_log 2>&1 &"
     fi
   fi
 
