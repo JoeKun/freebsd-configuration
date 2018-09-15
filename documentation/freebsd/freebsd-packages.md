@@ -1246,7 +1246,7 @@ Install and enable `redis`:
 Install other required dependencies:
 
 ```
-# pkg install sudo bash icu cmake pkgconf node npm phantomjs krb5 gmake go libtool bison re2 yarn
+# pkg install sudo bash icu cmake pkgconf node npm phantomjs krb5 gmake go libtool bison re2 yarn libgit2
 ```
 
 Add unprivileged user for GitLab:
