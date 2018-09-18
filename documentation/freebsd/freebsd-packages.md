@@ -1246,7 +1246,7 @@ Install and enable `redis`:
 Install other required dependencies:
 
 ```
-# pkg install sudo bash icu cmake pkgconf node npm phantomjs krb5 gmake go libtool bison re2 yarn libgit2
+# pkg install sudo bash icu cmake pkgconf node npm phantomjs krb5 gmake go libtool bison re2 yarn libgit2 ruby rubygem-bundler
 ```
 
 Add unprivileged user for GitLab:
@@ -1255,23 +1255,6 @@ Add unprivileged user for GitLab:
 # pw group add git -g 617
 # pw user add git -u 617 -g 617 -c "GitLab" -d /usr/local/git -s /usr/local/bin/zsh -m -k /usr/local/etc/skel
 # pw group mod redis -m git
-```
-
-Install RVM and ruby 2.3.1:
-
-```
-# su git
-$ gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
-$ \curl -L https://get.rvm.io | bash -s stable
-$ rm -f .bash_profile .bashrc .mkshrc .profile .zlogin .zshrc
-$ for file_name in .gitconfig .zprofile .zshenv .zshrc; do ln -s ../../../freebsd-configuration/usr/local/git/${file_name}; done
-$ exit
-# chown -R git:git /freebsd-configuration/usr/local/git
-# su git
-$ rvm autolibs read
-$ rvm install 2.3.1
-$ gem install bundler
-$ exit
 ```
 
 Prepare database:
