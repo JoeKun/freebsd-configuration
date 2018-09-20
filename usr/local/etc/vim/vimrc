@@ -51,7 +51,8 @@ set nocompatible
 set history=50
 
 " ~/.vimimfo file options
-set viminfo='20,\"50
+" (limits on copy/paste payloads, and disabling highlighting on launch).
+set viminfo='100,<100,s20,h
 
 " Enable the Backspace keystroke
 set backspace=2
@@ -115,9 +116,6 @@ set hlsearch
 
 " Allow wrapping when hit the last search result in pager mode
 set wrapscan
-
-" Clear any previous search term highlight upon startup
-autocmd VimEnter * let @/ = ""
 
 " Disable automatic switch to visual mode when using mouse
 autocmd VimEnter * set mouse-=a
