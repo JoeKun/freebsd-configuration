@@ -309,7 +309,7 @@ Assuming you have an SSL certificate named `foo.com_wildcard`, install it like t
 
 ```
 # pkg install nginx
-# pkg install php56
+# pkg install php71
 ```
 
 Configure `php`:
@@ -410,7 +410,7 @@ We should restart the MySQL service to ensure that our instance immediately impl
 # `phpMyAdmin`
 
 ```
-# pkg install php56-mysql phpMyAdmin
+# pkg install phpMyAdmin-php71
 ```
 
 Create the `phpMyAdmin` storage database, as well as the `phpmyadmin` MySQL user with the right privileges:
@@ -500,7 +500,7 @@ $ rm -f ~/.psql_history
 ## `phpPgAdmin`
 
 ```
-# pkg install phpPgAdmin
+# pkg install phppgadmin-php71
 # cd /freebsd-configuration/patches/phppgadmin
 # ./configure_phppgadmin
 ```
@@ -841,7 +841,7 @@ See if any dependency is missing:
 If any, install the dependency using `pkg`. For example:
 
 ```
-# pkg install converters/php56-iconv devel/autoconf devel/m4 misc/help2man devel/p5-Locale-gettext devel/gettext-tools devel/autoconf-wrapper textproc/php56-dom devel/pecl-intl sysutils/php56-fileinfo graphics/php56-exif databases/php56-pdo_pgsql databases/php56-pdo
+# pkg install textproc/php71-dom devel/php71-intl sysutils/php71-fileinfo graphics/php71-exif databases/php71-pdo_pgsql databases/php71-pdo
 # service php-fpm restart
 ```
 
