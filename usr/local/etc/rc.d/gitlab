@@ -343,6 +343,7 @@ start_gitlab() {
 
 ## Asks Unicorn, Sidekiq and MailRoom if they would be so kind as to stop, if not kills them.
 stop_gitlab() {
+  completion_policy="$1"
   exit_if_not_running
 
   if [ "$web_status" = "0" ]; then
@@ -392,7 +393,9 @@ stop_gitlab() {
   rm -f "$gitlab_pages_pid_path"
   rm -f "$gitaly_pid_path"
 
-  print_status exit_cleanly_if_not_running
+  if [ "$completion_policy" != "skip_print_status_and_exit" ]; then
+    print_status exit_cleanly_if_not_running
+  fi
 }
 
 ## Prints the status of GitLab and its components.
@@ -475,7 +478,7 @@ reload_gitlab(){
 restart_gitlab(){
   check_status
   if [ "$web_status" = "0" ] || [ "$sidekiq_status" = "0" ] || [ "$gitlab_workhorse" = "0" ] || { [ "$mail_room_enabled" = true ] && [ "$mail_room_status" = "0" ]; } || { [ "$gitlab_pages_enabled" = true ] && [ "$gitlab_pages_status" = "0" ]; } || { [ "$gitaly_enabled" = true ] && [ "$gitaly_status" = "0" ]; }; then
-    stop_gitlab
+    stop_gitlab skip_print_status_and_exit
   fi
   start_gitlab
 }
