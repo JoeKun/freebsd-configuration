@@ -1231,3 +1231,71 @@ Some important differences:
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/gitlab
 # service gitlab start
 ```
+
+
+## Time Machine Server
+
+You should consider tuning a few kernel settings to allow more files to be opened at once. In particular, consider the following settings:
+
+```
+kern.maxfiles=25600
+kern.maxfilesperproc=16384
+net.inet.tcp.sendspace=65536
+net.inet.tcp.recvspace=65536
+```
+
+To do this, you may simply use our `sysctl.conf` file:
+
+```
+# cd /etc
+# rm -f sysctl.conf ; ln -s ../freebsd-configuration/etc/sysctl.conf
+# sysctl --system
+```
+
+Install `netatalk3` for AFP file transfer protocol, and `nss_mdns` for multicast DNS support.
+
+```
+# pkg install netatalk3
+# pkg install nss_mdns
+```
+
+Enable `mdns` for Avahi, which will allow advertising services via Bonjour:
+
+```
+# cd /etc
+# rm -f nsswitch.conf ; ln -s ../freebsd-configuration/etc/nsswitch.conf
+```
+
+Alternatively, just make sure that the following line is present in `/etc/nsswitch.conf`:
+
+```
+hosts: files mdns_minimal [NOTFOUND=return] dns mdns
+```
+
+Prepare Time Machine folder:
+
+```
+# chmod o+x /var/backups
+# mkdir /var/backups/time-machine
+```
+
+Configure `netatalk3`:
+
+```
+# cd /usr/local/etc
+# rm -f afp.conf ; ln -s ../../../freebsd-configuration/usr/local/etc/afp.conf
+```
+
+Enable relevant daemons:
+
+```
+# cd /etc/rc.conf.d
+
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/dbus
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/avahi_daemon
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/netatalk
+
+# service dbus start
+# service avahi-daemon start
+# service netatalk start
+```
