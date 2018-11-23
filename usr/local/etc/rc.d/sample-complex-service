@@ -1,0 +1,171 @@
+#! /bin/sh
+
+# PROVIDE: sample_complex_service
+# REQUIRE: LOGIN DAEMON
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="sample_complex_service"
+rcvar="${name}_enable"
+extra_commands="status poll"
+
+load_rc_config $name
+
+: ${sample_backend_service_enable:=NO}
+: ${sample_backend_service_user:="www"}
+: ${sample_backend_service_home:="/usr/local/sample-complex-service"}
+: ${sample_backend_service_login_class:="daemon"}
+: ${sample_backend_service_name:="sample-backend-service"}
+: ${sample_backend_service_executable_file_name:="${sample_backend_service_name}"}
+: ${sample_backend_service_executable_file_path:="${sample_backend_service_home}/${sample_backend_service_executable_file_name}"}
+: ${sample_backend_service_configuration_file_path:="${sample_backend_service_home}/${sample_backend_service_executable_file_name}.conf"}
+: ${sample_backend_service_executable_arguments:="--configuration \"${sample_backend_service_configuration_file_path}\""}
+: ${sample_backend_service_command_interpreter:="/usr/local/bin/python"}
+
+: ${sample_frontend_service_enable:=NO}
+: ${sample_frontend_service_user:="${sample_backend_service_user}"}
+: ${sample_frontend_service_home:="${sample_backend_service_home}"}
+: ${sample_frontend_service_login_class:="${sample_backend_service_login_class}"}
+: ${sample_frontend_service_name:="sample-frontend-service"}
+: ${sample_frontend_service_executable_file_name:="${sample_frontend_service_name}"}
+: ${sample_frontend_service_executable_file_path:="${sample_frontend_service_home}/${sample_frontend_service_executable_file_name}"}
+: ${sample_frontend_service_configuration_file_path:="${sample_frontend_service_home}/${sample_frontend_service_executable_file_name}.conf"}
+: ${sample_frontend_service_executable_arguments:="--configuration \"${sample_frontend_service_configuration_file_path}\""}
+: ${sample_frontend_service_command_interpreter:="/usr/local/bin/python"}
+
+complex_service_get_status_for_helper() {
+    local helper_service_name="${1}"
+    local helper_service_command_interpreter="${4}"
+    local helper_service_executable_file_path="${5}"
+    
+    local helper_service_pids=$(check_process "${helper_service_executable_file_path}" "${helper_service_command_interpreter}")
+    if [ -n "${helper_service_pids}" ]
+    then
+        echo "${helper_service_name} is running as pid ${helper_service_pids}."
+    else
+        echo "${helper_service_name} is not running."
+        return 1
+    fi
+}
+
+complex_service_start_helper() {
+    local helper_service_name="${1}"
+    local helper_service_user="${2}"
+    local helper_service_login_class="${3}"
+    local helper_service_command_interpreter="${4}"
+    local helper_service_executable_file_path="${5}"
+    shift 5
+    local helper_service_command_arguments="$*"
+    
+    if [ -z "${rc_fast}" ]
+    then
+        local helper_service_pids=$(check_process "${helper_service_executable_file_path}" "${helper_service_command_interpreter}")
+        if [ -n "${helper_service_pids}" ]
+        then
+            if [ -z "${rc_quiet}" ]
+            then
+                echo 1>&2 "${helper_service_name} already running? (pid=${helper_service_pids})."
+            fi
+            return 1
+        fi
+    fi
+    
+    local helper_service_start_command="sh -c \"/usr/sbin/daemon -f ${helper_service_executable_file_path} ${helper_service_command_arguments}\""
+    helper_service_start_command="limits -C ${helper_service_login_class} su -m ${helper_service_user} -c '${helper_service_start_command}'"
+    
+    check_startmsgs && echo "Starting ${helper_service_name}."
+    eval "${helper_service_start_command}"
+    local helper_service_start_result=$?
+    if [ ${helper_service_start_result} -ne 0 ]
+    then
+        warn "failed to start ${helper_service_name}"
+        return 1
+    fi
+}
+
+complex_service_stop_helper() {
+    local helper_service_name="${1}"
+    local helper_service_user="${2}"
+    local helper_service_command_interpreter="${4}"
+    local helper_service_executable_file_path="${5}"
+    
+    local helper_service_pids=$(check_process "${helper_service_executable_file_path}" "${helper_service_command_interpreter}")
+    if [ -z "${helper_service_pids}" ]
+    then
+        echo 1>&2 "${helper_service_name} not running?"
+        return 1
+    fi
+    
+    echo "Stopping ${helper_service_name}."
+    
+    local helper_service_stop_command="sh -c \"kill -TERM ${helper_service_pids}\""
+    helper_service_stop_command="su -m ${helper_service_user} -c '${helper_service_stop_command}'"
+    eval "${helper_service_stop_command}"
+    local helper_service_stop_result=$?
+    if [ ${helper_service_stop_result} -ne 0 ]
+    then
+        exit 1
+    fi
+    
+    wait_for_pids "${helper_service_pids}"
+}
+
+complex_service_poll_helper() {
+    local helper_service_name="${1}"
+    local helper_service_command_interpreter="${4}"
+    local helper_service_executable_file_path="${5}"
+    
+    local helper_service_pids=$(check_process "${helper_service_executable_file_path}" "${helper_service_command_interpreter}")
+    if [ -n "${helper_service_pids}" ]
+    then
+        wait_for_pids "${helper_service_pids}"
+    fi
+}
+
+sample_complex_service_run_command() {
+    local helper_function_name=""
+    case "${rc_arg}" in
+        "status")
+            helper_function_name="complex_service_get_status_for_helper"
+            ;;
+        "start")
+            helper_function_name="complex_service_start_helper"
+            ;;
+        "stop")
+            helper_function_name="complex_service_stop_helper"
+            ;;
+        "poll")
+            helper_function_name="complex_service_poll_helper"
+            ;;
+    esac
+    
+    local status_code=0
+    if [ -z "${helper_function_name}" ]
+    then
+        echo 1>&2 "unsupported command: ${rc_arg}."
+        status_code=1
+    else
+        local helper_function_status_code=0
+        
+        eval "${helper_function_name} \"${sample_backend_service_name}\" \"${sample_backend_service_user}\" \"${sample_backend_service_login_class}\" \"${sample_backend_service_command_interpreter}\" \"${sample_backend_service_executable_file_path}\" ${sample_backend_service_executable_arguments}"
+        helper_function_status_code=$?
+        [ ${helper_function_status_code} -ne 0 ] && status_code=${helper_function_status_code}
+        
+        if checkyesno sample_frontend_service_enable
+        then
+            eval "${helper_function_name} \"${sample_frontend_service_name}\" \"${sample_frontend_service_user}\" \"${sample_frontend_service_login_class}\" \"${sample_frontend_service_command_interpreter}\" \"${sample_frontend_service_executable_file_path}\" ${sample_frontend_service_executable_arguments}"
+            helper_function_status_code=$?
+            [ ${helper_function_status_code} -ne 0 ] && status_code=${helper_function_status_code}
+        fi
+    fi
+    return ${status_code}
+}
+
+status_cmd="sample_complex_service_run_command"
+start_cmd="sample_complex_service_run_command"
+stop_cmd="sample_complex_service_run_command"
+poll_cmd="sample_complex_service_run_command"
+
+run_rc_command "$1"
+
