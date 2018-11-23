@@ -9,21 +9,21 @@
 name="gateone"
 rcvar="${name}_enable"
 
-gateone_user="${name}"
-eval gateone_home="~${gateone_user}"
-python_interpreter="/usr/local/bin/python"
-python_major_and_minor_version="$($python_interpreter -V 2>&1 | grep -o '[0-9].[0-9]')"
-
-command="${gateone_home}/bin/${name}"
-command_interpreter="${python_interpreter}"
-start_cmd="${name}_start"
-
 load_rc_config $name
 
-gateone_start() {
-    echo "Starting ${name}."
-    run_env="env HOME=\"${gateone_home}\" PYTHONPATH=\"${gateone_home}/lib/python${python_major_and_minor_version}/site-packages\""
-    su - ${gateone_user} -c "/usr/sbin/daemon -t ${name} ${run_env} ${command} --settings_dir=\"${gateone_home}/etc/${name}\" > /dev/null 2>&1"
-}
+python_interpreter="/usr/local/bin/python"
+python_major_and_minor_version=$("${python_interpreter}" -V 2>&1 | grep -o "[0-9].[0-9]")
+
+: ${gateone_enable:=NO}
+: ${gateone_user:="${name}"}
+: ${gateone_group:="${name}"}
+: ${gateone_home:="/usr/local/gateone"}
+: ${gateone_env:="HOME=\"${gateone_home}\" PATH=\"${PATH}:/usr/local/sbin:/usr/local/bin\" PYTHONPATH=\"${gateone_home}/lib/python${python_major_and_minor_version}/site-packages\""}
+
+procname="${gateone_home}/bin/${name}"
+command_interpreter="${python_interpreter}"
+
+command="/usr/sbin/daemon"
+command_args="-f ${procname} --settings_dir=\"${gateone_home}/etc/${name}\""
 
 run_rc_command "$1"
