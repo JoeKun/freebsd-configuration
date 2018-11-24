@@ -305,6 +305,57 @@ Assuming you have an SSL certificate named `foo.com_wildcard`, install it like t
 ```
 
 
+## OpenLDAP
+
+```
+# pkg install openldap-server
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/slapd
+# cd /usr/local/etc/openldap
+# rm -f slapd.ldif
+# ln -s ../../../../freebsd-configuration/usr/local/etc/openldap/slapd.ldif
+# cd schema
+# for file_name in virtual_mail.schema virtual_mail.ldif mailing_list.schema mailing_list.ldif; do ln -s ../../../../../../freebsd-configuration/usr/local/etc/openldap/schema/${file_name}; done
+# cd /freebsd-configuration/usr/local/etc/openldap
+# chmod 444 schema/*.{schema,ldif}
+# chmod 600 slapd.ldif
+# pw group mod ssl -m ldap
+```
+
+Manually edit the following keys in `/usr/local/etc/openldap/slapd.ldif`:
+
+ * `olcTLSCACertificateFile`;
+ * `olcTLSCertificateFile`;
+ * `olcTLSCertificateKeyFile`;
+ * `olcRootPW`.
+
+Specifically, this last key, `olcRootPW`, is for the password of the root DN. Here's how you can generate a suitable blowfish password hash to avoid keeping it in clear text in the configuration file:
+
+```
+# slappasswd -h "{CRYPT}" -c '$2a$12$%.22s'
+```
+
+Import definitions from `slapd.ldif` as a `cn=config` OpenLDAP configuration, and start the `slapd` service:
+
+```
+# /usr/local/sbin/slapadd -n0 -F /usr/local/etc/openldap/slapd.d/ -l /usr/local/etc/openldap/slapd.ldif
+# service slapd start
+```
+
+To populate the LDAP directory, you may use some scripts provided as part of this repository, which take advantage of the custom schemas used above, namely `virtual_mail` and `mailing_list`.
+
+```
+# mkdir -p /opt/local/lib
+# cd /opt/local/lib
+# for file_name in ../../../freebsd-configuration/opt/local/lib/ldap_*; do ln -s "${file_name}"; done
+# mkdir -p /opt/local/bin
+# cd /opt/local/bin
+# for file_name in ../../../freebsd-configuration/opt/local/bin/ldap_*; do ln -s "${file_name}"; done
+```
+
+Some examples of how you can use these scripts to populate the LDAP directory can be found at `/freebsd-configuration/documentation/ldap/ldap_setup_multi_domain_directory_with_sample_entries`.
+
+
 ## `nginx` and `php`
 
 ```
@@ -512,57 +563,6 @@ Enable `phpPgAdmin` configuration for `nginx`.
 # ln -s ../../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf.d/phppgadmin.conf
 # service nginx restart
 ```
-
-
-## OpenLDAP
-
-```
-# pkg install openldap-server
-# cd /etc/rc.conf.d
-# ln -s ../../freebsd-configuration/etc/rc.conf.d/slapd
-# cd /usr/local/etc/openldap
-# rm -f slapd.ldif
-# ln -s ../../../../freebsd-configuration/usr/local/etc/openldap/slapd.ldif
-# cd schema
-# for file_name in virtual_mail.schema virtual_mail.ldif mailing_list.schema mailing_list.ldif; do ln -s ../../../../../../freebsd-configuration/usr/local/etc/openldap/schema/${file_name}; done
-# cd /freebsd-configuration/usr/local/etc/openldap
-# chmod 444 schema/*.{schema,ldif}
-# chmod 600 slapd.ldif
-# pw group mod ssl -m ldap
-```
-
-Manually edit the following keys in `/usr/local/etc/openldap/slapd.ldif`:
-
- * `olcTLSCACertificateFile`;
- * `olcTLSCertificateFile`;
- * `olcTLSCertificateKeyFile`;
- * `olcRootPW`.
-
-Specifically, this last key, `olcRootPW`, is for the password of the root DN. Here's how you can generate a suitable blowfish password hash to avoid keeping it in clear text in the configuration file:
-
-```
-# slappasswd -h "{CRYPT}" -c '$2a$12$%.22s'
-```
-
-Import definitions from `slapd.ldif` as a `cn=config` OpenLDAP configuration, and start the `slapd` service:
-
-```
-# /usr/local/sbin/slapadd -n0 -F /usr/local/etc/openldap/slapd.d/ -l /usr/local/etc/openldap/slapd.ldif
-# service slapd start
-```
-
-To populate the LDAP directory, you may use some scripts provided as part of this repository, which take advantage of the custom schemas used above, namely `virtual_mail` and `mailing_list`.
-
-```
-# mkdir -p /opt/local/lib
-# cd /opt/local/lib
-# for file_name in ../../../freebsd-configuration/opt/local/lib/ldap_*; do ln -s "${file_name}"; done
-# mkdir -p /opt/local/bin
-# cd /opt/local/bin
-# for file_name in ../../../freebsd-configuration/opt/local/bin/ldap_*; do ln -s "${file_name}"; done
-```
-
-Some examples of how you can use these scripts to populate the LDAP directory can be found at `/freebsd-configuration/documentation/ldap/ldap_setup_multi_domain_directory_with_sample_entries`.
 
 
 ## `phpLDAPAdmin`
