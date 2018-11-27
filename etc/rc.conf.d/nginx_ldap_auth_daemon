@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/nginx_ldap_auth_daemon: system configuration for nginx-ldap-auth-daemon
+
+nginx_ldap_auth_daemon_enable="YES"
+

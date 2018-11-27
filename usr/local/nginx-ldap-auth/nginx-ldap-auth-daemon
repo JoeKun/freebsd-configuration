@@ -1,0 +1,310 @@
+#! /usr/local/bin/python
+# -*- coding: utf-8 -*-
+#
+# nginx-ldap-auth-daemon
+#
+# Copyright © 2018 Joel Lopes Da Silva.
+# Copyright © 2014-2015 Nginx, Inc.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+#
+#
+# Based on nginx-ldap-auth-daemon.py, found in Nginx's nginx-ldap-auth 
+# repository, at: https://github.com/nginxinc/nginx-ldap-auth
+#
+
+import argparse
+import base64
+import ldap
+import os
+import signal
+import sys
+import threading
+import yaml
+
+from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from SocketServer import ThreadingMixIn
+
+
+class AuthenticationContextAttribute:
+    def __init__(self, name, header_name, configuration_key, default_value, required = True):
+        self.name = name
+        self.header_name = header_name
+        self.configuration_key = configuration_key
+        self.default_value = default_value
+        self.required = required
+
+
+class AuthenticationContext:
+    def __init__(self):
+        self.action = ""
+        self.user_name = ""
+        self.password = ""
+        self.realm = "Restricted"
+    
+    def description_for_log_message(self):
+        description = ""
+        if self.user_name != "":
+            description += "login=\"%s\"" % self.user_name
+        return description
+
+
+class LDAPAuthenticationContext(AuthenticationContext):
+    supported_attributes = [
+        AuthenticationContextAttribute(name = "realm", header_name = "X-LDAP-Realm", configuration_key = "realm", default_value = "Restricted"), 
+        AuthenticationContextAttribute(name = "ldap_server_url", header_name = "X-LDAP-URL", configuration_key = "url", default_value = ""), 
+        AuthenticationContextAttribute(name = "ldap_server_requires_start_tls", header_name = "X-LDAP-StartTLS", configuration_key = "start-tls", default_value = False), 
+        AuthenticationContextAttribute(name = "ldap_should_disable_referrals", header_name = "X-LDAP-DisableReferrals", configuration_key = "disable-referrals", default_value = False), 
+        AuthenticationContextAttribute(name = "ldap_bind_dn", header_name = "X-LDAP-BindDN", configuration_key = "bind-dn", default_value = ""), 
+        AuthenticationContextAttribute(name = "ldap_bind_password", header_name = "X-LDAP-BindPassword", configuration_key = "bind-password", default_value = ""), 
+        AuthenticationContextAttribute(name = "ldap_user_base_dn", header_name = "X-LDAP-UserBaseDN", configuration_key = "user-base-dn", default_value = ""), 
+        AuthenticationContextAttribute(name = "ldap_user_search_filter", header_name = "X-LDAP-UserSearchFilter", configuration_key = "user-search-filter", default_value = "(cn=%(user_name)s)"), 
+        AuthenticationContextAttribute(name = "ldap_group_name", header_name = "X-LDAP-GroupName", configuration_key = "group-name", default_value = "", required = False), 
+        AuthenticationContextAttribute(name = "ldap_group_base_dn", header_name = "X-LDAP-GroupBaseDN", configuration_key = "group-base-dn", default_value = "", required = False), 
+        AuthenticationContextAttribute(name = "ldap_group_search_filter", header_name = "X-LDAP-GroupSearchFilter", configuration_key = "group-search-filter", default_value = "(&(cn=%(group_name)s)(|(member=%(user_name)s)(member=%(user_dn)s)))"), 
+    ]
+    
+    def __init__(self, headers = None, default_ldap_authentication_context = None):
+        AuthenticationContext.__init__(self)
+        for attribute in self.__class__.supported_attributes:
+            attribute_name = attribute.name
+            attribute_default_value = attribute.default_value
+            if default_ldap_authentication_context != None:
+                attribute_default_value = getattr(default_ldap_authentication_context, attribute_name)
+            attribute_value = attribute_default_value
+            if headers != None:
+                attribute_value = headers.get(attribute.header_name, attribute_default_value)
+            setattr(self, attribute_name, attribute_value)
+    
+    def description_for_log_message(self):
+        description = AuthenticationContext.description_for_log_message(self)
+        if self.ldap_server_url != "":
+            if description != "":
+                description += ", "
+            description += "server=\"%s\"" % self.ldap_server_url
+        return description
+
+
+class AuthenticationHTTPServer(ThreadingMixIn, HTTPServer):
+    pass
+
+
+class AuthenticationHandler(BaseHTTPRequestHandler):
+    
+    # Return True if request is processed and response sent, otherwise False.
+    # Set user_name and password on context object, which is assumed to be an 
+    # instance of a subclass of AuthenticationContext.
+    def do_GET_preflight(self, context):
+        did_process_request = False
+        context.action = "checking authorization header"
+        authorization_header = self.headers.get("Authorization")
+        authorization_header_prefix = "Basic "
+        if authorization_header is None or not authorization_header.lower().startswith(authorization_header_prefix.lower()):
+            self.handle_authentication_failure(context)
+            did_process_request = True
+        else:
+            context.action = "decoding credentials"
+            try:
+                decoded_authorization = base64.b64decode(authorization_header[len(authorization_header_prefix):])
+                user_name, password = decoded_authorization.split(":", 1)
+                context.user_name = user_name
+                context.password = password
+            except:
+                self.handle_authentication_failure(context)
+                did_process_request = True
+        return did_process_request
+    
+    
+    # Log the error and complete the request with appropriate status.
+    def handle_authentication_failure(self, context, error_message = None):
+        formatted_error_message = "Error while " + context.action
+        if error_message:
+            formatted_error_message += ": " + error_message
+        
+        exception, value, _ = sys.exc_info()
+        if exception != None:
+            formatted_error_message += ": " + str(value)
+        
+        context_description = context.description_for_log_message()
+        if context_description != "":
+            formatted_error_message += ", %s" % context_description
+        
+        self.log_error(formatted_error_message)
+        self.send_response(401)
+        self.send_header("WWW-Authenticate", "Basic realm=\"%s\"" % context.realm)
+        self.send_header("Cache-Control", "no-cache")
+        self.end_headers()
+    
+    
+    def log_message(self, format, *args):
+        address = "-"
+        if len(self.client_address) > 0:
+            address = BaseHTTPRequestHandler.address_string(self)
+        sys.stdout.write("%s\t[%s]\t%s\n" % (self.log_date_time_string(), address, (format % args)))
+        sys.stdout.flush()
+    
+    
+    def log_error(self, format, *args):
+        self.log_message(format, *args)
+
+
+# Verify credentials against LDAP server.
+class LDAPAuthenticationHandler(AuthenticationHandler):
+    default_authentication_context = LDAPAuthenticationContext()
+    
+    # GET handler for the authentication request.
+    def do_GET(self):
+        context = LDAPAuthenticationContext(self.headers, self.__class__.default_authentication_context)
+        did_process_request = False
+        
+        if not did_process_request:
+            context.action = "checking input parameters"
+            for attribute in context.__class__.supported_attributes:
+                attribute_name = attribute.name
+                attribute_value = getattr(context, attribute_name)
+                if attribute_value == None or attribute_value == "":
+                    self.handle_authentication_failure(context, "required \"%s\" header was not passed, nor was the corresponding \"%s\" configuration key defined" % (attribute.header_name, attribute.configuration_key))
+                    did_process_request = True
+                    break
+        
+        if not did_process_request:
+            context.action = "initializing basic authentication handler"
+            did_process_request = self.do_GET_preflight(context)
+        
+        if not did_process_request:
+            context.action = "checking for empty password"
+            if context.password == "":
+                self.handle_authentication_failure(context, "attempt to use empty password")
+                did_process_request = True
+        
+        try:
+            if not did_process_request:
+                context.action = "initializing LDAP connection"
+                ldap_handle = ldap.initialize(context.ldap_server_url);
+                ldap_handle.protocol_version=ldap.VERSION3
+                if context.ldap_server_requires_start_tls:
+                    ldap_handle.start_tls_s()
+                if context.ldap_should_disable_referrals:
+                    ldap_handle.set_option(ldap.OPT_REFERRALS, 0)
+                
+                context.action = "binding as search user"
+                ldap_handle.bind_s(context.ldap_bind_dn, context.ldap_bind_password, ldap.AUTH_SIMPLE)
+                
+                context.action = "preparing user search filter"
+                user_search_filter = context.ldap_user_search_filter % { "user_name": context.user_name }
+                
+                context.action = "running user search query"
+                self.log_message("searching on server \"%s\" with base DN \"%s\" and filter \"%s\"" % (context.ldap_server_url, context.ldap_user_base_dn, user_search_filter))
+                user_search_results = ldap_handle.search_s(context.ldap_user_base_dn, ldap.SCOPE_SUBTREE, user_search_filter, ["objectClass"], 1)
+                
+                context.action = "verifying user search query results"
+                number_of_user_search_results = len(user_search_results)
+                if number_of_user_search_results < 1:
+                    self.handle_authentication_failure(context, "no objects found")
+                    did_process_request = True
+                else:
+                    if number_of_user_search_results > 1:
+                        self.log_message("note: user search filter matched multiple objects: %d, using first" % number_of_user_search_results)
+                    
+                    found_user_entry = user_search_results[0]
+                    found_user_dn = found_user_entry[0]
+                    if found_user_dn == None:
+                        self.handle_authentication_failure(context, "matched user object has no DN")
+                        did_process_request = True
+                    
+                    if not did_process_request:
+                        self.log_message("attempting to bind using DN \"%s\"" % found_user_dn)
+                        context.action = "binding as an existing user \"%s\"" % found_user_dn
+                        ldap_handle.bind_s(found_user_dn, context.password, ldap.AUTH_SIMPLE)
+                        
+                        if context.ldap_group_name != "" and context.ldap_group_base_dn != "" and context.ldap_group_search_filter != "":
+                            context.action = "preparing group search filter"
+                            group_search_filter = context.ldap_group_search_filter % {
+                                "group_name": context.ldap_group_name, 
+                                "user_name": context.user_name, 
+                                "user_dn": found_user_dn, 
+                            }
+                            
+                            context.action = "running group search query"
+                            self.log_message("searching on server \"%s\" with base DN \"%s\" and filter \"%s\"" % (context.ldap_server_url, context.ldap_group_base_dn, group_search_filter))
+                            group_search_results = ldap_handle.search_s(context.ldap_group_base_dn, ldap.SCOPE_SUBTREE, group_search_filter, ["objectClass"], 1)
+                            
+                            context.action = "verifying group search query results"
+                            number_of_group_search_results = len(group_search_results)
+                            if number_of_group_search_results < 1:
+                                self.handle_authentication_failure(context, "no objects found")
+                                did_process_request = True
+                            else:
+                                if number_of_group_search_results > 1:
+                                    self.log_message("note: group search filter matched multiple objects: %d, using first" % number_of_user_search_results)
+                                
+                                found_group_entry = group_search_results[0]
+                                found_group_dn = found_group_entry[0]
+                                if found_group_entry == None:
+                                    self.handle_authentication_failure(context, "matched group object has no DN")
+                                    did_process_request = True
+                                
+                                self.log_message("found member attribute for user_name \"%s\" or user_dn \"%s\" in group named \"%s\" with DN: \"%s\"" % (context.user_name, found_user_dn, context.ldap_group_name, found_group_dn))
+                        
+                        if not did_process_request:
+                            # Successfully authenticated user
+                            self.log_message("Auth OK for user \"%s\"" % context.user_name)
+                            self.send_response(200)
+                            self.end_headers()
+                            did_process_request = True
+            
+        except:
+            self.handle_authentication_failure(context)
+
+
+def exit_handler(signal, frame):
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    arguments_parser = argparse.ArgumentParser(description = "Simple Nginx LDAP authentication helper.")
+    arguments_group = arguments_parser.add_argument_group(title = "required arguments")
+    arguments_group.add_argument("-c", "--configuration", 
+        metavar = "/path/to/configuration-file.conf", 
+        type = file, 
+        dest = "configuration_file", 
+        help = "Absolute path to required configuration file.", 
+        required = True
+    )
+    arguments = arguments_parser.parse_args()
+    
+    configuration_dictionary = yaml.load(arguments.configuration_file)
+    default_authentication_context = LDAPAuthenticationHandler.default_authentication_context
+    for attribute in default_authentication_context.__class__.supported_attributes:
+        configuration_key = attribute.configuration_key
+        if configuration_key in configuration_dictionary:
+            setattr(default_authentication_context, attribute.name, configuration_dictionary[configuration_key])
+    
+    listener_address = ("localhost", configuration_dictionary["port"])
+    server = AuthenticationHTTPServer(listener_address, LDAPAuthenticationHandler)
+    signal.signal(signal.SIGINT, exit_handler)
+    signal.signal(signal.SIGTERM, exit_handler)
+    
+    sys.stdout.write("Start listening on %s:%d...\n" % listener_address)
+    sys.stdout.flush()
+    server.serve_forever()
+

@@ -356,11 +356,30 @@ To populate the LDAP directory, you may use some scripts provided as part of thi
 Some examples of how you can use these scripts to populate the LDAP directory can be found at `/freebsd-configuration/documentation/ldap/ldap_setup_multi_domain_directory_with_sample_entries`.
 
 
-## `nginx` and `php`
+## `nginx`, `nginx-ldap-auth-daemon` and `php`
 
 ```
 # pkg install nginx
 # pkg install php71
+```
+
+Install `nginx-ldap-auth-daemon`:
+
+```
+# cd /usr/local
+# ln -s ../../freebsd-configuration/usr/local/nginx-ldap-auth
+# chown root:www /usr/local/nginx-ldap-auth/nginx-ldap-auth-daemon.conf
+# chmod 640 /usr/local/nginx-ldap-auth/nginx-ldap-auth-daemon.conf
+```
+
+Manually edit `/usr/local/nginx-ldap-auth/nginx-ldap-auth-daemon.conf` with the right settings for connecting to your LDAP server.
+
+Enable `nginx-ldap-auth-daemon`:
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/nginx_ldap_auth_daemon
+# service nginx-ldap-auth-daemon start
 ```
 
 Configure `php`:
@@ -395,7 +414,7 @@ Configure `nginx`:
 
 # cd /usr/local/etc/nginx
 # rm -f nginx.conf
-# for file_name in nginx.conf error_pages php php_ssl redirect_to_ssl ssl_wildcard_certificate; do ln -s ../../../../freebsd-configuration/usr/local/etc/nginx/${file_name}; done
+# for file_name in nginx.conf error_pages php php_ssl php_ssl_auth_proxy redirect_to_ssl ssl_wildcard_certificate; do ln -s ../../../../freebsd-configuration/usr/local/etc/nginx/${file_name}; done
 ```
 
 Manually edit `ssl_certificate` and `ssl_certificate_key` in `/usr/local/etc/nginx/ssl_wildcard_certificate` to point to your own SSL certificate.
@@ -406,9 +425,17 @@ Manually edit `ssl_certificate` and `ssl_certificate_key` in `/usr/local/etc/ngi
 # ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/default.conf
 # ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf
 # mkdir admin.foo.com.conf.d
+# mkdir -p /var/cache/nginx/admin.foo.com/auth_cache
+# chown -R www:www /var/cache/nginx
 ```
 
-Manually edit `server_name` directives in `/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf`.
+Manually edit the following in `/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf`:
+
+ * `server_name`;
+ * `proxy_cache_path`, to match the `auth_cache` directory created just earlier;
+ * `proxy_cache`;
+ * `proxy_set_header X-LDAP-UserBaseDN`;
+ * `proxy_set_header X-LDAP-GroupBaseDN`.
 
 ```
 # cd /etc/rc.conf.d

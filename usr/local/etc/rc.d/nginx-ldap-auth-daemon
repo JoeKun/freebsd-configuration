@@ -1,0 +1,40 @@
+#! /bin/sh
+
+# PROVIDE: nginx_ldap_auth_daemon
+# REQUIRE: LOGIN DAEMON
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="nginx_ldap_auth_daemon"
+rcvar="${name}_enable"
+
+load_rc_config $name
+
+: ${nginx_ldap_auth_daemon_enable:=NO}
+: ${nginx_ldap_auth_daemon_user:="www"}
+: ${nginx_ldap_auth_daemon_group:="www"}
+: ${nginx_ldap_auth_daemon_name:="nginx-ldap-auth-daemon"}
+: ${nginx_ldap_auth_daemon_home:="/usr/local/nginx-ldap-auth"}
+: ${nginx_ldap_auth_daemon_executable_file_name:="${nginx_ldap_auth_daemon_name}"}
+: ${nginx_ldap_auth_daemon_executable_file_path:="${nginx_ldap_auth_daemon_home}/${nginx_ldap_auth_daemon_executable_file_name}"}
+: ${nginx_ldap_auth_daemon_configuration_file_path:="${nginx_ldap_auth_daemon_home}/${nginx_ldap_auth_daemon_executable_file_name}.conf"}
+: ${nginx_ldap_auth_daemon_log_directory_path:="/var/log/nginx-ldap-auth"}
+: ${nginx_ldap_auth_daemon_log_file_path:="${nginx_ldap_auth_daemon_log_directory_path}/${nginx_ldap_auth_daemon_name}.log"}
+: ${nginx_ldap_auth_daemon_executable_arguments:="--configuration \"${nginx_ldap_auth_daemon_configuration_file_path}\""}
+: ${nginx_ldap_auth_daemon_command_interpreter:="/usr/local/bin/python"}
+
+procname="${nginx_ldap_auth_daemon_executable_file_path}"
+command_interpreter="${nginx_ldap_auth_daemon_command_interpreter}"
+
+command="/usr/sbin/daemon"
+command_args="-o \"${nginx_ldap_auth_daemon_log_file_path}\" ${procname} ${nginx_ldap_auth_daemon_executable_arguments}"
+
+nginx_ldap_auth_daemon_prestart() {
+    install -d -m 0700 -o "${nginx_ldap_auth_daemon_user}" -g "${nginx_ldap_auth_daemon_group}" "${nginx_ldap_auth_daemon_log_directory_path}"
+}
+
+start_precmd="nginx_ldap_auth_daemon_prestart"
+
+run_rc_command "$1"
+
