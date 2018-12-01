@@ -366,6 +366,7 @@ Some examples of how you can use these scripts to populate the LDAP directory ca
 Install `nginx-ldap-auth-daemon`:
 
 ```
+# pkg install py27-ldap py27-yaml
 # cd /usr/local
 # ln -s ../../freebsd-configuration/usr/local/nginx-ldap-auth
 # chown root:www /usr/local/nginx-ldap-auth/nginx-ldap-auth-daemon.conf
