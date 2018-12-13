@@ -50,7 +50,7 @@ You should then edit the name and email fields in the user section of this `.git
 ## `zsh`
 
 ```
-# pkg install zsh figlet
+# pkg install zsh figlet fortune-mod-freebsd-classic
 ```
 
 Link to global `zsh` configuration files:
