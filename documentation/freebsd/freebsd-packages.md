@@ -1387,6 +1387,8 @@ Enable relevant daemons:
 # service netatalk start
 ```
 
+For better performance and possibly better reliability with Time Machine backups, make sure to follow [this tutorial](http://endlessgeek.com/2014/03/improve-time-machine-performance-big-bands/).
+
 
 ## Plex Media Server
 
