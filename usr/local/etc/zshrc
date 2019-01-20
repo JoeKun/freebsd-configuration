@@ -29,28 +29,23 @@ alias lla="ls -lA"
 alias updatedb="pushd / && /usr/libexec/locate.updatedb ; popd"
 
 # Favor some GNU variants of common developer tools.
-which gpatch > /dev/null
-if [[ $? -eq 0 ]]
+if [[ ${+commands[gpatch]} -ne 0 ]]
 then
     alias patch="gpatch"
 else
     alias patch="patch --posix"
 fi
-function make() {
-    pwd | grep "^\/usr\/ports" &> /dev/null
-    if [[ $? -eq 0 ]]
-    then
-        /usr/bin/make $*
-    else
-        which gmake > /dev/null
-        if [[ $? -eq 0 ]]
+if [[ ${+commands[gmake]} -ne 0 ]]
+then
+    function make() {
+        if [[ $(pwd) == "/usr/ports"* ]]
         then
-            gmake $*
+            command make "$@"
         else
-            /usr/bin/make $*
+            gmake "$@"
         fi
-    fi
-}
+    }
+fi
 
 # Some handy aliases
 alias c="clear"
@@ -67,9 +62,9 @@ alias screen="screen -U"
 function su() {
     if [[ $# -eq 1 ]] && [[ "${1}" == "pgsql" ]]
     then
-        /usr/bin/su ${1} -c "SHELL=$(which zsh) zsh"
+        command su ${1} -c "SHELL=${commands[zsh]} zsh"
     else
-        /usr/bin/su $*
+        command su "$@"
     fi
 }
 
@@ -130,7 +125,7 @@ case ${TERM} in
 esac
 
 # Color management for `ls` (exporting LS_COLORS)
-if [[ -x /usr/bin/dircolors ]]
+if [[ ${+commands[dircolors]} -ne 0 ]]
 then
     if [[ -r ~/.dir_colors ]]
     then
