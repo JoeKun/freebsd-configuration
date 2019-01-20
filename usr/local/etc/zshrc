@@ -26,7 +26,7 @@ alias la="ls -A"
 alias lla="ls -lA"
 
 # updatedb
-alias updatedb="cd / && /usr/libexec/locate.updatedb ; cd - > /dev/null"
+alias updatedb="pushd / && /usr/libexec/locate.updatedb ; popd"
 
 # Favor some GNU variants of common developer tools.
 which gpatch > /dev/null
