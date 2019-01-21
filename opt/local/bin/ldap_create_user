@@ -40,6 +40,7 @@ user_virtual_mail_aliases=()
 user_virtual_mail_destination=""
 user_virtual_mailbox_enabled=0
 user_password=""
+user_supported_applications=()
 
 number_of_arguments=$#
 for ((i = 1; i <= ${number_of_arguments}; i++))
@@ -88,12 +89,17 @@ do
             i=$((i + 1))
             user_password="${!i}"
             ;;
+        "--supported-application")
+            i=$((i + 1))
+            user_supported_applications+=("${!i}")
+            ;;
         "--system")
             is_system_user=1
             ;;
     esac
 done
 number_of_user_virtual_mail_aliases=${#user_virtual_mail_aliases[@]}
+number_of_user_supported_applications=${#user_supported_applications[@]}
 
 
 user_dn=""
@@ -185,9 +191,8 @@ then
     if [[ -z "${user_virtual_mail_destination}" ]] && [[ ${is_virtual_mail_alias_only} -eq 0 ]] && [[ ${is_system_user} -eq 0 ]]
     then
         should_enable_virtual_mailbox=""
-        read -p "Do you want a local virtual mailbox to be created for ${user_rdn_attribute_value}@${domain_name}? (please answer yes or no): " should_enable_virtual_mailbox
-        should_enable_virtual_mailbox=$(echo "${should_enable_virtual_mailbox}" | tr "[:upper:]" "[:lower:]")
-        if [[ "${should_enable_virtual_mailbox}" == "y"* ]] || [[ "${should_enable_virtual_mailbox}" == "t"* ]]
+        read -p "Do you want a local virtual mailbox to be created for ${user_rdn_attribute_value}@${domain_name}? [y/N]: " should_enable_virtual_mailbox
+        if [[ "${should_enable_virtual_mailbox}" == [YyTt1]* ]]
         then
             user_virtual_mailbox_enabled=1
         fi
@@ -235,6 +240,36 @@ then
     then
         user_additional_attributes+=("virtualMailboxEnabled: TRUE")
     fi
+fi
+if [[ ${did_prompt_for_any_option} -ne 0 ]] && [[ ${number_of_user_supported_applications} -eq 0 ]]
+then
+    user_supported_application_from_prompting=""
+    should_prompt_for_supported_application=1
+    while [[ ${should_prompt_for_supported_application} -ne 0 ]]
+    do
+        if [[ -z "${user_supported_application_from_prompting}" ]]
+        then
+            read -p "Supported application (leave empty if no opt-in application is supported): " -r user_supported_application_from_prompting
+        else
+            read -p "Additional supported application (leave empty if no additional opt-in application is supported): " -r user_supported_application_from_prompting
+        fi
+        if [[ -n "${user_supported_application_from_prompting}" ]]
+        then
+            user_supported_applications+=("${user_supported_application_from_prompting}")
+        else
+            should_prompt_for_supported_application=0
+        fi
+    done
+    number_of_user_supported_applications=${#user_supported_applications[@]}
+fi
+if [[ ${number_of_user_supported_applications} -gt 0 ]]
+then
+    user_object_class_attributes+=("objectClass: applicationParticipant")
+    for ((i = 0; i < ${number_of_user_supported_applications}; i++))
+    do
+        user_supported_application="${user_supported_applications[${i}]}"
+        user_additional_attributes+=("supportedApplication: ${user_supported_application}")
+    done
 fi
 
 if [[ ${is_virtual_mail_alias_only} -eq 0 ]]

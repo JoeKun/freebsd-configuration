@@ -1,0 +1,33 @@
+# /usr/local/etc/openldap/schema/fully_qualified_group.schema
+
+#-----------------------------------------------------------------------
+# Schema OID
+#-----------------------------------------------------------------------
+
+objectIdentifier fullyQualifiedGroupSchemaOID 1.3.6.1.4.1.4203.666.57
+
+
+#-----------------------------------------------------------------------
+# Attributes
+#-----------------------------------------------------------------------
+
+attributeType ( fullyQualifiedGroupSchemaOID:1.0
+    NAME 'fullyQualifiedGroupName'
+    DESC 'Fully qualified name of group (e.g. this may include redundant information such as the domain component from the distinguished name of the entry)'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256}
+    SINGLE-VALUE )
+
+
+#-----------------------------------------------------------------------
+# Classes
+#-----------------------------------------------------------------------
+
+objectClass ( fullyQualifiedGroupSchemaOID:100
+    NAME 'fullyQualifiedGroup'
+    SUP top AUXILIARY
+    DESC 'Fully qualified group'
+    MUST ( cn $ fullyQualifiedGroupName )
+    MAY ( description ) )
+

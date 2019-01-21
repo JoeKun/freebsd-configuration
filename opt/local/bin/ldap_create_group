@@ -30,7 +30,10 @@ popd > /dev/null
 did_prompt_for_any_option=0
 domain_name=""
 group_cn=""
+group_is_fully_qualified=0
+group_fully_qualified_name=""
 group_members=()
+group_supported_applications=()
 
 number_of_arguments=$#
 for ((i = 1; i <= ${number_of_arguments}; i++))
@@ -45,13 +48,31 @@ do
             i=$((i + 1))
             domain_name="${!i}"
             ;;
+        "--fully-qualified")
+            group_is_fully_qualified=1
+            ;;
+        "--fully-qualified-group-name")
+            i=$((i + 1))
+            group_fully_qualified_name="${!i}"
+            group_is_fully_qualified=1
+            ;;
         "--member")
             i=$((i + 1))
             group_members+=("${!i}")
             ;;
+        "--supported-application")
+            i=$((i + 1))
+            group_supported_applications+=("${!i}")
+            ;;
     esac
 done
 number_of_group_members=${#group_members[@]}
+number_of_group_supported_applications=${#group_supported_applications[@]}
+
+group_object_class_attributes=()
+group_object_class_attributes+=("objectClass: top")
+group_object_class_attributes+=("objectClass: groupOfNames")
+group_additional_attributes=()
 
 if [[ -z "${domain_name}" ]]
 then
@@ -63,6 +84,64 @@ if [[ -z "${group_cn}" ]]
 then
     read -p "Name of group to add to LDAP directory: " -r group_cn
     did_prompt_for_any_option=1
+fi
+
+group_dn="cn=${group_cn},ou=groups,dc=${domain_name},ou=directory"
+group_additional_attributes+=("cn: ${group_cn}")
+
+if [[ ${did_prompt_for_any_option} -ne 0 ]] && [[ ${group_is_fully_qualified} -eq 0 ]]
+then
+    group_is_fully_qualified_answer_from_prompting=""
+    read -p "Fully qualified? [y/N]: " -r group_is_fully_qualified_answer_from_prompting
+    if [[ "${group_is_fully_qualified_answer_from_prompting}" == [YyTt1]* ]]
+    then
+        group_is_fully_qualified=1
+    fi
+fi
+if [[ ${group_is_fully_qualified} -ne 0 ]]
+then
+    group_object_class_attributes+=("objectClass: fullyQualifiedGroup")
+    group_default_fully_qualified_name="${group_cn}%${domain_name}"
+    if [[ ${did_prompt_for_any_option} -ne 0 ]] && [[ -z "${group_fully_qualified_name}" ]]
+    then
+        read -p "Fully qualified group name? [${group_default_fully_qualified_name}]: " -r group_fully_qualified_name
+    fi
+    if [[ -z "${group_fully_qualified_name}" ]]
+    then
+        group_fully_qualified_name="${group_default_fully_qualified_name}"
+    fi
+    group_additional_attributes+=("fullyQualifiedGroupName: ${group_fully_qualified_name}")
+fi
+
+if [[ ${did_prompt_for_any_option} -ne 0 ]] && [[ ${number_of_group_supported_applications} -eq 0 ]]
+then
+    group_supported_application_from_prompting=""
+    should_prompt_for_supported_application=1
+    while [[ ${should_prompt_for_supported_application} -ne 0 ]]
+    do
+        if [[ -z "${group_supported_application_from_prompting}" ]]
+        then
+            read -p "Supported application (leave empty if no opt-in application is supported): " -r group_supported_application_from_prompting
+        else
+            read -p "Additional supported application (leave empty if no additional opt-in application is supported): " -r group_supported_application_from_prompting
+        fi
+        if [[ -n "${group_supported_application_from_prompting}" ]]
+        then
+            group_supported_applications+=("${group_supported_application_from_prompting}")
+        else
+            should_prompt_for_supported_application=0
+        fi
+    done
+    number_of_group_supported_applications=${#group_supported_applications[@]}
+fi
+if [[ ${number_of_group_supported_applications} -gt 0 ]]
+then
+    group_object_class_attributes+=("objectClass: applicationParticipant")
+    for ((i = 0; i < ${number_of_group_supported_applications}; i++))
+    do
+        group_supported_application="${group_supported_applications[${i}]}"
+        group_additional_attributes+=("supportedApplication: ${group_supported_application}")
+    done
 fi
 
 if [[ ${number_of_group_members} -eq 0 ]]
@@ -86,12 +165,6 @@ then
     done
     number_of_group_members=${#group_members[@]}
 fi
-
-group_object_attributes=()
-group_object_attributes+=("dn: cn=${group_cn},ou=groups,dc=${domain_name},ou=directory")
-group_object_attributes+=("objectClass: top")
-group_object_attributes+=("objectClass: groupOfNames")
-group_object_attributes+=("cn: ${group_cn}")
 for ((i = 0; i < ${number_of_group_members}; i++))
 do
     group_member="${group_members[${i}]}"
@@ -102,11 +175,15 @@ do
             group_member="uid=${group_member},ou=users,dc=${domain_name},ou=directory"
             ;;
     esac
-    group_object_attributes+=("member: ${group_member}")
+    group_additional_attributes+=("member: ${group_member}")
 done
-group_object_combined_attributes=$(ldap_combine_attributes "${group_object_attributes[@]}")
+
+group_combined_object_class_attributes=$(ldap_combine_attributes "${group_object_class_attributes[@]}")
+group_combined_additional_attributes=$(ldap_combine_attributes "${group_additional_attributes[@]}")
 
 ldap_perform_standard_add $* ${did_prompt_for_any_option} "
-${group_object_combined_attributes}
+dn: ${group_dn}
+${group_combined_object_class_attributes}
+${group_combined_additional_attributes}
 "
 

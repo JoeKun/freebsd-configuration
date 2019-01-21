@@ -1,0 +1,17 @@
+# /usr/local/etc/openldap/schema/fully_qualified_group.ldif
+
+# This file was automatically generated from fully_qualified_group.schema;
+# see that file for complete references.
+
+dn: cn=fully_qualified_group,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: fully_qualified_group
+olcObjectIdentifier: {0}fullyQualifiedGroupSchemaOID 1.3.6.1.4.1.4203.666.57
+olcAttributeTypes: {0}( fullyQualifiedGroupSchemaOID:1.0 NAME 'fullyQualifie
+ dGroupName' DESC 'Fully qualified name of group (e.g. this may include redu
+ ndant information such as the domain component from the distinguished name 
+ of the entry)' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SY
+ NTAX 1.3.6.1.4.1.1466.115.121.1.15{256} SINGLE-VALUE )
+olcObjectClasses: {0}( fullyQualifiedGroupSchemaOID:100 NAME 'fullyQualified
+ Group' DESC 'Fully qualified group' SUP top AUXILIARY MUST ( cn $ fullyQual
+ ifiedGroupName ) MAY description )

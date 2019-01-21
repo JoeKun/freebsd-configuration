@@ -316,7 +316,7 @@ Assuming you have an SSL certificate named `foo.com_wildcard`, install it like t
 # rm -f slapd.ldif
 # ln -s ../../../../freebsd-configuration/usr/local/etc/openldap/slapd.ldif
 # cd schema
-# for file_name in virtual_mail.schema virtual_mail.ldif mailing_list.schema mailing_list.ldif; do ln -s ../../../../../../freebsd-configuration/usr/local/etc/openldap/schema/${file_name}; done
+# for file_name in virtual_mail.schema virtual_mail.ldif mailing_list.schema mailing_list.ldif application_participant.schema application_participant.ldif fully_qualified_group.schema fully_qualified_group.ldif; do ln -s ../../../../../../freebsd-configuration/usr/local/etc/openldap/schema/${file_name}; done
 # cd /freebsd-configuration/usr/local/etc/openldap
 # chmod 444 schema/*.{schema,ldif}
 # chmod 600 slapd.ldif
@@ -343,7 +343,7 @@ Import definitions from `slapd.ldif` as a `cn=config` OpenLDAP configuration, an
 # service slapd start
 ```
 
-To populate the LDAP directory, you may use some scripts provided as part of this repository, which take advantage of the custom schemas used above, namely `virtual_mail` and `mailing_list`.
+To populate the LDAP directory, you may use some scripts provided as part of this repository, which take advantage of the custom schemas used above, namely `virtual_mail`, `mailing_list`, `fullyQualifiedGroup` and `applicationParticipant`.
 
 ```
 # mkdir -p /opt/local/lib

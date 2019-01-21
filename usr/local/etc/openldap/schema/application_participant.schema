@@ -1,0 +1,32 @@
+# /usr/local/etc/openldap/schema/application_participant.schema
+
+#-----------------------------------------------------------------------
+# Schema OID
+#-----------------------------------------------------------------------
+
+objectIdentifier applicationParticipantSchemaOID 1.3.6.1.4.1.4203.666.65
+
+
+#-----------------------------------------------------------------------
+# Attributes
+#-----------------------------------------------------------------------
+
+attributeType ( applicationParticipantSchemaOID:1.0
+    NAME 'supportedApplication'
+    DESC 'Name of supported application for current participant entry'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256} )
+
+
+#-----------------------------------------------------------------------
+# Classes
+#-----------------------------------------------------------------------
+
+objectClass ( applicationParticipantSchemaOID:100
+    NAME 'applicationParticipant'
+    SUP top AUXILIARY
+    DESC 'Application participant'
+    MUST ( cn )
+    MAY ( supportedApplication ) )
+
