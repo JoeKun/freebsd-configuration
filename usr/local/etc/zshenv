@@ -54,6 +54,12 @@ umask 022
 # Use color for grep
 export GREP_OPTIONS='--color=auto'
 
+# Set active coloring theme for markdown viewer mdv (if present).
+if [[ ${+commands[mdv]} -ne 0 ]]
+then
+    export MDV_THEME="880.1331" # Bubblegum Bitch
+fi
+
 # Make sure user settings for login is not preserved from previous shells.
 unset LOGIN_GREETING_NAME
 unset LOGIN_GREETING_SLANTED_TEXT_DISABLED

@@ -47,6 +47,14 @@ then
     }
 fi
 
+# Combine markdown viewer mdv with pager (if present).
+if [[ ${+commands[mdv]} -ne 0 ]]
+then
+    function mdv() {
+        command mdv "$@" | ${PAGER}
+    }
+fi
+
 # Some handy aliases
 alias c="clear"
 alias less="less --quiet -M"
