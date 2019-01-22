@@ -112,6 +112,13 @@ inet_interfaces = all
 # relayhost = smtp.isp.com
 # fallback_relay = 
 
+# Accept mail with an address literal instead of the domain, to ensure
+# backwards compatibility and to help with delivery in certain non-optimal
+# situations, like a DNS server being down/unresponsive. This is typically
+# needed for servers behind a NAT, in which case we need to put the externally
+# accessible public IP address as the value of proxy_interfaces.
+proxy_interfaces = 1.2.3.4
+
 
 #-----------------------------------------------------------
 # TLS options
