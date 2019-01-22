@@ -12,13 +12,25 @@ acl myself {
 
 // BuddyNS domain name service transfer servers:
 //  - a.transfer.buddyns.com;
-//  - b.transfer.buddyns.com.
+//  - b.transfer.buddyns.com;
+//  - c.transfer.buddyns.com;
+//  - b.ns.buddyns.com;
+//  - k.ns.buddyns.com.
 acl buddyns-transfer {
 	173.244.206.26;
 	2607:f0d0:1005:72::100;
 
 	88.198.106.11;
 	2a01:4f8:d12:d01::10:100;
+
+	103.6.87.125;
+	2a01:4f8:d12:d01::10:100;
+
+	108.61.224.67;
+	2001:19f0:6400:8642::3;
+
+	185.136.176.247;
+	2a06:fdc0:fade:2f7::1;
 };
 
 // baz.org
