@@ -242,6 +242,7 @@ Manually edit `hostname` in `/etc/rc.conf.d/hostname`.
 
 ```
 # pkg install colordiff
+# pkg install diff-so-fancy
 # pkg install mmv
 # pkg install htop
 # pkg install screen

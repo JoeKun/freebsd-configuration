@@ -1,22 +1,33 @@
 [user]
 	name = GitLab
 	email = gitlab@foo.com
+[core]
+	abbrev = 12
+	autocrlf = input
+	pager = /usr/local/bin/diff-so-fancy | vimpager
+[push]
+	default = simple
 [apply]
 	whitespace = nowarn
 [color]
 	ui = true
+[color "diff"]
+	meta = yellow
+	frag = magenta bold
+	commit = yellow bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
 [color "diff-highlight"]
 	oldNormal = red bold
 	oldHighlight = red bold 52
 	newNormal = green bold
 	newHighlight = green bold 22
-[core]
-	abbrev = 12
-	autocrlf = input
-	pager = /usr/local/share/git-core/contrib/diff-highlight/diff-highlight | vimpager
+[diff-so-fancy]
+	stripLeadingSymbols = false
+	markEmptyLines = false
+	rulerWidth = 120
 [gc]
 	auto = 0
-[push]
-	default = simple
 [repack]
 	writeBitmaps = true
