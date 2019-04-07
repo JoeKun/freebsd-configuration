@@ -25,13 +25,13 @@ ns1                     IN      AAAA    2607:f7a0:a:23::3
 ns2                     IN      A       107.191.99.111
 ns2                     IN      AAAA    2604:180:2:4cf::3
 
-; g.ns.buddyns.com: Canada, Vancouver
-ns3                     IN      A       199.167.17.21
-ns3                     IN      AAAA    2607:d500:201:5::10
+; g.ns.buddyns.com: USA, Seattle
+ns3                     IN      A       192.184.93.99
+ns3                     IN      AAAA    2604:180:1:92a::3
 
-; c.ns.buddyns.com: Europe, Germany
-ns4                     IN      A       88.198.106.11
-ns4                     IN      AAAA    2a01:4f8:d12:d01::10:4
+; j.ns.buddyns.com: Europe, Netherlands
+ns4                     IN      A       185.34.136.178
+ns4                     IN      AAAA    2a00:dcc7:d3ff:88b2::1
 
 ; l.ns.buddyns.com: Asia, Japan
 ns5                     IN      A       45.77.29.133
