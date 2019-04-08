@@ -52,6 +52,7 @@ gitaly_pid_path="${gitlab_pid_path}/gitaly.pid"
 gitaly_log="${gitlab_root}/log/gitaly.log"
 gitlab_rails_environment=${gitlab_rails_environment:-"production"}
 gitlab_additional_environment_variables=${gitlab_additional_environment_variables:-"PATH=\"$PATH:/usr/local/sbin:/usr/local/bin\""}
+gitlab_ruby_environment_wrapper=${gitlab_ruby_environment_wrapper:-"${gitlab_home}/bin/gitlab_ruby_environment_wrapper"}
 
 # Redefine most of these variables without the "gitlab_" prefix for
 # backward compatibility with old configuration files.
@@ -67,6 +68,9 @@ mail_room_pid_path=${mail_room_pid_path:-"$gitlab_mail_room_pid_path"}
 
 ### Environment variables
 run_env="env RAILS_ENV=$gitlab_rails_environment HOME=$gitlab_home $gitlab_additional_environment_variables"
+if [ -x "${gitlab_ruby_environment_wrapper}" ]; then
+  run_env="${run_env} ${gitlab_ruby_environment_wrapper}"
+fi
 
 
 ### Init Script functions
@@ -320,7 +324,7 @@ start_gitlab() {
     if [ "$gitlab_pages_status" = "0" ]; then
       echo "The GitLab Pages is already running with pid $gppid, not restarting"
     else
-      $app_root/bin/daemon_with_pidfile $gitlab_pages_pid_path  \
+      $run_env $app_root/bin/daemon_with_pidfile $gitlab_pages_pid_path  \
           $gitlab_pages_dir/gitlab-pages $gitlab_pages_options \
         >> $gitlab_pages_log 2>&1 &
     fi
@@ -330,7 +334,7 @@ start_gitlab() {
     if [ "$gitaly_status" = "0" ]; then
       echo "Gitaly is already running with pid $gapid, not restarting"
     else
-      su - $gitlab_user -c "$app_root/bin/daemon_with_pidfile $gitaly_pid_path \
+      su - $gitlab_user -c "$run_env $app_root/bin/daemon_with_pidfile $gitaly_pid_path \
           $gitaly_dir/gitaly $gitaly_dir/config.toml >> $gitaly_log 2>&1 &"
     fi
   fi

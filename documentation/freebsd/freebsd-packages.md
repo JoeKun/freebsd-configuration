@@ -1279,12 +1279,48 @@ Install other required dependencies:
 # pkg install sudo bash icu cmake pkgconf node npm phantomjs krb5 gmake go libtool bison re2 yarn libgit2 ruby rubygem-bundler
 ```
 
+Install `chruby` to be able to select a specific version of ruby for GitLab:
+
+```
+# pkg install chruby
+```
+
+Install specific version of ruby for GitLab:
+
+```
+# wget "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.3.tar.gz"
+# tar xvzf ruby-2.5.3.tar.gz
+# cd ruby-2.5.3
+# ./configure --prefix=/opt/rubies/ruby-2.5.3
+# make
+# make install
+# cd ..
+# rm -R -f ruby-2.5.3
+```
+
+Install `bundler` for that specific version of ruby:
+
+```
+# source /usr/local/share/chruby/chruby.sh
+# chruby ruby-2.5.3
+# gem install bundler -v "1.17.3"
+```
+
 Add unprivileged user for GitLab:
 
 ```
 # pw group add git -g 617
 # pw user add git -u 617 -g 617 -c "GitLab" -d /usr/local/git -s /usr/local/bin/zsh -m -k /usr/local/etc/skel
 # pw group mod redis -m git
+```
+
+Lay down configuration and local scripts for this unprivileged user:
+
+```
+# su git
+$ rm -f .zshrc .zshenv
+$ for file_name in .zshenv .zshrc .gitconfig bin; do ln -s ../../../freebsd-configuration/usr/local/git/${file_name}; done
+$ exit
 ```
 
 Prepare database:
@@ -1309,7 +1345,15 @@ Some important differences:
 
  * don't apply the change described as "Change the Redis socket path to `/usr/local/var/run/redis/redis.sock`";
  * change `/home/*` to `/usr/local/*`;
- * use the following instructions for the init script instead of the ones from the guide.
+ * before installing the bundle for either `gitaly` or `gitlab`, you will probably need to make the following adjustments:
+
+```
+$ bundle config build.rugged --use-system-libraries
+$ bundle config build.gpgme --use-system-libraries
+$ bundle config build.charlock_holmes --with-opt-include=/usr/local/include --with-opt-lib=/usr/local/lib
+```
+
+ * use the following instructions for the init script instead of the ones from the guide:
 
 ```
 # cd /usr/local/etc/rc.d
