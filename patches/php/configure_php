@@ -4,5 +4,5 @@ cd /usr/local/etc
 cp php.ini-production php.ini
 patch --posix -p1 -i /freebsd-configuration/patches/php/php.ini-disable_cgi_fix_pathinfo.diff
 
-patch --posix -p1 -i /freebsd-configuration/patches/php/php-fpm.conf-listen-on-a-socket.diff
+patch --posix -p1 -i /freebsd-configuration/patches/php/php-fpm.d-www.conf-listen-on-a-socket.diff
 

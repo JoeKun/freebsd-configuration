@@ -1,6 +1,7 @@
---- a/php-fpm.conf	2016-08-10 02:03:49.000000000 -0700
-+++ b/php-fpm.conf	2016-08-13 22:51:49.697944000 -0700
-@@ -161,7 +161,7 @@
+diff -ru a/php-fpm.d/www.conf b/php-fpm.d/www.conf
+--- a/php-fpm.d/www.conf	2019-05-08 18:14:00.000000000 -0700
++++ b/php-fpm.d/www.conf	2019-01-18 16:18:56.268489000 -0800
+@@ -33,7 +33,7 @@
  ;                            (IPv6 and IPv4-mapped) on a specific port;
  ;   '/path/to/unix/socket' - to listen on a unix socket.
  ; Note: This value is mandatory.
@@ -8,9 +9,9 @@
 +listen = /var/run/php-fpm.sock
  
  ; Set listen(2) backlog.
- ; Default Value: 65535 (-1 on FreeBSD and OpenBSD)
-@@ -172,9 +172,9 @@
- ; BSD-derived systems allow connections regardless of permissions. 
+ ; Default Value: 511 (-1 on FreeBSD and OpenBSD)
+@@ -44,9 +44,9 @@
+ ; BSD-derived systems allow connections regardless of permissions.
  ; Default Values: user and group are set as the running user
  ;                 mode is set to 0660
 -;listen.owner = www
