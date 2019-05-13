@@ -1366,6 +1366,193 @@ $ bundle config build.charlock_holmes --with-opt-include=/usr/local/include --wi
 ```
 
 
+## Nextcloud
+
+Make sure to refer to the official instructions to install Nextcloud in the [administrator manual](https://docs.nextcloud.com/server/15/admin_manual/installation/index.html).
+
+You should also consider your options for [memory caching](https://docs.nextcloud.com/server/15/admin_manual/configuration_server/caching_configuration.html). In our case, we'll follow the recommendation for *Small organization, single-server setup* from an [older version of the Nextcloud administrator manual](https://docs.nextcloud.com/server/14/admin_manual/configuration_server/caching_configuration.html#small-organization-single-server-setup), which is to say that we'll use APCu for local caching, and Redis for file locking.
+
+### Basic installation
+
+Here are down below some of the steps where we deviate slightly from that manual installation guide.
+
+```
+# cd /usr/ports/www/nextcloud
+# make config
+```
+
+Keep all options enabled by default, except for `MYSQL` in the *Database backend(s)* section, which you should disable; and additionally enable the following:
+
+ * `IMAGICK` in first section;
+ * `PNCTL` in first section;
+ * `REDIS` in *Caching* section;
+ * `PGSQL` in *Database backend(s)* section.
+
+See if any dependency is missing:
+
+```
+# make missing
+```
+
+If any, install the dependencies using `pkg`. For example:
+
+```
+pkg install php71-pecl-imagick php71-pecl-redis php71-pecl-APCu
+pkg install graphics/ImageMagick6-nox11 print/ghostscript9-agpl-base graphics/jbig2dec graphics/poppler-data math/fftw3 graphics/liblqr-1 graphics/libraw graphics/libwmf-nox11 ftp/php71-curl sysutils/php71-posix textproc/php71-simplexml textproc/php71-xmlreader textproc/php71-xmlwriter textproc/php71-xsl textproc/php71-wddx www/php71-opcache devel/php71-pcntl
+```
+
+Then proceed to installing `nextcloud`:
+
+```
+# make all install clean
+# pkg lock nextcloud-php71
+```
+
+Prepare database:
+
+```
+# su pgsql
+$ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt nextcloud
+$ createdb --owner=nextcloud nextcloud "Nextcloud"
+$ psql postgres
+postgres=# GRANT ALL PRIVILEGES ON DATABASE nextcloud TO nextcloud;
+postgres=# \q
+$ rm -f ~/.psql_history
+```
+
+Grant the web server unprivileged user access to Redis:
+
+```
+# pw group mod redis -m www
+```
+
+Adjust `php` configuration with some optimizations for Nextcloud.
+
+```
+# cd /freebsd-configuration/patches/nextcloud
+# ./configure_php_for_nextcloud
+# service php-fpm restart
+```
+
+Enable `nginx` configuration for Nextcloud:
+
+```
+# cd /usr/local/etc/nginx/sites-enabled
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/cloud.foo.com.conf
+```
+
+Manually edit `server_name` directives in `/usr/local/etc/nginx/sites-enabled/cloud.foo.com.conf`.
+
+Restart `nginx`:
+
+```
+# service nginx restart
+```
+
+Follow the [installation wizard](https://docs.nextcloud.com/server/15/admin_manual/installation/installation_wizard.html) to bootstrap the configuration of your Nextcloud installation.
+
+You may want to enable [pretty URLs](https://docs.nextcloud.com/server/15/admin_manual/installation/source_installation.html#pretty-urls), but make sure to temporarily change the ownership of `config/.htaccess` before running the required maintenance task:
+
+```
+# cd /usr/local/www/nextcloud
+# chown www config/.htaccess .htaccess
+# sudo -u www php /usr/local/www/nextcloud/occ maintenance:update:htaccess
+# chown root config/.htaccess .htaccess
+```
+
+and make sure to add the following directives to `/usr/local/www/nextcloud/config/config.php`:
+
+```
+'overwrite.cli.url' => 'https://cloud.foo.com',
+'htaccess.RewriteBase' => '/',
+```
+
+Additionally, adjust your configuration options in that same file, `/usr/local/www/nextcloud/config/config.php`, for memory caching and file locking:
+
+```
+  'filelocking.enabled' => true,
+  'memcache.local' => '\\OC\\Memcache\\APCu',
+  'memcache.locking' => '\\OC\\Memcache\\Redis',
+  'redis' =>
+  array (
+    'host' => '/var/run/redis/redis.sock',
+    'port' => 0,
+    'timeout' => 0.0,
+  ),
+```
+
+### Ensure proper basic configuration
+
+ * Go to `https://cloud.foo.com/` with your web browser and login with your administrator account.
+ * Click the avatar icon on the top right, and then *Settings* in the popup menu.
+ * In the side menu on the left, click *Overview* right below the *Administration* section heading.
+ * In the section titled *Security & setup warnings*, wait for results of these checks to appear, and take appropriate action for each action item.
+
+In our case, at this point, there was a warning about incorrect types for big integers in the database, which is easily addressed by running the following command:
+
+```
+# sudo -u www php /usr/local/www/nextcloud/occ db:convert-filecache-bigint
+```
+
+### LDAP configuration for Nextcloud
+
+You will need to make a few adjustments to your LDAP directory in preparation of linking Nextcloud to it.
+
+To make those adjustments, you may want to take advantage of the LDAP scripts to populate the directory mentioned above and installed in `/opt/local`.
+
+Create an LDAP account for Nextcloud:
+
+```
+# ldap_create_user --system --cn "nextcloud"
+```
+
+Also augment LDAP entries for any user or group you want to have access to Nextcloud with the `applicationParticipant` schema, and this property:
+
+```
+supportedApplication: nextcloud
+```
+
+Groups will also require being augmented with the `fullyQualifiedGroup` schema, and the following property:
+
+```
+fullyQualifiedGroupName: <some_unique_group_name>
+```
+
+The point is simply that, with the kind of multi-domain LDAP setup we have on our server, you may have multiple groups with the same common name in different branches of the LDAP tree, for different domains. A simple pattern for coming up with the value of that fully qualified group name is to concatenate the group's common name with the domain name, separated by a delimiter such as `%`: `<group_cn>%<domain_name>`, which is the default behavior of the `ldap_create_group` script when you pass the option `--fully-qualified`.
+
+Once all those changes are applied, we can configure Nextcloud to point to our LDAP server.
+
+ * Go to `https://cloud.foo.com/` with your web browser and login with your administrator account.
+ * Click the avatar icon on the top right, and then *Settings* in the popup menu.
+ * In the side menu on the left, further down below the *Administration* section heading, click *LDAP / AD Integration*.
+ * In the *Server* tab:
+    - enter your LDAP server address as `localhost`, and click the *Detect Port* button; it should find the port number 389;
+    - in the field for the *DN of the client user with which the bind shall be done*, enter `cn=nextcloud,ou=users,ou=system,ou=directory`;
+    - right below, enter the associated password below;
+    - in the field for the *Base DN*, enter `ou=directory`.
+ * In the *Users* tab, enter the following in the text box below *Edit LDAP Query*:
+
+```
+(&(objectClass=inetOrgPerson)(ou:dn:=users)(supportedApplication=nextcloud)(uid=*)(mail=*))
+```
+
+ * In the *Login Attributes* tab, enter the following in the text box below *Edit LDAP Query*:
+
+```
+(&(objectClass=inetOrgPerson)(ou:dn:=users)(supportedApplication=nextcloud)(mail=%uid))
+```
+
+ * In the *Groups* tab, enter the following in the text box below *Edit LDAP Query*:
+
+```
+(&(objectClass=fullyQualifiedGroup)(ou:dn:=groups)(supportedApplication=nextcloud)(fullyQualifiedGroupName=*))
+```
+
+ * In the *Advanced* tab, disclose the *Directory Settings* section, and make the following changes:
+    - in the pop-up menu for *Group-Member association*, select *member (AD)*;
+    - in the text field for *Group Display Name Field*, enter `fullyQualifiedGroupName`.
+
+
 ## Time Machine Server
 
 You should consider tuning a few kernel settings to allow more files to be opened at once. In particular, consider the following settings:

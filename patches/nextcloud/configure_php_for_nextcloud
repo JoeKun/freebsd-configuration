@@ -1,0 +1,22 @@
+#! /bin/sh
+
+cd /usr/local/etc
+patch --posix -p1 -i /freebsd-configuration/patches/php/php.ini-optimize-settings-for-nextcloud.diff
+patch --posix -p1 -i /freebsd-configuration/patches/php/php-fpm.d-www.conf-optimize-settings-for-nextcloud.diff
+
+apcu_php_extension_configuration_file_path="$(pwd)/php/ext-20-apcu.ini"
+apcu_php_extension_configuration_file_contents="extension=apcu.so"
+if [ ! -r "${apcu_php_extension_configuration_file_path}" ]
+then
+    echo "${apcu_php_extension_configuration_file_contents}" > "${apcu_php_extension_configuration_file_path}"
+    echo "Successfully created ${apcu_php_extension_configuration_file_path}."
+else
+    apcu_php_extension_existing_configuration_file_contents=$(cat "${apcu_php_extension_configuration_file_path}")
+    if [ "${apcu_php_extension_existing_configuration_file_contents}" != "${apcu_php_extension_configuration_file_contents}" ]
+    then
+        echo "${apcu_php_extension_configuration_file_path} already exists. Please make sure it has the correct extension directive:"$'\n\n'"${apcu_php_extension_configuration_file_contents}"
+    else
+        echo "${apcu_php_extension_configuration_file_path} already exists, and it already has the correct extension directive."
+    fi
+fi
+

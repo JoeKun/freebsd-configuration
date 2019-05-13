@@ -1,0 +1,27 @@
+diff -ru a/php-fpm.d/www.conf b/php-fpm.d/www.conf
+--- a/php-fpm.d/www.conf	2019-05-08 18:14:00.000000000 -0700
++++ b/php-fpm.d/www.conf	2019-01-18 16:18:56.268489000 -0800
+@@ -374,7 +374,7 @@
+ ; Setting to "no" will make all environment variables available to PHP code
+ ; via getenv(), $_ENV and $_SERVER.
+ ; Default Value: yes
+-;clear_env = no
++clear_env = no
+ 
+ ; Limits the extensions of the main script FPM will allow to parse. This can
+ ; prevent configuration mistakes on the web server side. You should only limit
+@@ -388,10 +388,10 @@
+ ; the current environment.
+ ; Default Value: clean env
+ ;env[HOSTNAME] = $HOSTNAME
+-;env[PATH] = /usr/local/bin:/usr/bin:/bin
+-;env[TMP] = /tmp
+-;env[TMPDIR] = /tmp
+-;env[TEMP] = /tmp
++env[PATH] = /opt/local/bin:/usr/local/bin:/usr/local/sbin:/bin:/usr/bin:/usr/sbin:/sbin:/usr/games
++env[TMP] = /tmp
++env[TMPDIR] = /tmp
++env[TEMP] = /tmp
+ 
+ ; Additional php.ini defines, specific to this pool of workers. These settings
+ ; overwrite the values previously defined in the php.ini. The directives are the
