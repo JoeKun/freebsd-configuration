@@ -3,7 +3,7 @@
 # GitLab
 # Maintainer: Joel Lopes Da Silva <joel@lopes-da-silva.com>
 # Based on work of: Torsten Zuehlsdorff <ports@toco-domains.de>,
-#                   @charlienewey, rovanion.luckey@gmail.com, @randx
+#                   @charlienewey, rovanion.luckey@gmail.com, @dzaporozhets
 
 # PROVIDE: gitlab
 # REQUIRE: LOGIN DAEMON mysql postgresql redis
@@ -51,6 +51,7 @@ gitaly_dir=$(cd ${gitlab_root}/../gitaly 2> /dev/null && pwd)
 gitaly_pid_path="${gitlab_pid_path}/gitaly.pid"
 gitaly_log="${gitlab_root}/log/gitaly.log"
 gitlab_rails_environment=${gitlab_rails_environment:-"production"}
+gitlab_experimental_puma=${gitlab_experimental_puma:-""}
 gitlab_additional_environment_variables=${gitlab_additional_environment_variables:-"PATH=\"$PATH:/usr/local/sbin:/usr/local/bin\""}
 gitlab_ruby_environment_wrapper=${gitlab_ruby_environment_wrapper:-"${gitlab_home}/bin/gitlab_ruby_environment_wrapper"}
 
@@ -71,6 +72,7 @@ run_env="env RAILS_ENV=$gitlab_rails_environment HOME=$gitlab_home $gitlab_addit
 if [ -x "${gitlab_ruby_environment_wrapper}" ]; then
   run_env="${run_env} ${gitlab_ruby_environment_wrapper}"
 fi
+gitlab_bin_web_run_env=$(echo $run_env | sed "s| RAILS_ENV=$gitlab_rails_environment | RAILS_ENV=$gitlab_rails_environment EXPERIMENTAL_PUMA=$gitlab_experimental_puma |g")
 
 
 ### Init Script functions
@@ -81,7 +83,7 @@ check_pids(){
     echo "Could not create the path $pid_path needed to store the pids."
     exit 1
   fi
-  # If there exists a file which should hold the value of the Unicorn pid: read it.
+  # If there exists a file which should hold the value of the web server pid: read it.
   if [ -f "$web_server_pid_path" ]; then
     wpid=$(cat "$web_server_pid_path")
   else
@@ -204,7 +206,7 @@ check_stale_pids(){
   # If there is a pid it is something else than 0, the service is running if
   # *_status is == 0.
   if [ "$wpid" != "0" ] && [ "$web_status" != "0" ]; then
-    echo "Removing stale Unicorn web server pid. This is most likely caused by the web server crashing the last time it ran."
+    echo "Removing stale web server pid. This is most likely caused by the web server crashing the last time it ran."
     if ! rm "$web_server_pid_path"; then
       echo "Unable to remove stale pid, exiting."
       exit 1
@@ -256,22 +258,22 @@ exit_if_not_running(){
   fi
 }
 
-## Starts Unicorn and Sidekiq if they're not running.
+## Starts web server and Sidekiq if they're not running.
 start_gitlab() {
   check_stale_pids
 
   # Then check if the service is running. If it is: don't start again.
   if [ "$web_status" = "0" ]; then
-    echo "The Unicorn web server already running with pid $wpid, not restarting."
+    echo "The web server already running with pid $wpid, not restarting."
   else
-    echo "Starting GitLab Unicorn"
+    echo "Starting GitLab web server"
     # Remove old socket if it exists
     rm -f "$rails_socket" 2>/dev/null
     # Start the web server
     # Unicorn may break the current process on freebsd during 
     # daemonizing (defunct exists until new master has prefilled 
     # caches); therefore start itself is decoupled.
-    su - $gitlab_user -c "/usr/sbin/daemon -t gitlab-unicorn $run_env ${app_root}/bin/web start"
+    su - $gitlab_user -c "/usr/sbin/daemon -t gitlab-unicorn $gitlab_bin_web_run_env ${app_root}/bin/web start"
   fi
   if [ "$gitlab_pages_enabled" = true ] && [ "$gitlab_pages_status" != "0" ]; then
     echo "Starting GitLab Pages"
@@ -301,7 +303,7 @@ start_gitlab() {
         gitlab_workhorse_run_env=$(echo $run_env | sed "s| PATH=| PATH=$gitlab_workhorse_dir:|g")
         ;;
       *)
-        gitlab_workhorse_run_env=$(echo $run_env | sed "s| HOME=$gitlab_home | HOME=$gitlab_home PATH=$gitlab_workhorse_dir:$PATH |g")
+        gitlab_workhorse_run_env="$run_env PATH=$gitlab_workhorse_dir:$PATH"
         ;;
     esac
     su - $gitlab_user -c "/usr/sbin/daemon -p $gitlab_workhorse_pid_path \
@@ -345,14 +347,14 @@ start_gitlab() {
   print_status
 }
 
-## Asks Unicorn, Sidekiq and MailRoom if they would be so kind as to stop, if not kills them.
+## Asks web server, Sidekiq and MailRoom if they would be so kind as to stop, if not kills them.
 stop_gitlab() {
   completion_policy="$1"
   exit_if_not_running
 
   if [ "$web_status" = "0" ]; then
-    echo "Shutting down GitLab Unicorn"
-    su - $gitlab_user -c "$run_env ${app_root}/bin/web stop"
+    echo "Shutting down GitLab web server"
+    su - $gitlab_user -c "$gitlab_bin_web_run_env ${app_root}/bin/web stop"
   fi
   if [ "$sidekiq_status" = "0" ]; then
     echo "Shutting down GitLab Sidekiq"
@@ -415,9 +417,9 @@ print_status() {
     fi
   fi
   if [ "$web_status" = "0" ]; then
-      echo "The GitLab Unicorn web server with pid $wpid is running."
+      echo "The GitLab web server with pid $wpid is running."
   else
-      printf "The GitLab Unicorn web server is \033[31mnot running\033[0m.\n"
+      printf "The GitLab web server is \033[31mnot running\033[0m.\n"
   fi
   if [ "$sidekiq_status" = "0" ]; then
       echo "The GitLab Sidekiq job dispatcher with pid $spid is running."
@@ -455,15 +457,15 @@ print_status() {
   fi
 }
 
-## Tells unicorn to reload its config and Sidekiq to restart
+## Tells web server to reload its config and Sidekiq to restart
 reload_gitlab(){
   exit_if_not_running
   if [ "$wpid" = "0" ];then
-    echo "The GitLab Unicorn Web server is not running thus its configuration can't be reloaded."
+    echo "The GitLab web server Web server is not running thus its configuration can't be reloaded."
     exit 1
   fi
-  printf "Reloading GitLab Unicorn configuration... "
-  su - $gitlab_user -c "$run_env ${app_root}/bin/web reload"
+  printf "Reloading GitLab web server configuration... "
+  su - $gitlab_user -c "$gitlab_bin_web_run_env ${app_root}/bin/web reload"
   echo "Done."
 
   echo "Restarting GitLab Sidekiq since it isn't capable of reloading its config..."
@@ -478,7 +480,7 @@ reload_gitlab(){
   print_status
 }
 
-## Restarts Sidekiq and Unicorn.
+## Restarts Sidekiq and web server.
 restart_gitlab(){
   check_status
   if [ "$web_status" = "0" ] || [ "$sidekiq_status" = "0" ] || [ "$gitlab_workhorse" = "0" ] || { [ "$mail_room_enabled" = true ] && [ "$mail_room_status" = "0" ]; } || { [ "$gitlab_pages_enabled" = true ] && [ "$gitlab_pages_status" = "0" ]; } || { [ "$gitaly_enabled" = true ] && [ "$gitaly_status" = "0" ]; }; then
