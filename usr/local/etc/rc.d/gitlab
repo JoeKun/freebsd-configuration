@@ -301,7 +301,7 @@ start_gitlab() {
         gitlab_workhorse_run_env=$(echo $run_env | sed "s| PATH=| PATH=$gitlab_workhorse_dir:|g")
         ;;
       *)
-        gitlab_workhorse_run_env="$run_env PATH=$gitlab_workhorse_dir:$PATH"
+        gitlab_workhorse_run_env=$(echo $run_env | sed "s| HOME=$gitlab_home | HOME=$gitlab_home PATH=$gitlab_workhorse_dir:$PATH |g")
         ;;
     esac
     su - $gitlab_user -c "/usr/sbin/daemon -p $gitlab_workhorse_pid_path \
