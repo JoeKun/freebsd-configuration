@@ -1,4 +1,4 @@
-#! /usr/local/bin/python
+#! /usr/local/bin/python2
 # -*- coding: utf-8 -*-
 #
 # nginx-ldap-auth-daemon
@@ -292,7 +292,7 @@ if __name__ == "__main__":
     )
     arguments = arguments_parser.parse_args()
     
-    configuration_dictionary = yaml.load(arguments.configuration_file)
+    configuration_dictionary = yaml.safe_load(arguments.configuration_file)
     default_authentication_context = LDAPAuthenticationHandler.default_authentication_context
     for attribute in default_authentication_context.__class__.supported_attributes:
         configuration_key = attribute.configuration_key
