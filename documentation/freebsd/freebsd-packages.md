@@ -1639,37 +1639,3 @@ Enable `plexmediaserver-plexpass` daemon:
 # service plexmediaserver_plexpass start
 ```
 
-If you're interested in cutting commercials, you should also follow these instructions.
-
-```
-# pkg install ffmpeg
-# pkg install autoconf
-# pkg install automake
-# pkg install libtool
-# pkg install argtable
-# pkg install gcc6
-# export CC=gcc6
-
-# git clone --depth 1 https://github.com/erikkaashoek/Comskip comskip
-# cd comskip
-# ./autogen.sh
-# ./configure --prefix=/opt/local
-# make
-# make install
-# cd ..
-# rm -R -f comskip
-
-# git clone --depth 1 https://github.com/BrettSheleski/comchap
-# cp -av comchap/comchap comchap/comcut /opt/local/bin
-# rm -R -f comchap
-
-# mkdir -p /opt/local/etc
-# cd /opt/local/etc
-# ln -s ../../../freebsd-configuration/opt/local/etc/comskip.ini
-
-# cd /opt/local/bin
-# ln -s ../../../freebsd-configuration/opt/local/bin/plex_post_process_tv_content
-```
-
-Then, go to Plex's Server Settings, in the Live TV & DVR section. Click the DVR settings link, and set `/opt/local/bin/plex_post_process_tv_content` as the postprocessing script for recorded programs.
-
