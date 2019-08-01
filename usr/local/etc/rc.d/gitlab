@@ -67,12 +67,19 @@ sidekiq_pid_path=${sidekiq_pid_path:-"$gitlab_sidekiq_pid_path"}
 mail_room_enabled=${mail_room_enabled:-"$gitlab_mail_room_enabled"}
 mail_room_pid_path=${mail_room_pid_path:-"$gitlab_mail_room_pid_path"}
 
+# Select the web server to use
+if [ -z "$gitlab_experimental_puma" ]; then
+  use_web_server="unicorn"
+else
+  use_web_server="puma"
+fi
+
 ### Environment variables
 run_env="env RAILS_ENV=$gitlab_rails_environment HOME=$gitlab_home $gitlab_additional_environment_variables"
 if [ -x "${gitlab_ruby_environment_wrapper}" ]; then
   run_env="${run_env} ${gitlab_ruby_environment_wrapper}"
 fi
-gitlab_bin_web_run_env=$(echo $run_env | sed "s| RAILS_ENV=$gitlab_rails_environment | RAILS_ENV=$gitlab_rails_environment EXPERIMENTAL_PUMA=$gitlab_experimental_puma |g")
+gitlab_bin_web_run_env=$(echo $run_env | sed "s| RAILS_ENV=$gitlab_rails_environment | RAILS_ENV=$gitlab_rails_environment USE_WEB_SERVER=$use_web_server |g")
 
 
 ### Init Script functions
@@ -266,7 +273,7 @@ start_gitlab() {
   if [ "$web_status" = "0" ]; then
     echo "The web server already running with pid $wpid, not restarting."
   else
-    echo "Starting GitLab web server"
+    echo "Starting GitLab web server ($use_web_server)"
     # Remove old socket if it exists
     rm -f "$rails_socket" 2>/dev/null
     # Start the web server
