@@ -1,0 +1,50 @@
+#! /bin/sh
+
+# PROVIDE: nextcloud_full_text_search
+# REQUIRE: LOGIN DAEMON mysql postgresql elasticsearch
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="nextcloud_full_text_search"
+rcvar="${name}_enable"
+
+load_rc_config $name
+
+: ${nextcloud_full_text_search_enable:=NO}
+: ${nextcloud_full_text_search_user:="www"}
+: ${nextcloud_full_text_search_group:="www"}
+: ${nextcloud_full_text_search_name:="nextcloud-full-text-search"}
+: ${nextcloud_full_text_search_pid_directory_path:="/var/run/nextcloud"}
+: ${nextcloud_full_text_search_pid_file_path:="${nextcloud_full_text_search_pid_directory_path}/${nextcloud_full_text_search_name}.pid"}
+: ${nextcloud_full_text_search_script_file_path:="/usr/local/www/nextcloud/occ"}
+: ${nextcloud_full_text_search_script_arguments:="fulltextsearch:live --no-interaction --no-readline --quiet"}
+: ${nextcloud_full_text_search_command_interpreter:="/usr/local/bin/php"}
+
+procname="${nextcloud_full_text_search_command_interpreter}"
+pidfile="${nextcloud_full_text_search_pid_file_path}"
+
+command="/usr/sbin/daemon"
+command_args="-t ${nextcloud_full_text_search_name} -p ${nextcloud_full_text_search_pid_file_path} ${nextcloud_full_text_search_command_interpreter} ${nextcloud_full_text_search_script_file_path} ${nextcloud_full_text_search_script_arguments}"
+
+nextcloud_full_text_search_prestart() {
+    install -d -m 0700 -o "${nextcloud_full_text_search_user}" -g "${nextcloud_full_text_search_group}" "${nextcloud_full_text_search_pid_directory_path}"
+}
+
+nextcloud_full_text_search_stop() {
+    if [ -z "$rc_pid" ]
+    then
+        _run_rc_notrunning
+        return 1
+    fi
+
+    echo "Stopping ${nextcloud_full_text_search_name}."
+    su -m "${nextcloud_full_text_search_user}" -c "${nextcloud_full_text_search_command_interpreter} ${nextcloud_full_text_search_script_file_path} fulltextsearch:stop" > /dev/null
+    wait_for_pids "${rc_pid}"
+}
+
+start_precmd="nextcloud_full_text_search_prestart"
+stop_cmd="nextcloud_full_text_search_stop"
+
+run_rc_command "$1"
+

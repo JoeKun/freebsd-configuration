@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/nextcloud_full_text_search: system configuration for nextcloud-full-text-search
+
+nextcloud_full_text_search_enable="YES"
+

@@ -1,0 +1,11 @@
+--- a/elasticsearch.yml	2019-07-06 23:03:30.000000000 -0700
++++ b/elasticsearch.yml	2019-04-10 07:57:50.158388000 -0700
+@@ -54,7 +54,7 @@
+ #
+ # Set the bind address to a specific IP (IPv4 or IPv6):
+ #
+-#network.host: 192.168.0.1
++network.host: 127.0.0.1
+ #
+ # Set a custom port for HTTP:
+ #

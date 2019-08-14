@@ -1,0 +1,5 @@
+#! /bin/sh
+
+cd /usr/local/etc/elasticsearch
+patch --posix -p1 -i /freebsd-configuration/patches/elasticsearch/elasticsearch.yml-set-network-host-to-localhost.diff
+

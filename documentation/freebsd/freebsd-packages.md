@@ -1552,6 +1552,123 @@ Once all those changes are applied, we can configure Nextcloud to point to our L
     - in the pop-up menu for *Group-Member association*, select *member (AD)*;
     - in the text field for *Group Display Name Field*, enter `fullyQualifiedGroupName`.
 
+### Full Text Search for Nextcloud
+
+The following is heavily inspired from [Neil Feltham's amazing howto guide](https://lothiancaleysweb.co.uk/how-to-install-fulltextsearch-in-nextcloud-with-elasticsearch-and-tesseract-ocr).
+
+For full text search support, we'll be using Elasticsearch, which depends on Java.
+
+#### Prepare for installing Java
+
+The `openjdk8` package in FreeBSD requires a few special file systems to be mounted:
+
+ * `fdescfs` needs to be mounted on `/dev/fd`;
+ * `procfs` needs to be mounted on `/proc`.
+
+This is already in place in this repository's `/etc/fstab`, but if you don't have the corresponding entries in your `/etc/fstab`, add them, and then run the following commands, as needed:
+
+```
+# mount -t fdescfs fdesc /dev/fd
+# mount -t procfs proc /proc
+```
+
+#### Install Elasticsearch
+
+```
+# pkg install elasticsearch6
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/elasticsearch
+# cd /freebsd-configuration/patches/elasticsearch
+# ./configure_elasticsearch
+# service elasticsearch start
+```
+
+To check that the Elasticsearch server is running, enter the following:
+
+```
+# curl -XGET '127.0.0.1:9200/?pretty'
+```
+
+You should see output like this:
+
+```
+{
+  "name" : "gq3rrjS",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "aRlhEpf4QmGIHmWFA0_BWg",
+  "version" : {
+    "number" : "6.5.4",
+    "build_flavor" : "default",
+    "build_type" : "tar",
+    "build_hash" : "d2ef93d",
+    "build_date" : "2018-12-17T21:17:40.758843Z",
+    "build_snapshot" : false,
+    "lucene_version" : "7.5.0",
+    "minimum_wire_compatibility_version" : "5.6.0",
+    "minimum_index_compatibility_version" : "5.0.0"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
+
+Install the `ingest-attachment` plugin for Elasticsearch, which is required to facilitate searches within certain types of files.
+
+```
+# /usr/local/lib/elasticsearch/bin/elasticsearch-plugin install ingest-attachment
+# service elasticsearch restart
+```
+
+#### Install Tesseract Optical Character Recognition
+
+```
+# pkg install tesseract tesseract-data
+```
+
+#### Configure Nextcloud
+
+Install the `readline` PHP package:
+
+```
+# pkg install php71-readline
+# service php-fpm restart
+# service nginx restart
+```
+
+Go to `https://cloud.foo.com/` with your web browser, login with your administrator account, and install the following plugins:
+
+ * Full text search
+ * Full text search - Elasticsearch Platform
+ * Full text search - Files
+ * Full text search - Files - Tesseract OCR
+ * Full text search - Bookmarks
+
+Then follow the instructions as outlined in the last part of [Neil Feltham's howto guide](https://lothiancaleysweb.co.uk/how-to-install-fulltextsearch-in-nextcloud-with-elasticsearch-and-tesseract-ocr/2#6), with the following adjustments for FreeBSD:
+
+ * replace `/var/www/html/nextcloud` with `/usr/local/www/nextcloud`;
+ * replace `www-data` with `www`.
+
+So for example, for the step titled *Create the index*, after configuring full text search in Nextcloud's web interface, you'll end up running this command:
+
+```
+# sudo -u www php /usr/local/www/nextcloud/occ fulltextsearch:index
+```
+
+#### Live Index Service for Nextcloud Full Text Search
+
+To have your files continuously indexed, you need to install a new service.
+
+```
+# cd /usr/local/etc/rc.d
+# ln -s ../../../../freebsd-configuration/usr/local/etc/rc.d/nextcloud-full-text-search
+# chmod -H 555 nextcloud-full-text-search
+
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/nextcloud_full_text_search
+# service nextcloud-full-text-search start
+```
+
+For some reason, and despite my best efforts to address that, your shell may start behaving weirdly after starting this new service, as if it's eating a bunch of your keystrokes. The best solution I found to this was to simply disconnect from the current SSH session, close the Terminal tab or window, and create a new one.
+
 
 ## Time Machine Server
 
