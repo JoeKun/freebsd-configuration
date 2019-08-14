@@ -380,6 +380,10 @@ Manually edit `/usr/local/nginx-ldap-auth/nginx-ldap-auth-daemon.conf` with the 
 Enable `nginx-ldap-auth-daemon`:
 
 ```
+# cd /usr/local/etc/rc.d
+# ln -s ../../../../freebsd-configuration/usr/local/etc/rc.d/nginx-ldap-auth-daemon
+# chmod -H 555 nginx-ldap-auth-daemon
+
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/nginx_ldap_auth_daemon
 # service nginx-ldap-auth-daemon start
