@@ -549,34 +549,41 @@ Enable `phpMyAdmin` configuration for `nginx`.
 ## PostgreSQL
 
 ```
-# pkg install postgresql95-client postgresql95-server postgresql95-contrib
+# pkg install postgresql11-client postgresql11-server postgresql11-contrib
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/postgresql
 # service postgresql initdb
 # cd /freebsd-configuration/patches/postgresql
 # ./configure_postgresql
 # service postgresql start
-# chown -R pgsql:pgsql /freebsd-configuration/usr/local/pgsql
-# cd /usr/local/pgsql
-# ln -s ../../../freebsd-configuration/usr/local/pgsql/.zshenv
-# ln -s ../../../freebsd-configuration/usr/local/pgsql/.zshrc
 ```
 
-Change the Unix password of `pgsql` user:
+Change the Unix password of `postgres` user:
 
 ```
-# passwd pgsql
+# passwd postgres
 ```
 
-And alter password of `pgsql` user in the database:
+Configure shell for `postgres` user:
 
 ```
-# su pgsql
-$ psql postgres
+# chown -R postgres:postgres /freebsd-configuration/var/db/postgres
+# su postgres
+$ cd /var/db/postgres
+$ ln -s ../../../freebsd-configuration/var/db/postgres/.zshenv
+$ ln -s ../../../freebsd-configuration/var/db/postgres/.zshrc
+$ exit
+```
+
+And alter password of `postgres` user in the database:
+
+```
+# su postgres
+$ psql
 
 [...]
 
-postgres=# ALTER USER pgsql WITH PASSWORD 'SomeThing@1234';
+postgres=# ALTER USER postgres WITH PASSWORD 'SomeThing@1234';
 postgres=# \q
 $ rm -f ~/.psql_history
 ```
@@ -889,10 +896,10 @@ Then proceed to installing `roundcube`:
 Create `roundcube` PostgreSQL database:
 
 ```
-# su pgsql
+# su postgres
 $ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt roundcube
 $ createdb --owner=roundcube roundcube "Roundcube"
-$ psql postgres
+$ psql
 postgres=# GRANT ALL PRIVILEGES ON DATABASE roundcube TO roundcube;
 postgres=# \q
 $ psql --host=localhost --username=roundcube --dbname=roundcube < /usr/local/www/roundcube/SQL/postgres.initial.sql
@@ -1330,10 +1337,10 @@ $ exit
 Prepare database:
 
 ```
-# su pgsql
+# su postgres
 $ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt gitlab
 $ createdb --owner=gitlab gitlab "GitLab"
-$ psql postgres
+$ psql
 postgres=# GRANT ALL PRIVILEGES ON DATABASE gitlab TO gitlab;
 postgres=# CREATE EXTENSION IF NOT EXISTS pg_trgm;
 postgres=# \q
@@ -1415,10 +1422,10 @@ Then proceed to installing `nextcloud`:
 Prepare database:
 
 ```
-# su pgsql
+# su postgres
 $ createuser --no-createdb --no-createrole --no-superuser --encrypted --pwprompt nextcloud
 $ createdb --owner=nextcloud nextcloud "Nextcloud"
-$ psql postgres
+$ psql
 postgres=# GRANT ALL PRIVILEGES ON DATABASE nextcloud TO nextcloud;
 postgres=# \q
 $ rm -f ~/.psql_history

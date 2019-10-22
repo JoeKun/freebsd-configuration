@@ -1,5 +1,6 @@
---- a/postgresql.conf	2016-08-23 22:57:09.109097000 -0700
-+++ b/postgresql.conf	2016-08-23 22:57:33.093282000 -0700
+diff -ru a/postgresql.conf b/postgresql.conf
+--- a/postgresql.conf	2019-10-20 17:29:38.956271000 -0700
++++ b/postgresql.conf	2019-10-20 17:31:33.525534000 -0700
 @@ -60,7 +60,7 @@
  					# comma-separated list of addresses;
  					# defaults to 'localhost'; use '*' for all
@@ -7,5 +8,5 @@
 -#port = 5432				# (change requires restart)
 +port = 5432				# (change requires restart)
  max_connections = 100			# (change requires restart)
- # Note:  Increasing max_connections costs ~400 bytes of shared memory per
- # connection slot, plus lock space (see max_locks_per_transaction).
+ #superuser_reserved_connections = 3	# (change requires restart)
+ #unix_socket_directories = '/tmp'	# comma-separated list of directories

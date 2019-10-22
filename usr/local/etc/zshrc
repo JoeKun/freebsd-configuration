@@ -66,9 +66,9 @@ alias md="mkdir"
 alias rd="rmdir"
 alias screen="screen -U"
 
-# Workaround to allow `su pgsql` to use zsh as if it was the actual login shell.
+# Workaround to allow `su postgres` to use zsh as if it was the actual login shell.
 function su() {
-    if [[ $# -eq 1 ]] && [[ "${1}" == "pgsql" ]]
+    if [[ $# -eq 1 ]] && [[ "${1}" == "postgres" ]]
     then
         command su ${1} -c "SHELL=${commands[zsh]} zsh"
     else
