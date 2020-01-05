@@ -362,7 +362,7 @@ Some examples of how you can use these scripts to populate the LDAP directory ca
 
 ```
 # pkg install nginx
-# pkg install php71
+# pkg install php72
 ```
 
 Install `nginx-ldap-auth-daemon`:
@@ -495,7 +495,7 @@ We should restart the MySQL service to ensure that our instance immediately impl
 # `phpMyAdmin`
 
 ```
-# pkg install phpMyAdmin-php71
+# pkg install phpMyAdmin-php72
 ```
 
 Create the `phpMyAdmin` storage database, as well as the `phpmyadmin` MySQL user with the right privileges:
@@ -592,7 +592,7 @@ $ rm -f ~/.psql_history
 ## `phpPgAdmin`
 
 ```
-# pkg install phppgadmin-php71
+# pkg install phppgadmin-php72
 # cd /freebsd-configuration/patches/phppgadmin
 # ./configure_phppgadmin
 ```
@@ -609,7 +609,7 @@ Enable `phpPgAdmin` configuration for `nginx`.
 ## `phpLDAPAdmin`
 
 ```
-# pkg install phpldapadmin
+# pkg install phpldapadmin-php72
 ```
 
 Enable `phpLDAPAdmin` configuration for `nginx`.
@@ -882,7 +882,7 @@ See if any dependency is missing:
 If any, install the dependency using `pkg`. For example:
 
 ```
-# pkg install textproc/php71-dom devel/php71-intl sysutils/php71-fileinfo graphics/php71-exif databases/php71-pdo_pgsql databases/php71-pdo
+# pkg install textproc/php72-dom devel/php72-intl sysutils/php72-fileinfo graphics/php72-exif databases/php72-pdo_pgsql databases/php72-pdo
 # service php-fpm restart
 ```
 
@@ -1408,15 +1408,15 @@ See if any dependency is missing:
 If any, install the dependencies using `pkg`. For example:
 
 ```
-pkg install php71-pecl-imagick php71-pecl-redis php71-pecl-APCu
-pkg install graphics/ImageMagick6-nox11 print/ghostscript9-agpl-base graphics/jbig2dec graphics/poppler-data math/fftw3 graphics/liblqr-1 graphics/libraw graphics/libwmf-nox11 ftp/php71-curl sysutils/php71-posix textproc/php71-simplexml textproc/php71-xmlreader textproc/php71-xmlwriter textproc/php71-xsl textproc/php71-wddx www/php71-opcache devel/php71-pcntl
+# pkg install php72-pecl-imagick php72-pecl-redis php72-pecl-APCu
+# pkg install graphics/ImageMagick6-nox11 print/ghostscript9-agpl-base graphics/jbig2dec graphics/poppler-data math/fftw3 graphics/liblqr-1 graphics/libraw graphics/libwmf-nox11 ftp/php72-curl sysutils/php72-posix textproc/php72-simplexml textproc/php72-xmlreader textproc/php72-xmlwriter textproc/php72-xsl textproc/php72-wddx www/php72-opcache devel/php72-pcntl
 ```
 
 Then proceed to installing `nextcloud`:
 
 ```
 # make all install clean
-# pkg lock nextcloud-php71
+# pkg lock nextcloud-php72
 ```
 
 Prepare database:
@@ -1640,7 +1640,7 @@ Install the `ingest-attachment` plugin for Elasticsearch, which is required to f
 Install the `readline` PHP package:
 
 ```
-# pkg install php71-readline
+# pkg install php72-readline
 # service php-fpm restart
 # service nginx restart
 ```
