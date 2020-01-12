@@ -117,6 +117,9 @@ set hlsearch
 " Allow wrapping when hit the last search result in pager mode
 set wrapscan
 
+" Skip automatic addition of missing new line at end of file
+set nofixendofline
+
 " Disable automatic switch to visual mode when using mouse
 autocmd VimEnter * set mouse-=a
 
