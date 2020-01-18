@@ -252,7 +252,7 @@ Manually edit `hostname` in `/etc/rc.conf.d/hostname`.
 # pkg install par_format
 # pkg install gmake
 # pkg install pwgen
-# pkg install py27-mdv
+# pkg install py37-mdv
 ```
 
 

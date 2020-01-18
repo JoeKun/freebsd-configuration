@@ -51,7 +51,7 @@ fi
 if [[ ${+commands[mdv]} -ne 0 ]]
 then
     function mdv() {
-        command mdv "$@" | ${PAGER}
+        command mdv "$@" 2> /dev/null | less -R
     }
 fi
 
