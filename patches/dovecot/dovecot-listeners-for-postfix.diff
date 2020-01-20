@@ -1,7 +1,7 @@
 diff -ru a/conf.d/10-master.conf b/conf.d/10-master.conf
---- a/conf.d/10-master.conf	2018-01-04 16:50:20.450321000 -0800
-+++ b/conf.d/10-master.conf	2018-01-01 18:50:35.447346000 -0800
-@@ -50,6 +50,13 @@
+--- a/conf.d/10-master.conf	2020-01-20 23:46:55.328786000 -0800
++++ b/conf.d/10-master.conf	2020-01-20 23:47:38.045078000 -0800
+@@ -56,6 +56,13 @@
      #mode = 0666
    }
  
@@ -15,7 +15,7 @@ diff -ru a/conf.d/10-master.conf b/conf.d/10-master.conf
    # Create inet listener only if you can't use the above UNIX socket
    #inet_listener lmtp {
      # Avoid making LMTP visible for the entire internet
-@@ -93,9 +100,11 @@
+@@ -104,9 +111,11 @@
    }
  
    # Postfix smtp-auth

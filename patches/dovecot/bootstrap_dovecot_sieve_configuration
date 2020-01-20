@@ -1,0 +1,8 @@
+#! /bin/sh
+
+cd /usr/local/etc/dovecot
+cp -a /usr/local/share/doc/dovecot-pigeonhole/example-config/conf.d/* conf.d/
+mkdir {sieve,sieve-before.d,sieve-after.d}
+chown -R root:dovecot {sieve,sieve-before.d,sieve-after.d}
+patch --posix -p1 -i /freebsd-configuration/patches/dovecot/dovecot-sieve-configuration.diff
+

@@ -1,0 +1,93 @@
+diff -ru a/conf.d/15-lda.conf b/conf.d/15-lda.conf
+--- a/conf.d/15-lda.conf	2020-01-17 22:38:12.273553000 -0800
++++ b/conf.d/15-lda.conf	2020-01-20 23:34:01.176169000 -0800
+@@ -47,5 +47,5 @@
+   mail_fsync = optimized
+   
+   # Space separated list of plugins to load (default is global mail_plugins).
+-  #mail_plugins = $mail_plugins
++  mail_plugins = $mail_plugins sieve
+ }
+diff -ru a/conf.d/20-imap.conf b/conf.d/20-imap.conf
+--- a/conf.d/20-imap.conf	2020-01-17 22:39:17.836595000 -0800
++++ b/conf.d/20-imap.conf	2020-01-20 23:34:01.176337000 -0800
+@@ -90,7 +90,8 @@
+ 
+ protocol imap {
+   # Space separated list of plugins to load (default is global mail_plugins).
+-  #mail_plugins = $mail_plugins
++  # imap_sieve will be used for spam training by rspamd.
++  mail_plugins = $mail_plugins imap_sieve
+ 
+   # Maximum number of IMAP connections allowed for a user from each IP address.
+   # NOTE: The username is compared case-sensitively.
+diff -ru a/conf.d/20-lmtp.conf b/conf.d/20-lmtp.conf
+--- a/conf.d/20-lmtp.conf	2020-01-17 22:39:34.673621000 -0800
++++ b/conf.d/20-lmtp.conf	2020-01-20 23:34:01.176491000 -0800
+@@ -39,5 +39,5 @@
+   mail_fsync = optimized
+   
+   # Space separated list of plugins to load (default is global mail_plugins).
+-  #mail_plugins = $mail_plugins
++  mail_plugins = $mail_plugins sieve
+ }
+diff -ru a/conf.d/20-managesieve.conf b/conf.d/20-managesieve.conf
+--- a/conf.d/20-managesieve.conf	2020-01-12 23:24:21.698137000 -0800
++++ b/conf.d/20-managesieve.conf	2020-01-14 14:27:40.480986000 -0800
+@@ -3,14 +3,14 @@
+ ##
+ 
+ # Uncomment to enable managesieve protocol:
+-#protocols = $protocols sieve
++protocols = $protocols sieve
+ 
+ # Service definitions
+ 
+-#service managesieve-login {
+-  #inet_listener sieve {
+-  #  port = 4190
+-  #}
++service managesieve-login {
++  inet_listener sieve {
++    #port = 4190
++  }
+ 
+   #inet_listener sieve_deprecated {
+   #  port = 2000
+@@ -26,7 +26,7 @@
+ 
+   # If you set service_count=0, you probably need to grow this.
+   #vsz_limit = 64M
+-#}
++}
+ 
+ #service managesieve {
+   # Max. number of ManageSieve processes (connections)
+diff -ru a/conf.d/90-sieve.conf b/conf.d/90-sieve.conf
+--- a/conf.d/90-sieve.conf	2020-01-12 23:24:21.698236000 -0800
++++ b/conf.d/90-sieve.conf	2020-01-14 09:27:38.226461000 -0800
+@@ -73,14 +73,14 @@
+   # to the script execution sequence in the specified order. Reading the
+   # numbered sieve_before settings stops at the first missing setting, so no
+   # numbers may be skipped.
+-  #sieve_before = /var/lib/dovecot/sieve.d/
++  sieve_before = /usr/local/etc/dovecot/sieve-before.d
+   #sieve_before2 = ldap:/etc/sieve-ldap.conf;name=ldap-domain
+   #sieve_before3 = (etc...)
+ 
+   # Identical to sieve_before, only the specified scripts are executed after the
+   # user's script (only when keep is still in effect!). Multiple script
+   # locations can be specified by appending an increasing number.
+-  #sieve_after =
++  sieve_after = /usr/local/etc/dovecot/sieve-after.d
+   #sieve_after2 =
+   #sieve_after2 = (etc...)
+ 
+@@ -202,4 +202,7 @@
+   # Enables showing byte code addresses in the trace output, rather than only
+   # the source line numbers.
+   #sieve_trace_addresses = no 
++  
++  # Make sieve aware of user+tag@domain.tld aliases.
++  recipient_delimiter = +
+ }

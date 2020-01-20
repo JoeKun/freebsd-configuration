@@ -631,7 +631,10 @@ Enable `phpLDAPAdmin` configuration for `nginx`.
 
 ## Email
 
-The following is heavily inspired from [Kliment Andreev's amazing howto guide](https://blog.iandreev.com/?p=1604).
+The following is heavily inspired by:
+
+ * [Kliment Andreev's amazing howto guide](https://blog.iandreev.com/?p=1604);
+ * [Cullum Smith's amazing howto guide](https://www.c0ffee.net/blog/mail-server-guide/).
 
 ### Disable `sendmail`
 
@@ -682,8 +685,9 @@ Prepare storage for virtual mailboxes:
 # pw group add virtual_mail -g 145
 # pw user add virtual_mail -u 145 -g 145 -c "Virtual Mail Administrator" -d /var/mail/virtual -s /usr/sbin/nologin
 # rm -f /var/mail/virtual_mail
-# mkdir /var/mail/virtual
-# chown virtual_mail:virtual_mail /var/mail/virtual
+# mkdir /var/mail/virtual /var/mail/attachments
+# chown virtual_mail:virtual_mail /var/mail/virtual /var/mail/attachments
+# chmod 770 /var/mail/virtual /var/mail/attachments
 ```
 
 Apply basic `dovecot` configuration:
@@ -704,6 +708,47 @@ Enable `dovecot`:
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/dovecot
 # service dovecot start
+```
+
+
+### Server-side mail rules
+
+This section is inspired by the [Dovecot section of Cullum Smith's guide](https://www.c0ffee.net/blog/mail-server-guide/#dovecot), especially those parts of that guide that directly mention `sieve`.
+
+```
+# cd /usr/ports/mail/dovecot-pigeonhole
+# make config
+```
+
+Keep all options enabled by default, double-checking that the following are enabled:
+
+ * `DOCS` in first section;
+ * `MANAGESIEVE` in first section.
+
+Additionally enable the following:
+
+ * `LDAP` in first section.
+
+See if any dependency is missing:
+
+```
+# make missing
+```
+
+If any, install the dependency using `pkg`.
+
+Then proceed to installing `dovecot-pigeonhole`:
+
+```
+# make all install clean
+# pkg lock dovecot-pigeonhole
+```
+
+Update `dovecot` configuration for `sieve` support:
+
+```
+# cd /freebsd-configuration/patches/dovecot
+# ./bootstrap_dovecot_sieve_configuration
 ```
 
 
@@ -862,7 +907,7 @@ Log out and log back in.
 
 ### Roundcube
 
-The following is heavily inspired from [Kliment Andreev's howto guide on `roundcube`](https://blog.iandreev.com/?p=1339).
+The following is heavily inspired by [Kliment Andreev's howto guide on `roundcube`](https://blog.iandreev.com/?p=1339).
 
 ```
 # cd /usr/ports/mail/roundcube
@@ -1009,7 +1054,7 @@ Enable `mailman`:
 
 ##### Integration with `postfix`
 
-This part was inspired from [FreeBSD Diary's amazing howto guide](http://www.freebsddiary.org/mailman.php).
+This part was inspired by [FreeBSD Diary's amazing howto guide](http://www.freebsddiary.org/mailman.php).
 
 Make sure that the following configuration option in `/usr/local/etc/postfix/main.cf` is uncommented:
 
@@ -1055,7 +1100,7 @@ Restart `postfix`:
 
 ##### Integration with `nginx`
 
-This part was inspired from [My Wushu Blog's amazing howto guide](https://www.mywushublog.com/2012/05/mailman-with-nginx-on-freebsd/).
+This part was inspired by [My Wushu Blog's amazing howto guide](https://www.mywushublog.com/2012/05/mailman-with-nginx-on-freebsd/).
 
 Install `fcgiwrap`:
 
@@ -1565,7 +1610,7 @@ Once all those changes are applied, we can configure Nextcloud to point to our L
 
 ### Full Text Search for Nextcloud
 
-The following is heavily inspired from [Neil Feltham's amazing howto guide](https://lothiancaleysweb.co.uk/how-to-install-fulltextsearch-in-nextcloud-with-elasticsearch-and-tesseract-ocr).
+The following is heavily inspired by [Neil Feltham's amazing howto guide](https://lothiancaleysweb.co.uk/how-to-install-fulltextsearch-in-nextcloud-with-elasticsearch-and-tesseract-ocr).
 
 For full text search support, we'll be using Elasticsearch, which depends on Java.
 
