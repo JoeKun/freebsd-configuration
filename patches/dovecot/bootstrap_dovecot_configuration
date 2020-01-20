@@ -3,7 +3,11 @@
 cd /usr/local/etc/dovecot
 cp -a example-config/* .
 patch --posix -p1 -i /freebsd-configuration/patches/dovecot/dovecot-base-configuration.diff
+
 ln -s dovecot-ldap.conf.ext dovecot-ldap-userdb.conf.ext
 chown -h root:dovecot dovecot-ldap.conf.ext dovecot-ldap-userdb.conf.ext
 chmod 640 dovecot-ldap.conf.ext
 
+openssl dhparam -out dh.pem 4096
+chown root:dovecot dh.pem
+chmod 640 dh.pem

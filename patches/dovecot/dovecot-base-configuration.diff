@@ -145,6 +145,15 @@ diff -ru a/conf.d/10-ssl.conf b/conf.d/10-ssl.conf
  
  # If key file is password protected, give the password here. Alternatively
  # give it when starting dovecot with -p parameter. Since this file is often
+@@ -50,7 +50,7 @@
+ # Generate new params with `openssl dhparam -out /usr/local/etc/dovecot/dh.pem 4096`
+ # Or migrate from old ssl-parameters.dat file with the command dovecot
+ # gives on startup when ssl_dh is unset.
+-#ssl_dh = </usr/local/etc/dovecot/dh.pem
++ssl_dh = </usr/local/etc/dovecot/dh.pem
+ 
+ # Minimum SSL protocol version to use. Potentially recognized values are SSLv3,
+ # TLSv1, TLSv1.1, and TLSv1.2, depending on the OpenSSL version used.
 diff -ru a/conf.d/15-lda.conf b/conf.d/15-lda.conf
 --- a/conf.d/15-lda.conf	2020-01-06 07:54:20.545976000 -0800
 +++ b/conf.d/15-lda.conf	2020-01-17 22:38:12.273553000 -0800
