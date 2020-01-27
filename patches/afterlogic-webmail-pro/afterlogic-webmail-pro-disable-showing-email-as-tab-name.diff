@@ -1,0 +1,12 @@
+diff -ru webmail-orig/data/settings/modules/MailWebclient.config.json webmail/data/settings/modules/MailWebclient.config.json
+--- webmail-orig/data/settings/modules/MailWebclient.config.json	2020-01-26 22:05:26.634060000 -0800
++++ webmail/data/settings/modules/MailWebclient.config.json	2020-01-14 16:23:23.389635000 -0800
+@@ -64,7 +64,7 @@
+         "int"
+     ],
+     "ShowEmailAsTabName": [
+-        true,
++        false,
+         "bool"
+     ],
+     "AllowShowMessagesCountInFolderList": [

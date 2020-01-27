@@ -636,6 +636,13 @@ The following is heavily inspired by:
  * [Kliment Andreev's amazing howto guide](https://blog.iandreev.com/?p=1604);
  * [Cullum Smith's amazing howto guide](https://www.c0ffee.net/blog/mail-server-guide/).
 
+Please note that this section contains information on how to install and configure two different webmail applications:
+
+ * Roundcube, which is fully open source, and at the same time with a basic design and powerful (especially when it comes to the extent to which it supports advanced aspects of server-side mail rules);
+ * AfterLogic WebMail Pro, which is a commercial and paid product, but has a slightly more appealing look and feel, and a broader range as a more complete groupware suite, although its support for server-side mail rules is a bit more barebones; as a side note though, AfterLogic also offers a more stripped down version of this product, named AfterLogic WebMail Lite, which is free of charge.
+
+Typically, one should pick only one of these two.
+
 ### Disable `sendmail`
 
 ```
@@ -907,6 +914,8 @@ Log out and log back in.
 
 ### Roundcube
 
+Roundcube is an open source webmail application.
+
 The following is heavily inspired by [Kliment Andreev's howto guide on `roundcube`](https://blog.iandreev.com/?p=1339).
 
 ```
@@ -984,6 +993,42 @@ Enable `nginx` configuration for `roundcube`:
 
 ```
 # cd /usr/local/etc/nginx/sites-enabled
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/roundcube.foo.com.conf
+```
+
+Manually edit `server_name` directives in `/usr/local/etc/nginx/sites-enabled/roundcube.foo.com.conf`.
+
+Restart `nginx`:
+
+```
+# service nginx restart
+```
+
+
+### AfterLogic WebMail Pro
+
+If Roundcube doesn't quite satisfy your needs, you might want to consider AfterLogic WebMail Pro, which is a commercial webmail application with wide-ranging groupware functionality.
+
+##### AfterLogic WebMail Pro software itself
+
+Make sure to refer to the official instructions to install AfterLogic WebMail Pro in the [administrator manual](https://afterlogic.com/docs/webmail-pro-8/installation/installation-instructions).
+
+Install the web application:
+
+```
+# cd /usr/local/www
+# wget https://afterlogic.com/download/webmail-pro-php-8.zip
+# mkdir webmail
+# cd webmail
+# chown -R www:www data
+# unzip ../webmail-pro-php-8.zip
+# rm -f ../webmail-pro-php-8.zip
+```
+
+Enable `nginx` configuration for AfterLogic WebMail Pro:
+
+```
+# cd /usr/local/etc/nginx/sites-enabled
 # ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/mail.foo.com.conf
 ```
 
@@ -993,6 +1038,85 @@ Restart `nginx`:
 
 ```
 # service nginx restart
+```
+
+Follow [these instructions](https://afterlogic.com/docs/webmail-pro-8/installation/compatibility-test) by going to `https://mail.foo.com/?install` with your web browser, in order to figure out if your server meets the minimum requirements to run AfterLogic WebMail Pro. You might need to install additional PHP modules; for example, you might need to do the following:
+
+```
+# pkg install php72-pdo_mysql
+# service php-fpm restart
+```
+
+Create `webmail` MySQL database as well as associated `webmail` user:
+
+```
+# mysql -u root -p
+
+[...]
+
+root@localhost [(none)]> CREATE DATABASE IF NOT EXISTS `webmail` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+root@localhost [(none)]> CREATE USER 'webmail'@'localhost' IDENTIFIED BY 'SomeThing@1234';
+root@localhost [(none)]> GRANT ALL PRIVILEGES ON webmail.* TO 'webmail'@'localhost';
+```
+
+Remove any trace of these passwords:
+
+```
+# rm -f ~/.mysql_secret ~/.mysql_history
+```
+
+Then log into the administrator interface, going to `https://mail.foo.com/` with your web browser, and follow [these instructions](https://afterlogic.com/docs/webmail-pro-8/configuring-webmail). In the database settings, you should indicate:
+
+ * SQL login: `webmail`;
+ * SQL password: same password as what you used in `CREATE USER` MySQL command above;
+ * Database name: `webmail`;
+ * Host: `localhost`.
+
+
+##### Configuration adjustments
+
+For security reasons, you may want to disallow embedding AfterLogic WebMail Pro into an `iframe`:
+
+```
+# cd /usr/local/www/webmail
+# patch --posix -p1 -i /freebsd-configuration/patches/afterlogic-webmail-pro/afterlogic-webmail-pro-prevent-clickjacking-attacks.diff
+```
+
+You can also remove the *Powered by AfterLogic WebMail Pro* footer:
+
+```
+# cd /usr/local/www/webmail
+# patch --posix -p1 -i /freebsd-configuration/patches/afterlogic-webmail-pro/afterlogic-webmail-pro-remove-powered-by-footer.diff
+```
+
+If you'd like to replace the email address as the name of the mail tab for something simpler and more consistent with the rest of the tab bar, you can do that with another patch:
+
+```
+# cd /usr/local/www/webmail
+# patch --posix -p1 -i /freebsd-configuration/patches/afterlogic-webmail-pro/afterlogic-webmail-pro-disable-showing-email-as-tab-name.diff
+```
+
+The files functionality of AfterLogic WebMail Pro is pretty unsatisfactory, so we might as well disable it:
+
+```
+# cd /usr/local/www/webmail
+# patch --posix -p1 -i /freebsd-configuration/patches/afterlogic-webmail-pro/afterlogic-webmail-pro-disable-files-functionality.diff
+```
+
+
+##### Allow saving messages as PDF
+
+AfterLogic WebMail Pro has the ability to expose a button to save messages as PDF.
+
+However, this functionality relies on a tool named `wkhtmltopdf`, which has a lot of dependencies. If you're willing to install so many package dependencies, you can enable this functionality like this:
+
+```
+# pkg install wkhtmltopdf
+# cd /usr/local/www/webmail/data
+# mkdir -p system/wkhtmltopdf/linux
+# cd system/wkhtmltopdf/linux
+# ln -s ../../../../../../bin/wkhtmltopdf
+# chown -R -h www:www /usr/local/www/webmail/data/system
 ```
 
 
@@ -1724,6 +1848,20 @@ To have your files continuously indexed, you need to install a new service.
 ```
 
 For some reason, and despite my best efforts to address that, your shell may start behaving weirdly after starting this new service, as if it's eating a bunch of your keystrokes. The best solution I found to this was to simply disconnect from the current SSH session, close the Terminal tab or window, and create a new one.
+
+
+### Integrate AfterLogic WebMail Pro with Nextcloud
+
+To make this work, you'll need to expose AfterLogic WebMail Pro with the same origin as the Nextcloud installation:
+
+```
+# cd /usr/local/etc/nginx/sites-enabled
+# mkdir -p cloud.foo.com.conf.d
+# cd cloud.foo.com.conf.d
+# ln -s ../../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/cloud.foo.com.conf.d/mail.conf
+```
+
+Then follow instructions about [Nextcloud integration](https://afterlogic.com/docs/webmail-pro-8/configuring-webmail/nextcloud-integration) from AfterLogic WebMail Pro's documentation.
 
 
 ## Time Machine Server

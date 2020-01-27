@@ -14,9 +14,9 @@ $config['ip_check'] = true;
 
 $config['des_key'] = 'b+ITLBama21h%E5pGzEffAer';
 
-$config['product_name'] = 'Webmail';
+$config['product_name'] = 'Mail';
 
-$config['plugins'] = array('attachment_reminder', 'emoticons', 'hide_blockquote', 'markasjunk', 'password');
+$config['plugins'] = array('attachment_reminder', 'emoticons', 'hide_blockquote', 'managesieve', 'markasjunk', 'password');
 
 $config['language'] = 'en_US';
 

@@ -1,0 +1,11 @@
+diff -ru webmail-orig/data/settings/modules/FilesWebclient.config.json webmail/data/settings/modules/FilesWebclient.config.json
+--- webmail-orig/data/settings/modules/FilesWebclient.config.json	2019-12-19 02:48:30.000000000 -0800
++++ webmail/data/settings/modules/FilesWebclient.config.json	2020-01-16 12:36:47.160049000 -0800
+@@ -1,6 +1,6 @@
+ {
+     "Disabled": [
+-        false,
++        true,
+         "bool"
+     ],
+     "EditFileNameWithoutExtension": [

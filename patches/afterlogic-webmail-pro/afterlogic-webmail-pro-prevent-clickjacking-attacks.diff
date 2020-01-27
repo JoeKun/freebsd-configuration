@@ -1,0 +1,12 @@
+diff -ru webmail-orig/data/settings/config.json webmail/data/settings/config.json
+--- webmail-orig/data/settings/config.json	2019-12-19 02:48:38.000000000 -0800
++++ webmail/data/settings/config.json	2020-01-16 12:36:47.159853000 -0800
+@@ -162,7 +162,7 @@
+         "bool"
+     ],
+     "XFrameOptions": [
+-        "",
++        "SAMEORIGIN",
+         "string"
+     ],
+     "RemoveOldLogs": [
