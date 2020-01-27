@@ -1468,21 +1468,21 @@ Install `chruby` to be able to select a specific version of ruby for GitLab:
 Install specific version of ruby for GitLab:
 
 ```
-# wget "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.3.tar.gz"
-# tar xvzf ruby-2.5.3.tar.gz
-# cd ruby-2.5.3
-# ./configure --prefix=/opt/rubies/ruby-2.5.3
+# wget "https://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.6.3.tar.gz"
+# tar xvzf ruby-2.6.3.tar.gz
+# cd ruby-2.6.3
+# ./configure --prefix=/opt/rubies/ruby-2.6.3
 # make
 # make install
 # cd ..
-# rm -R -f ruby-2.5.3
+# rm -R -f ruby-2.6.3
 ```
 
 Install `bundler` for that specific version of ruby:
 
 ```
 # source /usr/local/share/chruby/chruby.sh
-# chruby ruby-2.5.3
+# chruby ruby-2.6.3
 # gem install bundler -v "1.17.3"
 ```
 
