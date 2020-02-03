@@ -842,8 +842,10 @@ Then proceed to installing `postfix`:
 Configure `postfix`:
 
 ```
+# cd /freebsd-configuration/patches/postfix
+# ./bootstrap_postfix_configuration
+
 # cd /usr/local/etc/postfix
-# patch --posix -p1 -i /freebsd-configuration/patches/postfix/postfix-master.cf.diff
 # rm -f main.cf
 # ln -s ../../../../freebsd-configuration/usr/local/etc/postfix/main.cf
 # ln -s ../../../../freebsd-configuration/usr/local/etc/postfix/transport
@@ -974,10 +976,6 @@ Manually edit the following in `/usr/local/www/roundcube/config.inc.php`:
 
  * password in `pgsql` address set for key `db_dsnw`;
  * administrator address set for key `support_url`.
-
-Manually edit the following in `/usr/local/www/roundcube/plugins/password/config.inc.php`:
-
- * password in `pgsql` address set for key `password_db_dsn`.
 
 Fix permissions:
 

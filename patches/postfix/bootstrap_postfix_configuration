@@ -1,0 +1,9 @@
+#! /bin/sh
+
+cd /usr/local/etc/postfix
+
+patch --posix -p1 -i /freebsd-configuration/patches/postfix/postfix-master.cf.diff
+
+openssl dhparam -out dh512.pem 512
+openssl dhparam -out dh2048.pem 2048
+chmod 644 dh512.pem dh2048.pem

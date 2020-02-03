@@ -1,6 +1,11 @@
 --- a/master.cf	2016-08-24 15:48:41.131858000 -0700
 +++ b/master.cf	2016-08-25 16:18:37.766617000 -0700
-@@ -14,17 +14,14 @@
+@@ -10,22 +10,19 @@
+ #               (yes)   (yes)   (no)    (never) (100)
+ # ==========================================================================
+ smtp      inet  n       -       n       -       -       smtpd
++  -o smtpd_sasl_auth_enable=no
+ #smtp      inet  n       -       n       -       1       postscreen
  #smtpd     pass  -       -       n       -       -       smtpd
  #dnsblog   unix  -       -       n       -       0       dnsblog
  #tlsproxy  unix  -       -       n       -       0       tlsproxy
@@ -8,6 +13,7 @@
 -#  -o syslog_name=postfix/submission
 -#  -o smtpd_tls_security_level=encrypt
 -#  -o smtpd_sasl_auth_enable=yes
+-#  -o smtpd_tls_auth_only=yes
 -#  -o smtpd_reject_unlisted_recipient=no
 -#  -o smtpd_client_restrictions=$mua_client_restrictions
 -#  -o smtpd_helo_restrictions=$mua_helo_restrictions
@@ -26,7 +32,7 @@
  #smtps     inet  n       -       n       -       -       smtpd
  #  -o syslog_name=postfix/smtps
  #  -o smtpd_tls_wrappermode=yes
-@@ -128,3 +125,38 @@
+@@ -131,3 +128,38 @@
  #mailman   unix  -       n       n       -       -       pipe
  #  flags=FR user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
  #  ${nexthop} ${user}
