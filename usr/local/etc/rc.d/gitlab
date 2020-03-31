@@ -28,12 +28,23 @@ load_rc_config $name
 # They should also be prefixed with "gitlab_".
 gitlab_enable=${gitlab_enable:-"NO"}
 gitlab_user=${gitlab_user:-"git"}
+gitlab_use_unicorn=${gitlab_use_unicorn:-""}
+
+# Select the web server to use
+gitlab_use_web_server=""
+if [ -z "$gitlab_use_unicorn" ]; then
+  gitlab_use_web_server="puma"
+else
+  gitlab_use_web_server="unicorn"
+fi
+
+# Other script variables
 eval gitlab_home=${gitlab_home:-"~${gitlab_user}"}
 gitlab_root=${gitlab_root:-"$gitlab_home/gitlab"}
 gitlab_pid_path=${gitlab_pid_path:-"$gitlab_root/tmp/pids"}
 gitlab_socket_path=${gitlab_socket_path:-"$gitlab_root/tmp/sockets"}
 gitlab_rails_socket=${gitlab_rails_socket:-"$gitlab_socket_path/gitlab.socket"}
-gitlab_web_server_pid_path=${gitlab_web_server_pid_path:-"$gitlab_pid_path/unicorn.pid"}
+gitlab_web_server_pid_path=${gitlab_web_server_pid_path:-"$gitlab_pid_path/$gitlab_use_web_server.pid"}
 gitlab_sidekiq_pid_path=${gitlab_sidekiq_pid_path:-"$gitlab_pid_path/sidekiq.pid"}
 gitlab_mail_room_enabled=${gitlab_mail_room_enabled:-"false"}
 gitlab_mail_room_pid_path=${gitlab_mail_room_pid_path:-"$gitlab_pid_path/mail_room.pid"}
@@ -51,7 +62,6 @@ gitaly_dir=$(cd ${gitlab_root}/../gitaly 2> /dev/null && pwd)
 gitaly_pid_path="${gitlab_pid_path}/gitaly.pid"
 gitaly_log="${gitlab_root}/log/gitaly.log"
 gitlab_rails_environment=${gitlab_rails_environment:-"production"}
-gitlab_experimental_puma=${gitlab_experimental_puma:-""}
 gitlab_additional_environment_variables=${gitlab_additional_environment_variables:-"PATH=\"$PATH:/usr/local/sbin:/usr/local/bin\""}
 gitlab_ruby_environment_wrapper=${gitlab_ruby_environment_wrapper:-"${gitlab_home}/bin/gitlab_ruby_environment_wrapper"}
 
@@ -66,13 +76,7 @@ web_server_pid_path=${web_server_pid_path:-"$gitlab_web_server_pid_path"}
 sidekiq_pid_path=${sidekiq_pid_path:-"$gitlab_sidekiq_pid_path"}
 mail_room_enabled=${mail_room_enabled:-"$gitlab_mail_room_enabled"}
 mail_room_pid_path=${mail_room_pid_path:-"$gitlab_mail_room_pid_path"}
-
-# Select the web server to use
-if [ -z "$gitlab_experimental_puma" ]; then
-  use_web_server="unicorn"
-else
-  use_web_server="puma"
-fi
+use_web_server=${gitlab_use_web_server}
 
 ### Environment variables
 run_env="env RAILS_ENV=$gitlab_rails_environment HOME=$gitlab_home $gitlab_additional_environment_variables"
@@ -277,10 +281,7 @@ start_gitlab() {
     # Remove old socket if it exists
     rm -f "$rails_socket" 2>/dev/null
     # Start the web server
-    # Unicorn may break the current process on freebsd during 
-    # daemonizing (defunct exists until new master has prefilled 
-    # caches); therefore start itself is decoupled.
-    su - $gitlab_user -c "/usr/sbin/daemon -t gitlab-unicorn $gitlab_bin_web_run_env ${app_root}/bin/web start"
+    su - $gitlab_user -c "$gitlab_bin_web_run_env ${app_root}/bin/web start"
   fi
   if [ "$gitlab_pages_enabled" = true ] && [ "$gitlab_pages_status" != "0" ]; then
     echo "Starting GitLab Pages"
