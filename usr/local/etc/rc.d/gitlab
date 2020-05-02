@@ -29,6 +29,7 @@ load_rc_config $name
 gitlab_enable=${gitlab_enable:-"NO"}
 gitlab_user=${gitlab_user:-"git"}
 gitlab_use_unicorn=${gitlab_use_unicorn:-""}
+gitlab_sidekiq_workers=${gitlab_sidekiq_workers:-""}
 
 # Select the web server to use
 gitlab_use_web_server=""
@@ -45,7 +46,6 @@ gitlab_pid_path=${gitlab_pid_path:-"$gitlab_root/tmp/pids"}
 gitlab_socket_path=${gitlab_socket_path:-"$gitlab_root/tmp/sockets"}
 gitlab_rails_socket=${gitlab_rails_socket:-"$gitlab_socket_path/gitlab.socket"}
 gitlab_web_server_pid_path=${gitlab_web_server_pid_path:-"$gitlab_pid_path/$gitlab_use_web_server.pid"}
-gitlab_sidekiq_pid_path=${gitlab_sidekiq_pid_path:-"$gitlab_pid_path/sidekiq.pid"}
 gitlab_mail_room_enabled=${gitlab_mail_room_enabled:-"false"}
 gitlab_mail_room_pid_path=${gitlab_mail_room_pid_path:-"$gitlab_pid_path/mail_room.pid"}
 gitlab_workhorse_dir=${gitlab_workhorse_dir:-"$(cd $gitlab_root/../gitlab-workhorse 2> /dev/null && pwd)"}
@@ -73,17 +73,22 @@ pid_path=${pid_path:-"$gitlab_pid_path"}
 socket_path=${socket_path:-"$gitlab_socket_path"}
 rails_socket=${rails_socket:-"$gitlab_rails_socket"}
 web_server_pid_path=${web_server_pid_path:-"$gitlab_web_server_pid_path"}
-sidekiq_pid_path=${sidekiq_pid_path:-"$gitlab_sidekiq_pid_path"}
 mail_room_enabled=${mail_room_enabled:-"$gitlab_mail_room_enabled"}
 mail_room_pid_path=${mail_room_pid_path:-"$gitlab_mail_room_pid_path"}
 use_web_server=${gitlab_use_web_server}
 
+if [ -z "$gitlab_sidekiq_workers" ]; then
+  sidekiq_pid_path="$pid_path/sidekiq.pid"
+else
+  sidekiq_pid_path="$pid_path/sidekiq-cluster.pid"
+fi
+
 ### Environment variables
-run_env="env RAILS_ENV=$gitlab_rails_environment HOME=$gitlab_home $gitlab_additional_environment_variables"
+run_env="env RAILS_ENV=$gitlab_rails_environment SIDEKIQ_WORKERS=$gitlab_sidekiq_workers HOME=$gitlab_home $gitlab_additional_environment_variables"
 if [ -x "${gitlab_ruby_environment_wrapper}" ]; then
   run_env="${run_env} ${gitlab_ruby_environment_wrapper}"
 fi
-gitlab_bin_web_run_env=$(echo $run_env | sed "s| RAILS_ENV=$gitlab_rails_environment | RAILS_ENV=$gitlab_rails_environment USE_WEB_SERVER=$use_web_server |g")
+gitlab_bin_web_run_env=$(echo $run_env | sed "s| RAILS_ENV=$gitlab_rails_environment SIDEKIQ_WORKERS=$gitlab_sidekiq_workers | RAILS_ENV=$gitlab_rails_environment USE_WEB_SERVER=$use_web_server |g")
 
 
 ### Init Script functions
