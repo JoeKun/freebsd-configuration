@@ -31,7 +31,7 @@
  // If you enable a local name server, don't forget to enter 127.0.0.1
  // first in your /etc/resolv.conf so this server will be queried.
  // Also, make sure to enable it in /etc/rc.conf.
-@@ -358,3 +364,6 @@
+@@ -378,3 +384,6 @@
  	};
  };
  */
