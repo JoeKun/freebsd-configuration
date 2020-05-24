@@ -167,6 +167,41 @@ diff -ru a/conf.d/15-lda.conf b/conf.d/15-lda.conf
    # Space separated list of plugins to load (default is global mail_plugins).
    #mail_plugins = $mail_plugins
  }
+diff -ru a/conf.d/15-mailboxes.conf b/conf.d/15-mailboxes.conf
+--- a/conf.d/15-mailboxes.conf	2020-01-06 07:54:20.545913000 -0800
++++ b/conf.d/15-mailboxes.conf	2020-01-17 22:33:41.830297000 -0800
+@@ -49,18 +49,30 @@
+   # These mailboxes are widely used and could perhaps be created automatically:
+   mailbox Drafts {
+     special_use = \Drafts
++    auto = subscribe
+   }
++
++  # For \Junk mailboxes, there are two widely used names. We'll mark both of
++  # them as \Junk, but only the one preferred by our webmail as auto subscribe.
++  mailbox Spam {
++    special_use = \Junk
++    auto = subscribe
++  }
+   mailbox Junk {
+     special_use = \Junk
+   }
++
+   mailbox Trash {
+     special_use = \Trash
++    auto = subscribe
+   }
+ 
+   # For \Sent mailboxes there are two widely used names. We'll mark both of
+-  # them as \Sent. User typically deletes one of them if duplicates are created.
++  # them as \Sent, but only the one preferred by our webmail as auto subscribe.
++  # User typically deletes one of them if duplicates are created.
+   mailbox Sent {
+     special_use = \Sent
++    auto = subscribe
+   }
+   mailbox "Sent Messages" {
+     special_use = \Sent
 diff -ru a/conf.d/20-imap.conf b/conf.d/20-imap.conf
 --- a/conf.d/20-imap.conf	2020-01-06 07:54:20.546107000 -0800
 +++ b/conf.d/20-imap.conf	2020-01-17 22:39:17.836595000 -0800
