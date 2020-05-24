@@ -145,7 +145,7 @@ diff -ru a/conf.d/10-ssl.conf b/conf.d/10-ssl.conf
  
  # If key file is password protected, give the password here. Alternatively
  # give it when starting dovecot with -p parameter. Since this file is often
-@@ -50,7 +50,7 @@
+@@ -51,7 +51,7 @@
  # Generate new params with `openssl dhparam -out /usr/local/etc/dovecot/dh.pem 4096`
  # Or migrate from old ssl-parameters.dat file with the command dovecot
  # gives on startup when ssl_dh is unset.
