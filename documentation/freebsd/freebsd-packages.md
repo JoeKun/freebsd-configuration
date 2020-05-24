@@ -420,6 +420,11 @@ Configure `nginx`:
 # cd /usr/local/www
 # ln -s ../../../freebsd-configuration/usr/local/www/admin
 
+# cd /usr/local/etc
+# mkdir -p newsyslog.conf.d
+# cd newsyslog.conf.d
+# ln -s ../../../../freebsd-configuration/usr/local/etc/newsyslog.conf.d/nginx.conf
+
 # cd /usr/local/etc/nginx
 # rm -f nginx.conf
 # for file_name in nginx.conf error_pages php php_ssl php_ssl_auth_proxy redirect_to_ssl ssl_wildcard_certificate; do ln -s ../../../../freebsd-configuration/usr/local/etc/nginx/${file_name}; done
@@ -1323,6 +1328,9 @@ Install `apache`:
 Apply basic configuration for `apache`:
 
 ```
+# cd /usr/local/etc/newsyslog.conf.d
+# ln -s ../../../../freebsd-configuration/usr/local/etc/newsyslog.conf.d/apache.conf
+
 # mkdir -p /var/db/httpd-dav-lock
 # cd /usr/local/etc/apache24
 # mkdir -p sites-enabled
