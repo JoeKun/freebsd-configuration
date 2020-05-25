@@ -1,4 +1,37 @@
 # /etc/rc.conf.d/redis: system configuration for redis
 
-redis_enable="YES"
+#-----------------------------------------------------------------------
+# Support for separate redis instances for each service that needs one
+#-----------------------------------------------------------------------
+
+# Build redis_profiles by importing any system configuration file for redis in
+# the sibling redis.d directory.
+# Files in the redis.d directory are expected to contain a single statement,
+# like this:
+#
+#    redis_profiles="${redis_profiles} foo"
+#
+# where "foo" corresponds to the name of a configuration file named
+# redis-foo.conf next to the global redis.conf file.
+#
+# Please refer to /usr/local/etc/rc.d/redis for further guidance on using
+# multiple redis profiles.
+
+redis_profiles=""
+_redis_global_system_configuration_file_path=$(echo "${rc_conf_files}" | tr ' ' '\n' | head -n 1)
+_redis_profile_configuration_directory_path="${_redis_global_system_configuration_file_path}.d/redis.d"
+if [ -d "${_redis_profile_configuration_directory_path}" ]
+then
+    for _redis_profile_configuration_file_path in "${_redis_profile_configuration_directory_path}"/*
+    do
+        . "${_redis_profile_configuration_file_path}"
+    done
+    redis_profiles=$(echo "${redis_profiles}" | sed "s,^[[:space:]]*,," | sed "s,[[:space:]]*$,,")
+fi
+
+redis_enable="NO"
+if [ -n "${redis_profiles}" ]
+then
+    redis_enable="YES"
+fi
 

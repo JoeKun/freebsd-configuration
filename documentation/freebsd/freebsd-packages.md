@@ -635,6 +635,34 @@ Enable `phpLDAPAdmin` configuration for `nginx`.
 ```
 
 
+## `redis`
+
+In this section, we will install `redis` with a special startup configuration file that makes it easy to use separate `redis` instances for each service that needs one.
+
+This is inspired by [Rspamd's guide on using a multi-instance redis backend for its various components](https://rspamd.com/doc/tutorials/redis_replication.html).
+
+```
+# pkg install redis
+
+# cd /usr/local/etc
+# patch --posix -p1 -i /freebsd-configuration/patches/redis/redis.conf-bind-to-localhost-only-and-disable-listening-on-tcp-socket.diff
+
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/redis
+# mkdir redis.d
+```
+
+Files in the `redis.d` directory are expected to contain a single statement, like this:
+
+```
+redis_profiles="${redis_profiles} foo"
+```
+
+where `foo` corresponds to the name of a configuration file named `redis-foo.conf` next to the global `redis.conf` file.
+
+Please refer to `/usr/local/etc/rc.d/redis` for further guidance on using multiple redis profiles.
+
+
 ## Email
 
 The following is heavily inspired by:
@@ -1450,14 +1478,22 @@ Enable GateOne virtual host for `nginx`:
 
 ## GitLab
 
-Install and enable `redis`:
+Configure and enable a new `redis` instance dedicated to GitLab:
 
 ```
-# pkg install redis
+# cd /var/db/redis
+# mkdir gitlab
+# chown redis:redis gitlab
 
-# cd /etc/rc.conf.d
-# ln -s ../../freebsd-configuration/etc/rc.conf.d/redis
-# service redis start
+# cd /usr/local/etc
+# ln -s ../../../freebsd-configuration/usr/local/etc/redis-gitlab.conf
+
+# cd /usr/local/etc/newsyslog.conf.d
+# ln -s ../../../../freebsd-configuration/usr/local/etc/newsyslog.conf.d/redis-gitlab.conf
+
+# cd /etc/rc.conf.d/redis.d
+# ln -s ../../../freebsd-configuration/etc/rc.conf.d/redis.d/gitlab
+# service redis start gitlab
 ```
 
 Install other required dependencies:
@@ -1530,7 +1566,7 @@ Complete installation drawing some inspiration from the instructions in [this gu
 
 Some important differences:
 
- * don't apply the change described as "Change the Redis socket path to `/usr/local/var/run/redis/redis.sock`";
+ * don't apply the change described as "Change the Redis socket path to `/usr/local/var/run/redis/redis.sock`"; instead, change it to `/var/run/redis/gitlab.sock`, as shown in `/freebsd-configuration/usr/local/git/gitlab/config/resque.yml`; also disregard other instructions about `redis` configuration, since this was covered above with a new `redis` instance dedicated to GitLab;
  * change `/home/*` to `/usr/local/*`;
  * before installing the bundle for either `gitaly` or `gitlab`, you will probably need to make the following adjustments:
 
@@ -1558,6 +1594,27 @@ $ bundle config build.charlock_holmes --with-opt-include=/usr/local/include --wi
 Make sure to refer to the official instructions to install Nextcloud in the [administrator manual](https://docs.nextcloud.com/server/15/admin_manual/installation/index.html).
 
 You should also consider your options for [memory caching](https://docs.nextcloud.com/server/15/admin_manual/configuration_server/caching_configuration.html). In our case, we'll follow the recommendation for *Small organization, single-server setup* from an [older version of the Nextcloud administrator manual](https://docs.nextcloud.com/server/14/admin_manual/configuration_server/caching_configuration.html#small-organization-single-server-setup), which is to say that we'll use APCu for local caching, and Redis for file locking.
+
+### Redis backend
+
+Configure and enable a new `redis` instance dedicated to Nextcloud:
+
+```
+# cd /var/db/redis
+# mkdir nextcloud
+# chown redis:redis nextcloud
+
+# cd /usr/local/etc
+# ln -s ../../../freebsd-configuration/usr/local/etc/redis-nextcloud.conf
+
+# cd /usr/local/etc/newsyslog.conf.d
+# ln -s ../../../../freebsd-configuration/usr/local/etc/newsyslog.conf.d/redis-nextcloud.conf
+
+# cd /etc/rc.conf.d/redis.d
+# ln -s ../../../freebsd-configuration/etc/rc.conf.d/redis.d/nextcloud
+# service redis start nextcloud
+```
+
 
 ### Basic installation
 
@@ -1662,7 +1719,7 @@ Additionally, adjust your configuration options in that same file, `/usr/local/w
   'memcache.locking' => '\\OC\\Memcache\\Redis',
   'redis' =>
   array (
-    'host' => '/var/run/redis/redis.sock',
+    'host' => '/var/run/redis/nextcloud.sock',
     'port' => 0,
     'timeout' => 0.0,
   ),

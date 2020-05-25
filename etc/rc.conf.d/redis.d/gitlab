@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/redis.d/rspamd: system configuration for redis instance dedicated to GitLab
+
+redis_profiles="${redis_profiles} gitlab"
+
