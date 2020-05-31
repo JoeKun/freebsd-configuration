@@ -229,6 +229,7 @@ smtpd_data_restrictions = permit_mynetworks
 
 # Filter mail through rspamd's milter socket.
 smtpd_milters = unix:/var/run/rspamd/milter.sock
+non_smtpd_milters = unix:/var/run/rspamd/milter.sock
 
 # Accept mail by default is there is any issue with rspamd.
 milter_default_action = accept
