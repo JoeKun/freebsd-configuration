@@ -1195,9 +1195,10 @@ Enable `nginx` configuration for AfterLogic WebMail Pro:
 ```
 # cd /usr/local/etc/nginx/sites-enabled
 # ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/mail.foo.com.conf
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/sync.foo.com.conf
 ```
 
-Manually edit `server_name` directives in `/usr/local/etc/nginx/sites-enabled/mail.foo.com.conf`.
+Manually edit `server_name` directives in `/usr/local/etc/nginx/sites-enabled/mail.foo.com.conf` and in `/usr/local/etc/nginx/sites-enabled/sync.foo.com.conf`.
 
 Restart `nginx`:
 
@@ -1236,6 +1237,10 @@ Then log into the administrator interface, going to `https://mail.foo.com/` with
  * SQL password: same password as what you used in `CREATE USER` MySQL command above;
  * Database name: `webmail`;
  * Host: `localhost`.
+
+In the Mobile Sync settings, make the following changes:
+
+ * DAV server: `https://sync.foo.com/`, after replacing the domain with what you used as the `server_name` in `/usr/local/etc/nginx/sites-enabled/sync.foo.com.conf` up above.
 
 
 ##### Configuration adjustments
