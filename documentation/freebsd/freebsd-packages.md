@@ -792,30 +792,24 @@ Update `dovecot` configuration for `sieve` support:
 # ./bootstrap_dovecot_sieve_configuration
 ```
 
+Restart dovecot:
+
+```
+# service dovecot restart
+```
+
 
 ### Content filters (anti-spam and anti-virus)
 
-Install content filter tools:
+Install ClamAV:
 
 ```
-# pkg install amavisd-new clamav spamassassin
-```
-
-Initialize and enable `spamassassin`:
-
-```
-# sa-update -D
-# cd /usr/local/etc/periodic/daily
-# ln -s ../../../../../freebsd-configuration/usr/local/etc/periodic/daily/340.spamassassin-update
-# cd /etc/rc.conf.d
-# ln -s ../../freebsd-configuration/etc/rc.conf.d/spamd
-# service sa-spamd start
+# pkg install clamav
 ```
 
 Initialize and enable ClamAV:
 
 ```
-# pw group mod vscan -m clamav
 # freshclam
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/clamav_clamd
@@ -824,26 +818,159 @@ Initialize and enable ClamAV:
 # service clamav-freshclam start
 ```
 
-Apply base patch for `amavisd` configuration file:
+Install this helper script that makes it easy to augment ClamAV's database of known virus signatures:
 
 ```
-# cd /usr/local/etc
-# chmod u+w amavisd.conf
-# patch --posix -p1 -i /freebsd-configuration/patches/amavis/amavisd.conf.diff
+# pkg install clamav-unofficial-sigs
+
+# cd /var/log
+# mkdir clamav-unofficial-sigs
+# chown clamav:clamav clamav-unofficial-sigs
+
+# cd /usr/local/etc/newsyslog.conf.d
+# ln -s ../../../../freebsd-configuration/usr/local/etc/newsyslog.conf.d/clamav-unofficial-sigs.conf
+
+# cd /usr/local/etc/clamav-unofficial-sigs
+# patch --posix -p1 /freebsd-configuration/patches/clamav-unofficial-sigs/clamav-unofficial-sigs-user.conf-enable-logging-to-file.diff
 ```
 
-Manually edit `$mydomain` and `$myhostname` in `/usr/local/etc/amavisd.conf`.
+Then follow instructions in [this guide](https://minamikhail.com/clamav-unofficial-sigs-installation-configuration/) on how to get and configure authorization keys for SecuriteInfo and MalwarePatrol.
 
-Enable `amavisd`:
+Enable this script to run hourly:
 
 ```
-# chmod u-w amavisd.conf
+# cd /etc/cron.d
+# ln -s ../../freebsd-configuration/etc/cron.d/periodic-hourly
+
+# cd /usr/local/etc/periodic
+# mkdir hourly
+# cd hourly
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/periodic/hourly/210.clamav-unofficial-sigs-update
+```
+
+Install the DCC daemon to check mail for bulkiness:
+
+```
+# cd /usr/ports/mail/dcc-dccd
+# make all install clean
+# pkg lock dcc-dccd
+
+# cd /var/db/dcc
+# patch --posix -p1 /freebsd-configuration/patches/dcc/dcc_conf-configure-for-spam-detection.diff
+
+# cd /usr/local/etc/periodic/daily
+# ln -s ../../../libexec/cron-dccd 340.dcc-maintenance-tasks
+
 # cd /etc/rc.conf.d
-# ln -s ../../freebsd-configuration/etc/rc.conf.d/amavisd
-# service amavisd start
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/dccifd
+# service dccifd start
 ```
 
-TODO: Look into `pyzor`, `razor`, `SPF`, `DKIM`.
+Configure and enable two new `redis` instances dedicated to `rspamd`, including one specifically for the Bayes classifier:
+
+```
+# cd /var/db/redis
+# mkdir rspamd
+# chown redis:redis rspamd
+
+# cd /usr/local/etc
+# ln -s ../../../freebsd-configuration/usr/local/etc/redis-rspamd.conf
+# ln -s ../../../freebsd-configuration/usr/local/etc/redis-rspamd-bayes.conf
+
+# cd /usr/local/etc/newsyslog.conf.d
+# ln -s ../../../../freebsd-configuration/usr/local/etc/newsyslog.conf.d/redis-rspamd.conf
+# ln -s ../../../../freebsd-configuration/usr/local/etc/newsyslog.conf.d/redis-rspamd-bayes.conf
+
+# cd /etc/rc.conf.d/redis.d
+# ln -s ../../../freebsd-configuration/etc/rc.conf.d/redis.d/rspamd
+# ln -s ../../../freebsd-configuration/etc/rc.conf.d/redis.d/rspamd-bayes
+# service redis start rspamd
+# service redis start rspamd-bayes
+```
+
+Prepare to install `rspamd`:
+
+```
+# cd /usr/ports/mail/rspamd
+# make config
+```
+
+Keep all options enabled by default, and additionally enable the following:
+
+ * `HYPERSCAN`.
+
+See if any dependency is missing:
+
+```
+# make missing
+```
+
+If any, install the dependencies using `pkg`. For example:
+
+```
+# pkg install devel/ragel devel/ninja security/libsodium devel/hyperscan lang/luajit
+```
+
+Then proceed to installing `rspamd`:
+
+```
+# make all install clean
+# pkg lock rspamd
+```
+
+Configure `rspamd`:
+
+```
+# pw group mod clamav -m rspamd
+
+# cd /usr/local/etc/rspamd
+# mkdir local.d
+# cd local.d
+# for file_name in antivirus.conf classifier-bayes.conf dcc.conf dkim_signing.conf mx_check.conf phishing.conf redis.conf replies.conf worker-controller.inc worker-normal.inc worker-proxy.inc; do ln -s ../../../../../freebsd-configuration/usr/local/etc/rspamd/local.d/${file_name}; done
+```
+
+Manually edit the following key in `/usr/local/etc/rspamd/local.d/worker-controller.inc`:
+
+ * `password`.
+
+This key, `password`, is for the password of the administrator interface of `rspamd`. Here's how you can generate a suitable password hash:
+
+```
+# rspamadm pw
+```
+
+Enable `rspamd`:
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/rspamd
+# service rspamd start
+```
+
+Enable `rspamd` configuration for `nginx`:
+
+```
+# cd /usr/local/etc/nginx/sites-enabled/admin.foo.com.conf.d
+# ln -s ../../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/admin.foo.com.conf.d/rspamd.conf
+# service nginx restart
+```
+
+Update `dovecot` configuration to use IMAP Sieve plugin to run appropriate `sieve` scripts that allow for automatic training of `rspamd`:
+
+```
+# cd /freebsd-configuration/patches/dovecot
+# ./bootstrap_dovecot_sieve_configuration
+```
+
+For reference, this part is heavily inspired from [dovecot's guide on integrating with an antispam using IMAP Sieve](https://wiki.dovecot.org/HowTo/AntispamWithSieve).
+
+Restart `dovecot`:
+
+```
+# service dovecot restart
+```
+
+Once this is setup, you should consider following the steps outlined by Cullum Smith in the section titled [DKIM: Validation for Your Outgoing Mail](https://www.c0ffee.net/blog/mail-server-guide/#dkim) of his howto guide.
 
 
 ### `postfix`
@@ -904,6 +1031,12 @@ Manually edit the following keys in `/usr/local/etc/postfix/main.cf`:
 Manually edit the entry for `root` in `/usr/local/etc/mail/aliases`.
 
 Manually edit the `bind_pw` entry in each of the files in `/usr/local/etc/postfix/ldap`.
+
+Add `postfix` to `rspamd` group:
+
+```
+# pw group mod rspamd -m postfix
+```
 
 Add listeners for `postfix` in `dovecot` configuration files:
 

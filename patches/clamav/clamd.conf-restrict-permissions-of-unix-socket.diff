@@ -1,0 +1,12 @@
+diff -ru a/clamd.conf b/clamd.conf
+--- a/clamd.conf	2020-05-14 22:39:45.775466000 -0700
++++ b/clamd.conf	2020-05-14 22:39:50.307526000 -0700
+@@ -98,7 +98,7 @@
+ 
+ # Sets the permissions on the unix socket to the specified mode.
+ # Default: disabled (socket is world accessible)
+-#LocalSocketMode 660
++LocalSocketMode 660
+ 
+ # Remove stale socket after unclean shutdown.
+ # Default: yes

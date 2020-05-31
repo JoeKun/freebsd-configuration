@@ -1,0 +1,20 @@
+diff -ru a/user.conf b/user.conf
+--- a/user.conf	2020-05-28 15:04:38.819740000 -0700
++++ b/user.conf	2020-05-28 15:05:22.193096000 -0700
+@@ -52,6 +52,16 @@
+ #   ftp://ftp.example.net/pub/sigs.ndb
+ #   http://www.example.org/sigs.ldb
+ #) #END ADDITIONAL DATABASES
++
++
++# =========================
++# Logging
++# =========================
++
++logging_enabled="yes"
++log_file_path="/var/log/clamav-unofficial-sigs"
++log_file_name="clamav-unofficial-sigs.log"
++
+ 
+ # Uncomment the following line to enable the script
+ #user_configuration_complete="yes"

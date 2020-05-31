@@ -4,4 +4,5 @@
 autocmd BufRead,BufNewFile */etc/apache2*/*.conf,*/etc/apache2*/conf.*/*,*/etc/apache2*/mods-*/*,*/etc/apache2*/sites-*/* setfiletype apache
 autocmd BufRead,BufNewFile */var/db/namedb*/include/*.zone-include setfiletype bindzone
 autocmd BufRead,BufNewFile */etc/namedb/* setfiletype named
+autocmd BufRead,BufNewFile */etc/rspamd/*.inc call timer_start(1, { tid -> execute("set filetype=conf") })
 

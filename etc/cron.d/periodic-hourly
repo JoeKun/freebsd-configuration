@@ -1,0 +1,7 @@
+# /etc/cron.d/periodic-hourly: Periodic job to perform hourly maintenance.
+
+SHELL=/bin/sh
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+
+# minute	hour	mday	month	wday	who	command
+45		*	*	*	*	root	periodic hourly

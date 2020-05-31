@@ -1,0 +1,40 @@
+#! /bin/sh
+# 
+# train-rspamd
+# 
+# Created by Joel Lopes Da Silva on 5/17/20.
+# Copyright © 2020 Joel Lopes Da Silva. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+script_name=$(basename "${0}")
+
+mail_category="${1}"
+email="${2}"
+message_identifier="${3}"
+
+case "${mail_category}" in
+    spam|ham)
+        ;;
+    *)
+        logger -p mail.err "${script_name}: Unsupported mail category supplied as the first argument: \"${mail_category}\"; the mail category must be either \"spam\" or \"ham\". Aborting."
+        exit 1
+        ;;
+esac
+
+logger -p mail.info "${script_name}: Classifying message for ${email} with identifier ${message_identifier} as ${mail_category}."
+
+rspamc_action="learn_${mail_category}"
+exec /usr/local/bin/rspamc -h /var/run/rspamd/rspamd.sock "${rspamc_action}"
+

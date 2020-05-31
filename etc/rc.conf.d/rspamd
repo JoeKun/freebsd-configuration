@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/rspamd: system configuration for rspamd
+
+rspamd_enable="YES"
+

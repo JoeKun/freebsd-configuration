@@ -1,4 +1,0 @@
-# /etc/rc.conf.d/amavisd: system configuration for amavisd
-
-amavisd_enable="YES"
-

@@ -1,0 +1,14 @@
+diff -ru a/dcc_conf b/dcc_conf
+--- a/dcc_conf	2020-05-12 11:12:53.676373000 -0700
++++ b/dcc_conf	2020-05-12 11:28:59.930747000 -0700
+@@ -88,8 +88,8 @@
+ #   does not affect the blacklisting of the DCCM_WHITECLNT whitelist file.
+ # Add '-aIGNORE' to DCCM_ARGS to ignore the bulkiness of mail except to
+ #   add X-DCC headers.
+-DCCM_LOG_AT=5
+-DCCM_REJECT_AT=
++DCCM_LOG_AT=NEVER
++DCCM_REJECT_AT=MANY
+ # override basic list of DCC server checksums controlling rejections or logging
+ DCCM_CKSUMS=
+ # additional DCC server checksums worthy of rejections or logging

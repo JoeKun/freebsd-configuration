@@ -1,4 +1,0 @@
-# /etc/rc.conf.d/spamd: system configuration for spamd
-
-spamd_enable="YES"
-

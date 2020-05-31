@@ -1,0 +1,21 @@
+#! /bin/sh
+
+cd /usr/local/etc/dovecot
+
+cd sieve
+ln -s ../../../../../freebsd-configuration/usr/local/etc/dovecot/sieve/train-rspamd
+for file_name in report-spam.sieve report-ham.sieve
+do
+    ln -s ../../../../../freebsd-configuration/usr/local/etc/dovecot/sieve/${file_name}
+    sievec ${file_name}
+done
+cd ..
+
+cd sieve-before.d
+ln -s ../../../../../freebsd-configuration/usr/local/etc/dovecot/sieve-before.d/10-file-flagged-spam-into-spam-folder.sieve
+sievec 10-file-flagged-spam-into-spam-folder.sieve
+cd ..
+
+patch --posix -p1 -i /freebsd-configuration/patches/dovecot/dovecot-sieve-scripting-for-rspamd-training.diff
+cd conf.d
+ln -s ../../../../../freebsd-configuration/usr/local/etc/dovecot/conf.d/90-imapsieve.conf

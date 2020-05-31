@@ -1,0 +1,25 @@
+diff -ru a/conf.d/10-mail.conf b/conf.d/10-mail.conf
+--- a/conf.d/10-mail.conf	2020-01-06 07:54:20.545781000 -0800
++++ b/conf.d/10-mail.conf	2020-01-17 22:37:24.031715000 -0800
+@@ -118,7 +118,7 @@
+ # dangerous to set these if users can create symlinks (e.g. if "mail" group is
+ # set here, ln -s /var/mail ~/mail/var could allow a user to delete others'
+ # mailboxes, or ln -s /secret/shared/box ~/mail/mybox would allow reading it).
+-#mail_access_groups =
++mail_access_groups = rspamd
+ 
+ # Allow full filesystem access to clients. There's no access checks other than
+ # what the operating system does for the active UID/GID. It works with both
+diff -ru a/conf.d/20-imap.conf b/conf.d/20-imap.conf
+--- a/conf.d/20-imap.conf	2020-01-17 22:39:17.836595000 -0800
++++ b/conf.d/20-imap.conf	2020-01-20 23:34:01.176337000 -0800
+@@ -91,7 +91,8 @@
+ 
+ protocol imap {
+   # Space separated list of plugins to load (default is global mail_plugins).
+-  #mail_plugins = $mail_plugins
++  # imap_sieve is required for spam training by rspamd.
++  mail_plugins = $mail_plugins imap_sieve
+ 
+   # Maximum number of IMAP connections allowed for a user from each IP address.
+   # NOTE: The username is compared case-sensitively.

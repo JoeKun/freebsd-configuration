@@ -8,19 +8,6 @@ diff -ru a/conf.d/15-lda.conf b/conf.d/15-lda.conf
 -  #mail_plugins = $mail_plugins
 +  mail_plugins = $mail_plugins sieve
  }
-diff -ru a/conf.d/20-imap.conf b/conf.d/20-imap.conf
---- a/conf.d/20-imap.conf	2020-01-17 22:39:17.836595000 -0800
-+++ b/conf.d/20-imap.conf	2020-01-20 23:34:01.176337000 -0800
-@@ -90,7 +90,8 @@
- 
- protocol imap {
-   # Space separated list of plugins to load (default is global mail_plugins).
--  #mail_plugins = $mail_plugins
-+  # imap_sieve will be used for spam training by rspamd.
-+  mail_plugins = $mail_plugins imap_sieve
- 
-   # Maximum number of IMAP connections allowed for a user from each IP address.
-   # NOTE: The username is compared case-sensitively.
 diff -ru a/conf.d/20-lmtp.conf b/conf.d/20-lmtp.conf
 --- a/conf.d/20-lmtp.conf	2020-01-17 22:39:34.673621000 -0800
 +++ b/conf.d/20-lmtp.conf	2020-01-20 23:34:01.176491000 -0800

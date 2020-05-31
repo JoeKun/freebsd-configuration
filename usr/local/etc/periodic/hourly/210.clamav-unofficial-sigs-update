@@ -1,0 +1,6 @@
+#! /usr/local/bin/bash
+#
+# /usr/local/etc/periodic/daily/340.clamav-unofficial-sigs-update
+
+/usr/local/bin/clamav-unofficial-sigs.sh
+

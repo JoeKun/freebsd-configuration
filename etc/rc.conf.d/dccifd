@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/dccifd: system configuration for dccifd
+
+dccifd_enable="YES"
+
