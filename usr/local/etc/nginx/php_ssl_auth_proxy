@@ -3,11 +3,11 @@
 # Redefine index directive.
 index index.php index.html index.htm;
 
-# Pass the PHP scripts to FastCGI server listening on php-fpm.sock.
+# Pass the PHP scripts to FastCGI server listening on php-handler.
 location ~ \.php$ {
     include fastcgi_params;
     fastcgi_split_path_info ^(.+\.php)(/.+)$;
-    fastcgi_pass unix:/var/run/php-fpm.sock;
+    fastcgi_pass php-handler;
     fastcgi_index index.php;
     fastcgi_param SCRIPT_FILENAME $request_filename;
     fastcgi_param HTTPS on;
