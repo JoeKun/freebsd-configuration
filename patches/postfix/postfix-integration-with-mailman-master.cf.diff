@@ -1,16 +1,13 @@
 diff -ru a/master.cf b/master.cf
 --- a/master.cf	2016-08-25 16:18:37.766617000 -0700
 +++ b/master.cf	2016-09-05 18:34:53.429160000 -0700
-@@ -122,9 +122,9 @@
+@@ -125,6 +125,6 @@
  #  flags=R user=scalemail argv=/usr/lib/scalemail/bin/scalemail-store
  #  ${nexthop} ${user} ${extension}
  #
 -#mailman   unix  -       n       n       -       -       pipe
--#  flags=FR user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
+-#  flags=FRX user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
 -#  ${nexthop} ${user}
 +mailman   unix  -       n       n       -       -       pipe
 +  flags=FR user=mailman:mailman
 +  argv=/usr/local/mailman/bin/postfix-to-mailman.py ${nexthop} ${user}
- 
- 
- #-----------------------------------------------------------
