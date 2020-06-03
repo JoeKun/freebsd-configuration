@@ -30,14 +30,16 @@ gitlab_enable=${gitlab_enable:-"NO"}
 gitlab_user=${gitlab_user:-"git"}
 gitlab_use_unicorn=${gitlab_use_unicorn:-""}
 gitlab_sidekiq_workers=${gitlab_sidekiq_workers:-""}
+gitlab_use_web_server=${gitlab_use_web_server:-"puma"}
 
-# Select the web server to use
-gitlab_use_web_server=""
-if [ -z "$gitlab_use_unicorn" ]; then
-  gitlab_use_web_server="puma"
-else
-  gitlab_use_web_server="unicorn"
-fi
+case "${gitlab_use_web_server}" in
+  puma|unicorn)
+    ;;
+  *)
+    echo "Unsupported web server '${gitlab_use_web_server}' (Allowed: 'puma', 'unicorn')" 1>&2
+    exit 1
+    ;;
+esac
 
 # Other script variables
 eval gitlab_home=${gitlab_home:-"~${gitlab_user}"}
