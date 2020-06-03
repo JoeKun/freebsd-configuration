@@ -1,3 +1,0 @@
-export rvm_prefix="$HOME"
-export rvm_path="$HOME/.rvm"
-export rvm_man_path="$HOME/.rvm/man"

@@ -3,10 +3,3 @@
 # Enable GitLab
 gitlab_enable="YES"
 
-# Extend GitLab environment for compatibility with RVM
-if [ -f ~git/.rvm/environments/default ]
-then
-    gitlab_additional_environment_variables="$(cat ~git/.rvm/environments/default | sed 's/[^\\]#.*$//g' | sed 's/^#.*$//g' | grep -E -v '^[[:blank:]]*$' | grep -v '^unset ' | sed 's/^export //g' | tr '\n' ' ')"
-    gitlab_additional_environment_variables=$(echo "${gitlab_additional_environment_variables}" | sed "s|\${PATH}|${PATH}:/usr/local/sbin:/usr/local/bin|g")
-fi
-
