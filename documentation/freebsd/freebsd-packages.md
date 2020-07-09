@@ -363,7 +363,7 @@ Some examples of how you can use these scripts to populate the LDAP directory ca
 
 ```
 # pkg install nginx
-# pkg install php72
+# pkg install php73
 ```
 
 Install `nginx-ldap-auth-daemon`:
@@ -501,7 +501,7 @@ We should restart the MySQL service to ensure that our instance immediately impl
 # `phpMyAdmin`
 
 ```
-# pkg install phpMyAdmin-php72
+# pkg install phpMyAdmin-php73
 ```
 
 Create the `phpMyAdmin` storage database, as well as the `phpmyadmin` MySQL user with the right privileges:
@@ -598,7 +598,7 @@ $ rm -f ~/.psql_history
 ## `phpPgAdmin`
 
 ```
-# pkg install phppgadmin-php72
+# pkg install phppgadmin-php73
 # cd /freebsd-configuration/patches/phppgadmin
 # ./configure_phppgadmin
 ```
@@ -615,7 +615,7 @@ Enable `phpPgAdmin` configuration for `nginx`.
 ## `phpLDAPAdmin`
 
 ```
-# pkg install phpldapadmin-php72
+# pkg install phpldapadmin-php73
 ```
 
 Enable `phpLDAPAdmin` configuration for `nginx`.
@@ -1105,7 +1105,7 @@ See if any dependency is missing:
 If any, install the dependency using `pkg`. For example:
 
 ```
-# pkg install textproc/php72-dom devel/php72-intl sysutils/php72-fileinfo graphics/php72-exif databases/php72-pdo_pgsql databases/php72-pdo
+# pkg install textproc/php73-dom devel/php73-intl sysutils/php73-fileinfo graphics/php73-exif databases/php73-pdo_pgsql databases/php73-pdo
 # service php-fpm restart
 ```
 
@@ -1113,7 +1113,7 @@ Then proceed to installing `roundcube`:
 
 ```
 # make all install clean
-# pkg lock roundcube
+# pkg lock roundcube-php73
 ```
 
 Create `roundcube` PostgreSQL database:
@@ -1209,7 +1209,7 @@ Restart `nginx`:
 Follow [these instructions](https://afterlogic.com/docs/webmail-pro-8/installation/compatibility-test) by going to `https://mail.foo.com/?install` with your web browser, in order to figure out if your server meets the minimum requirements to run AfterLogic WebMail Pro. You might need to install additional PHP modules; for example, you might need to do the following:
 
 ```
-# pkg install php72-pdo_mysql
+# pkg install php73-pdo_mysql
 # service php-fpm restart
 ```
 
@@ -1779,15 +1779,15 @@ See if any dependency is missing:
 If any, install the dependencies using `pkg`. For example:
 
 ```
-# pkg install php72-pecl-imagick php72-pecl-redis php72-pecl-APCu
-# pkg install graphics/ImageMagick6-nox11 print/ghostscript9-agpl-base graphics/jbig2dec graphics/poppler-data math/fftw3 graphics/liblqr-1 graphics/libraw graphics/libwmf-nox11 ftp/php72-curl sysutils/php72-posix textproc/php72-simplexml textproc/php72-xmlreader textproc/php72-xmlwriter textproc/php72-xsl textproc/php72-wddx www/php72-opcache devel/php72-pcntl
+# pkg install php73-pecl-imagick php73-pecl-redis php73-pecl-APCu
+# pkg install math/php73-bcmath ftp/php73-curl math/php73-gmp sysutils/php73-posix textproc/php73-simplexml textproc/php73-xmlreader textproc/php73-xmlwriter textproc/php73-xsl www/php73-opcache devel/php73-pcntl
 ```
 
 Then proceed to installing `nextcloud`:
 
 ```
 # make all install clean
-# pkg lock nextcloud-php72
+# pkg lock nextcloud-php73
 ```
 
 Prepare database:
@@ -2011,7 +2011,7 @@ Install the `ingest-attachment` plugin for Elasticsearch, which is required to f
 Install the `readline` PHP package:
 
 ```
-# pkg install php72-readline
+# pkg install php73-readline
 # service php-fpm restart
 # service nginx restart
 ```
