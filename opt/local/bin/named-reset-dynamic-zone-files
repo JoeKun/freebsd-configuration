@@ -1,0 +1,61 @@
+#! /usr/bin/env bash
+# 
+# named-reset-dynamic-zone-files
+# 
+# Created by Joel Lopes Da Silva on 6/6/20.
+# Copyright © 2020 Joel Lopes Da Silva. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+
+/usr/local/sbin/rndc sync -clean
+
+cd /var/named/var/db/namedb
+
+did_reset_any_dynamic_zone_file=0
+for master_zone_file_path in master/*.zone
+do
+    domain_name=$(basename "${master_zone_file_path}" ".zone")
+    dynamic_zone_file_path="master-dynamic/${domain_name}.zone"
+    /usr/local/sbin/rndc -q freeze "${domain_name}"
+    serial_from_dynamic_zone=$(/usr/local/sbin/named-checkzone "${domain_name}" "${dynamic_zone_file_path}" | grep -o "loaded serial[[:space:]]*[0-9]*" | grep -o "[0-9]*$")
+    serial_from_master_zone=$(/usr/local/sbin/named-checkzone "${domain_name}" "${master_zone_file_path}" | grep -o "loaded serial[[:space:]]*[0-9]*" | grep -o "[0-9]*$")
+    if [[ ${serial_from_dynamic_zone} -le ${serial_from_master_zone} ]]
+    then
+        /usr/local/sbin/rndc -q thaw "${domain_name}"
+    else
+        echo "Dynamic zone for ${domain_name} has serial ${serial_from_dynamic_zone}, which is ahead of master zone's serial ${serial_from_master_zone}."
+        proposed_serial_reflecting_current_date=$(date +'%Y%m%d01')
+        updated_serial=""
+        if [[ ${proposed_serial_reflecting_current_date} -gt ${serial_from_dynamic_zone} ]]
+        then
+            updated_serial="${proposed_serial_reflecting_current_date}"
+        else
+            updated_serial=$((serial_from_dynamic_zone + 1))
+        fi
+        echo "Updating master zone for ${domain_name} with serial ${updated_serial}."
+        sed -i.bak "s/${serial_from_master_zone}\([[:space:]]*;[[:space:]]*Serial\)/${updated_serial}\1/" "${master_zone_file_path}"
+        rm -f "${master_zone_file_path}.bak"
+        echo "Overwriting dynamic zone for ${domain_name} with recently updated master zone."
+        cp -f "${master_zone_file_path}" "${dynamic_zone_file_path}"
+        chown bind:bind "${dynamic_zone_file_path}"
+        /usr/local/sbin/rndc thaw "${domain_name}"
+        did_reset_any_dynamic_zone_file=1
+    fi 
+done
+
+if [[ ${did_reset_any_dynamic_zone_file} -eq 0 ]]
+then
+    echo "All master zone files are up-to-date with serial numbers from dynamic zone files. Nothing to reset."
+fi
+

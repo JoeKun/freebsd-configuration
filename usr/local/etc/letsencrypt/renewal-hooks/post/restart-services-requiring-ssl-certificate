@@ -1,0 +1,6 @@
+#! /usr/bin/env bash
+
+service slapd restart
+service dovecot restart
+service postfix restart
+service nginx restart

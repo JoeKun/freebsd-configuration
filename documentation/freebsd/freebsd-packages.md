@@ -287,24 +287,218 @@ Unfortunately, `vimpager` 2.06 has a serious bug when used with the latest versi
 ```
 
 
+## `bind`
+
+### Basic configuration
+
+```
+# pkg install bind916
+
+# mkdir /var/named
+# cd /var/named
+# git clone https://github.com/JoeKun/freebsd-configuration.git
+
+# mkdir -p usr/local/etc var/db/namedb var/db/namedb/managed-keys
+# chgrp bind var/db/namedb
+# chmod 775 var/db/namedb
+# chown bind:bind var/db/namedb/managed-keys
+
+# cd /usr/local/etc
+# mv namedb /var/named/usr/local/etc
+# ln -s ../../../var/named/usr/local/etc/namedb
+# cd /var/db
+# ln -s ../../var/named/var/db/namedb
+
+# cd /var/named/usr/local/etc/namedb
+# patch --posix -p1 -i ../../../../freebsd-configuration/patches/bind/modularize-named.conf.diff
+# for file_name in named.conf.local named.conf.logging named.conf.options; do ln -s ../../../../freebsd-configuration/var/named/usr/local/etc/namedb/${file_name}; done
+```
+
+Manually edit `/var/named/usr/local/etc/namedb/named.conf.local` with your own zones and access lists.
+
+Enable `bind`:
+
+```
+# cd /etc/rc.conf.d
+# for file_name in named syslogd; do ln -s ../../freebsd-configuration/etc/rc.conf.d/${file_name}; done
+# service named start
+```
+
+### Considerations for dynamic updates
+
+Here are a few additional considerations in case you need to use RFC 2136 dynamic updates (which you will need if you want to generate Let's Encrypt certificates with the [DNS challenge](#dns-challenge) verification method).
+
+If you tend to prefer handcrafting your DNS zone files, you may want to keep two directories in `/var/named/var/db/namedb`:
+
+ * one named `master` where you keep your handcrafted zone files;
+ * another one named `master-dynamic` where you keep the zone files that can be dynamically modified by `bind`.
+
+Assuming you only use dynamic updates for transient challenge related records (such as those for generating Let's Encrypt certificates), the idea is that the source of truth for what the zone file should look like, in terms of both content and formatting, remains in `master`, which will only ever be handcrafted, whereas you can point `bind` to a copy of the zone file in `master-dynamic`, which `bind` is entitled to modify when it handles a dynamic update.
+
+When setting this up initially, just copy all `.zone` files from `master` into `master-dynamic`, and make sure both `master-dynamic` and all `.zone` files in that directory are owned by `bind:bind`.
+
+Then, make sure your `zone` configuration blocks in `/var/named/usr/local/etc/namedb/named.conf.local` refer to the zone file in the `master-dynamic` directory.
+
+From this point on, in order to edit the dynamic zone, you need to freeze it first with `rndc freeze`, and then thaw it with `rndc thaw` once you're done editing it.
+
+Since that is quite error prone, an easier approach is to leverage the script `named-reset-dynamic-zone-files`, which you can install as follows:
+
+```
+# cd /opt/local/bin
+# ln -s ../../../freebsd-configuration/opt/local/bin/named-reset-dynamic-zone-files
+```
+
+The right way to perform manual edits to your zone files in a way that can be applied by `named-reset-dynamic-zone-files` is to never manually edit `.zone` files in the `master-dynamic` directory; instead, you should edit them in the `master` directory, and then call:
+
+```
+# named-reset-dynamic-zone-files
+```
+
+This will do the right dance with `rndc freeze` and `rndc thaw` on your behalf for any `.zone` file present in the `master` directory, and update the serial number in the SOA record as appropriate.
+
+
 ## SSL
+
+### Create SSL user and group
 
 ```
 # pw group add ssl -g 551
 # pw user add ssl -u 551 -g 551 -c "SSL Unprivileged User" -d /var/empty -s /usr/sbin/nologin
-# pw group mod ssl -m www
 # mkdir -p /etc/ssl/certs /etc/ssl/private
 # chown root:ssl /etc/ssl/private
 # chmod 710 /etc/ssl/private
 ```
 
-Assuming you have an SSL certificate named `foo.com_wildcard`, install it like this:
+### Let's Encrypt
+
+A great option to get a valid SSL certificate is [Let's Encrypt](https://www.letsencrypt.org/). To use it, you'll need to install the following:
 
 ```
-# cp foo.com_wildcard.pem /etc/ssl/certs
-# cp foo.com_wildcard.key /etc/ssl/private
-# chown root:ssl /etc/ssl/private/foo.com_wildcard.key
-# chmod 640 /etc/ssl/private/foo.com_wildcard.key
+# pkg install py37-certbot
+```
+
+Let's discuss at a high level two different ways to generate Let's Encrypt signed certificates with `certbot`.
+
+#### Standalone
+
+One of the easiest ways to use `certbot` to create a new SSL certificate signed by Let's Encrypt is to use the `standalone` option, which essentially spawns up a builtin web server to handle a cryptographic challenge meant to prove that we do control our domain name. However, the downside of this `standalone` option is that you have to temporarily shut down any web server you might have running on your server. So, for example, assuming you have `nginx` running as a web server, you'll need to invoke `certbot` like this:
+
+```
+# service nginx stop
+# certbot certonly --standalone
+# service nginx start
+```
+
+The `certbot` command will prompt you with various questions, such as which domain names to include in your certificate.
+
+With such a certificate, when the time to renew the certificate comes, you'll need to use `certbot` like so:
+
+```
+# service nginx stop
+# certbot renew --standalone
+# service nginx start
+```
+
+#### DNS challenge
+
+As an alternative, `certbot` supports the DNS-01 challenge method, which requires a DNS server configured to allow `TXT` records to be updated in the zone file using RFC 2136 dynamic updates.
+
+If you're using `bind` as a DNS server, make sure to check out the following resources on how to set this up:
+
+ * [Patrick Terlisten's amazing howto guide](https://www.vcloudnine.de/using-lets-encrypt-dns-01-challenge-validation-with-local-bind-instance/);
+ * [Alexis Wilke's amazing howto guide](https://linux.m2osw.com/setting-bind-get-letsencrypt-wildcards-work-your-system-using-rfc-2136).
+
+However, a couple of things need to be done a bit differently on FreeBSD.
+
+Create the TSIG key for `bind`:
+
+```
+# cd /var/named/usr/local/etc/namedb
+# tsig-keygen -a hmac-sha512 letsencrypt > letsencrypt.key
+# chown bind letsencrypt.key
+# chmod 600 letsencrypt.key
+```
+
+Manually edit `/var/named/usr/local/etc/namedb/named.conf.local` to uncomment portions that relate to `letsencrypt`.
+
+Restart `bind`:
+
+```
+# service named restart
+```
+
+Install the RFC 2136 plugin for `certbot`:
+
+```
+# pkg install py37-certbot-dns-rfc2136
+```
+
+Create a configuration file for this plugin:
+
+```
+# cd /etc/ssl
+# mkdir credentials
+# chmod 700 credentials
+# cd credentials
+# ln -s ../../../freebsd-configuration/etc/ssl/credentials/letsencrypt-dns-rfc2136-credentials.ini
+# chmod -H 600 letsencrypt-dns-rfc2136-credentials.ini
+```
+
+Manually edit `/etc/ssl/credentials/letsencrypt-dns-rfc2136-credentials.ini` to replace the value associated with the `dns_rfc2136_secret` key with the `secret` present in `/var/named/usr/local/etc/namedb/letsencrypt.key`.
+
+Invoke `certbot` with the RFC 2136 plugin:
+
+```
+# certbot certonly --dns-rfc2136 --dns-rfc2136-credentials /etc/ssl/credentials/letsencrypt-dns-rfc2136-credentials.ini --dns-rfc2136-propagation-seconds 180 -d foo.com -d '*.foo.com' -d bar.org -d '*.bar.org'
+```
+
+#### Create links to certificate in `/etc/ssl`
+
+After you create a new Let's Encrypt signed certificate, you may want to create symbolic links to the commonly used components of this certificate, in `/etc/ssl`. For example, assuming you just created a wildcard certificate for foo.com as described above, run the following commands:
+
+```
+# cd /etc/ssl/certs
+# ln -s ../../../usr/local/etc/letsencrypt/live/foo.com/fullchain.pem
+# cd /etc/ssl/private
+# ln -s ../../../usr/local/etc/letsencrypt/live/foo.com/privkey.pem
+```
+
+#### Adjust permissions
+
+Every time you create or renew a Let's Encrypt signed certificate with `certbot`, make sure to adjust permissions so the private key can be read by any user that belongs to the newly created `ssl` group:
+
+```
+# cd /usr/local/etc/letsencrypt
+# chown -R -h root:ssl live archive
+# chmod g+x live archive
+# chmod g+r archive/*/privkey*.pem
+```
+
+And of course, don't forget to restart any services you have that use this SSL certificate.
+
+#### Automate certificate renewal
+
+In order to automate the renewal of your Let's Encrypt certificate, make sure you include the following in `/etc/periodic.conf`:
+
+```
+weekly_certbot_enable="YES"
+```
+
+Then you'll need to automate adjusting the permissions of new SSL certificates, as well as restarting any services that use SSL certificates. You can do so by adding executable scripts to the `post` `renewal-hooks` directory for Let's Encrypt:
+
+```
+# cd /usr/local/etc/letsencrypt/renewal-hooks/post
+# ln -s ../../../../../../freebsd-configuration/usr/local/etc/letsencrypt/renewal-hooks/post/fix-ssl-certificate-permissions
+# ln -s ../../../../../../freebsd-configuration/usr/local/etc/letsencrypt/renewal-hooks/post/restart-services-requiring-ssl-certificate
+```
+
+Manually edit `/usr/local/etc/letsencrypt/renewal-hooks/post/restart-services-requiring-ssl-certificate` to include instructions for restarting any services you run on your server that use your SSL certificate.
+
+And finally, if you normally use `named-reset-dynamic-zone-files` to help you [reconcile handcrafting your zone files with DNS dynamic updates](#considerations-for-dynamic-updates), you can also add that script as an additional hook:
+
+```
+# cd /usr/local/etc/letsencrypt/renewal-hooks/post
+# ln -s ../../../../../../opt/local/bin/named-reset-dynamic-zone-files
 ```
 
 
@@ -364,6 +558,12 @@ Some examples of how you can use these scripts to populate the LDAP directory ca
 ```
 # pkg install nginx
 # pkg install php73
+```
+
+Add `www` user to `ssl` group:
+
+```
+# pw group mod ssl -m www
 ```
 
 Install `nginx-ldap-auth-daemon`:
@@ -1174,7 +1374,7 @@ Restart `nginx`:
 
 If Roundcube doesn't quite satisfy your needs, you might want to consider AfterLogic WebMail Pro, which is a commercial webmail application with wide-ranging groupware functionality.
 
-##### AfterLogic WebMail Pro software itself
+#### AfterLogic WebMail Pro software itself
 
 Make sure to refer to the official instructions to install AfterLogic WebMail Pro in the [administrator manual](https://afterlogic.com/docs/webmail-pro-8/installation/installation-instructions).
 
@@ -1243,7 +1443,7 @@ In the Mobile Sync settings, make the following changes:
  * DAV server: `https://sync.foo.com/`, after replacing the domain with what you used as the `server_name` in `/usr/local/etc/nginx/sites-enabled/sync.foo.com.conf` up above.
 
 
-##### Configuration adjustments
+#### Configuration adjustments
 
 For security reasons, you may want to disallow embedding AfterLogic WebMail Pro into an `iframe`:
 
@@ -1274,7 +1474,7 @@ The files functionality of AfterLogic WebMail Pro is pretty unsatisfactory, so w
 ```
 
 
-##### Allow saving messages as PDF
+#### Allow saving messages as PDF
 
 AfterLogic WebMail Pro has the ability to expose a button to save messages as PDF.
 
@@ -1292,7 +1492,7 @@ However, this functionality relies on a tool named `wkhtmltopdf`, which has a lo
 
 ### `mailman`
 
-##### `mailman` software itself
+#### `mailman` software itself
 
 ```
 # cd /usr/ports/mail/mailman
@@ -1346,7 +1546,7 @@ Enable `mailman`:
 ```
 
 
-##### Integration with `postfix`
+#### Integration with `postfix`
 
 This part was inspired by [FreeBSD Diary's amazing howto guide](http://www.freebsddiary.org/mailman.php).
 
@@ -1392,7 +1592,7 @@ Restart `postfix`:
 ```
 
 
-##### Integration with `nginx`
+#### Integration with `nginx`
 
 This part was inspired by [My Wushu Blog's amazing howto guide](https://www.mywushublog.com/2012/05/mailman-with-nginx-on-freebsd/).
 
@@ -1443,43 +1643,6 @@ To launch `irssi` in a `screen` upon rebooting, add the following entry to the u
 
 ```
 @reboot screen -d -m -S irc env TERM=xterm-256color irssi
-```
-
-
-## `bind`
-
-```
-# pkg install bind916
-
-# mkdir /var/named
-# cd /var/named
-# git clone https://github.com/JoeKun/freebsd-configuration.git
-
-# mkdir -p usr/local/etc var/db/namedb var/db/namedb/managed-keys
-# chgrp bind var/db/namedb var/db/namedb/managed-keys
-# chmod 775 var/db/namedb var/db/namedb/managed-keys
-# chown bind:bind .
-# chmod 700 .
-
-# cd /usr/local/etc
-# mv namedb /var/named/usr/local/etc
-# ln -s ../../../var/named/usr/local/etc/namedb
-# cd /var/db
-# ln -s ../../var/named/var/db/namedb
-
-# cd /var/named/usr/local/etc/namedb
-# patch --posix -p1 -i ../../../../freebsd-configuration/patches/bind/modularize-named.conf.diff
-# for file_name in named.conf.local named.conf.logging named.conf.options; do ln -s ../../../../freebsd-configuration/var/named/usr/local/etc/namedb/${file_name}; done
-```
-
-Manually edit `/var/named/usr/local/etc/namedb/named.conf.local` with your own zones and access lists.
-
-Enable `bind`:
-
-```
-# cd /etc/rc.conf.d
-# for file_name in named syslogd; do ln -s ../../freebsd-configuration/etc/rc.conf.d/${file_name}; done
-# service named start
 ```
 
 

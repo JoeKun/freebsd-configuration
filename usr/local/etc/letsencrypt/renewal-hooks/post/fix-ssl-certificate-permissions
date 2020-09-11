@@ -1,0 +1,6 @@
+#! /usr/bin/env bash
+
+cd /usr/local/etc/letsencrypt
+chown -R -h root:ssl live archive
+chmod g+x live archive
+chmod g+r archive/*/privkey*.pem

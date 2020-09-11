@@ -14,9 +14,9 @@ olcPidFile: /var/run/openldap/slapd.pid
 #
 # TLS
 #
-olcTLSCACertificateFile: /etc/ssl/certs/server-ca.pem
-olcTLSCertificateFile: /etc/ssl/certs/foo.com_wildcard.pem
-olcTLSCertificateKeyFile: /etc/ssl/private/foo.com_wildcard.key
+olcTLSCACertificateFile: /usr/local/etc/letsencrypt/live/foo.com/fullchain.pem
+olcTLSCertificateFile: /usr/local/etc/letsencrypt/live/foo.com/cert.pem
+olcTLSCertificateKeyFile: /usr/local/etc/letsencrypt/live/foo.com/privkey.pem
 olcTLSProtocolMin: 3.1
 #
 # Do not enable referrals until AFTER you have a working directory
@@ -56,6 +56,8 @@ include: file:///usr/local/etc/openldap/schema/misc.ldif
 include: file:///usr/local/etc/openldap/schema/nis.ldif
 include: file:///usr/local/etc/openldap/schema/virtual_mail.ldif
 include: file:///usr/local/etc/openldap/schema/mailing_list.ldif
+include: file:///usr/local/etc/openldap/schema/fully_qualified_group.ldif
+include: file:///usr/local/etc/openldap/schema/application_participant.ldif
 
 # Frontend settings
 #

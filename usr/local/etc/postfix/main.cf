@@ -129,7 +129,6 @@ proxy_interfaces = 1.2.3.4
 
 smtpd_tls_cert_file = /etc/ssl/certs/foo.com_wildcard.pem
 smtpd_tls_key_file = /etc/ssl/private/foo.com_wildcard.key
-smtpd_tls_CAfile = /etc/ssl/certs/server-ca.pem
 smtpd_tls_security_level = may
 smtpd_tls_auth_only = yes
 smtpd_tls_received_header = yes

@@ -91,18 +91,32 @@ masters baz {
 
 
 //-----------------------------------------------------------
+// Let's Encrypt Key
+//-----------------------------------------------------------
+
+include "/usr/local/etc/namedb/letsencrypt.key";
+
+
+//-----------------------------------------------------------
 // DNS Zones Configuration as master
 //-----------------------------------------------------------
 
 zone "foo.com" {
 	type master;
-	file "master/foo.com.zone";
+	file "master-dynamic/foo.com.zone";
 	allow-query {
 		any;
 	};
 	allow-transfer {
 		buddyns-transfer;
 	};
+	// Uncomment the following two sections for Let's Encrypt.
+	/*
+	check-names warn;
+	update-policy {
+		grant letsencrypt name _acme-challenge.foo.com. txt;
+	};
+	*/
 };
 
 
