@@ -1,0 +1,7 @@
+# /usr/local/etc/cron.d/nextcloud-cron: Periodic job to perform Nextcloud maintenance tasks.
+
+SHELL=/bin/sh
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+
+# minute	hour	mday	month	wday	who	command
+*/5		*	*	*	*	www	php -f /usr/local/www/nextcloud/cron.php

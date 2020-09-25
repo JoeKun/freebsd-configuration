@@ -2026,6 +2026,14 @@ Additionally, adjust your configuration options in that same file, `/usr/local/w
   ),
 ```
 
+Finally, setup a cron job for Nextcloud maintenance tasks:
+
+```
+# mkdir -p /usr/local/etc/cron.d
+# cd /usr/local/etc/cron.d
+# ln -s ../../../../freebsd-configuration/usr/local/etc/cron.d/nextcloud-cron
+```
+
 ### Ensure proper basic configuration
 
  * Go to `https://cloud.foo.com/` with your web browser and login with your administrator account.
@@ -2038,6 +2046,10 @@ In our case, at this point, there was a warning about incorrect types for big in
 ```
 # sudo -u www php /usr/local/www/nextcloud/occ db:convert-filecache-bigint
 ```
+
+ * In the side menu on the left, click *Basic settings* below the *Administration* section heading.
+ * In the section titled *Background jobs*, select *Cron* as the preferred method for running maintenance tasks.
+ * In the section titled *Email server*, adjust configuration as needed to make sure Nextcloud can send emails to its users.
 
 ### LDAP configuration for Nextcloud
 
