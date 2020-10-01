@@ -365,7 +365,7 @@ diff -ru a/dovecot-ldap.conf.ext b/dovecot-ldap.conf.ext
  
  # Filter for password lookups
 -#pass_filter = (&(objectClass=posixAccount)(uid=%u))
-+pass_filter = (&(objectClass=virtualMailRecipient)(virtualMailboxEnabled=TRUE)(uid=%n)(mail=%u))
++pass_filter = (&(objectClass=virtualMailRecipient)(|(virtualMailboxEnabled=TRUE)(virtualMailAuthenticatedSender=TRUE))(uid=%n)(mail=%u))
  
  # Attributes and filter to get a list of all users
 -#iterate_attrs = uid=user

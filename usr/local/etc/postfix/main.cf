@@ -181,6 +181,9 @@ smtpd_delay_reject = yes
 # Prevents spam to invalid addresses.
 local_recipient_maps = proxy:unix:passwd.byname $alias_maps
 
+# Add core headers when missing (such as Message-ID).
+always_add_missing_headers = yes
+
 # Require HELO.
 smtpd_helo_required = yes
 

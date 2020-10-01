@@ -1,4 +1,4 @@
-# /usr/local/etc/postfix/ldap/virtual_alias/maps.cf
+# /usr/local/etc/postfix/ldap/virtual_mailbox/maps.cf
 
 server_host = ldapi://%2fvar%2frun%2fopenldap%2fldapi/
 search_base = ou=users,dc=%d,ou=directory

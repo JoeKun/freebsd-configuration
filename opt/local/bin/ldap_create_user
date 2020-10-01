@@ -38,6 +38,7 @@ user_surname=""
 user_mail=""
 user_virtual_mail_aliases=()
 user_virtual_mail_destination=""
+user_virtual_mail_authenticated_sender_enabled=0
 user_virtual_mailbox_enabled=0
 user_password=""
 user_supported_applications=()
@@ -84,6 +85,9 @@ do
             ;;
         "--virtual-mail-alias-only")
             is_virtual_mail_alias_only=1
+            ;;
+        "--virtual-mail-authenticated-sender")
+            user_virtual_mail_authenticated_sender_enabled=1
             ;;
         "--user-password")
             i=$((i + 1))
@@ -188,13 +192,24 @@ then
     done
     number_of_user_virtual_mail_aliases=${#user_virtual_mail_aliases[@]}
     read -p "Virtual mail destination (leave empty if mail should not be redirected to an external account): " -r user_virtual_mail_destination
-    if [[ -z "${user_virtual_mail_destination}" ]] && [[ ${is_virtual_mail_alias_only} -eq 0 ]] && [[ ${is_system_user} -eq 0 ]]
+    if [[ ${is_virtual_mail_alias_only} -eq 0 ]] && [[ ${is_system_user} -eq 0 ]]
     then
-        should_enable_virtual_mailbox=""
-        read -p "Do you want a local virtual mailbox to be created for ${user_rdn_attribute_value}@${domain_name}? [y/N]: " should_enable_virtual_mailbox
-        if [[ "${should_enable_virtual_mailbox}" == [YyTt1]* ]]
+        if [[ -z "${user_virtual_mail_destination}" ]]
         then
-            user_virtual_mailbox_enabled=1
+            should_enable_virtual_mailbox=""
+            read -p "Do you want a local virtual mailbox to be created for ${user_rdn_attribute_value}@${domain_name}? [y/N]: " should_enable_virtual_mailbox
+            if [[ "${should_enable_virtual_mailbox}" == [YyTt1]* ]]
+            then
+                user_virtual_mailbox_enabled=1
+            fi
+        elif [[ ${user_virtual_mail_authenticated_sender_enabled} -eq 0 ]]
+        then
+            should_treat_as_virtual_mail_authenticated_sender=""
+            read -p "Do you want to be able to send authenticated mail despite not having a mailbox for ${user_rdn_attribute_value}@${domain_name}? [y/N]: " should_treat_as_virtual_mail_authenticated_sender
+            if [[ "${should_treat_as_virtual_mail_authenticated_sender}" == [YyTt1]* ]]
+            then
+                user_virtual_mail_authenticated_sender_enabled=1
+            fi
         fi
     fi
 fi
@@ -224,7 +239,7 @@ then
     user_object_class_attributes+=("objectClass: inetOrgPerson")
     user_additional_attributes+=("mail: ${user_mail}")
 fi
-if [[ ${number_of_user_virtual_mail_aliases} -gt 0 ]] || [[ -n "${user_virtual_mail_destination}" ]] || [[ ${user_virtual_mailbox_enabled} -ne 0 ]]
+if [[ ${number_of_user_virtual_mail_aliases} -gt 0 ]] || [[ -n "${user_virtual_mail_destination}" ]] || [[ ${user_virtual_mailbox_enabled} -ne 0 ]] || [[ ${user_virtual_mail_authenticated_sender_enabled} -ne 0 ]]
 then
     user_object_class_attributes+=("objectClass: virtualMailRecipient")
     for ((i = 0; i < ${number_of_user_virtual_mail_aliases}; i++))
@@ -239,6 +254,10 @@ then
     if [[ ${user_virtual_mailbox_enabled} -ne 0 ]]
     then
         user_additional_attributes+=("virtualMailboxEnabled: TRUE")
+    fi
+    if [[ ${user_virtual_mail_authenticated_sender_enabled} -ne 0 ]]
+    then
+        user_additional_attributes+=("virtualMailAuthenticatedSender: TRUE")
     fi
 fi
 if [[ ${did_prompt_for_any_option} -ne 0 ]] && [[ ${number_of_user_supported_applications} -eq 0 ]]
