@@ -30,9 +30,15 @@ do
     /usr/local/sbin/rndc -q freeze "${domain_name}"
     serial_from_dynamic_zone=$(/usr/local/sbin/named-checkzone "${domain_name}" "${dynamic_zone_file_path}" | grep -o "loaded serial[[:space:]]*[0-9]*" | grep -o "[0-9]*$")
     serial_from_master_zone=$(/usr/local/sbin/named-checkzone "${domain_name}" "${master_zone_file_path}" | grep -o "loaded serial[[:space:]]*[0-9]*" | grep -o "[0-9]*$")
-    if [[ ${serial_from_dynamic_zone} -le ${serial_from_master_zone} ]]
+    should_overwrite_dynamic_zone_file_with_master_zone_file=0
+    master_zone_current_state_description_for_logging="master zone"
+    if [[ ${serial_from_dynamic_zone} -eq ${serial_from_master_zone} ]]
     then
         /usr/local/sbin/rndc -q thaw "${domain_name}"
+    elif [[ ${serial_from_dynamic_zone} -lt ${serial_from_master_zone} ]]
+    then
+        echo "Dynamic zone for ${domain_name} has serial ${serial_from_dynamic_zone}, which is behind that of master zone's serial ${serial_from_master_zone}."
+        should_overwrite_dynamic_zone_file_with_master_zone_file=1
     else
         echo "Dynamic zone for ${domain_name} has serial ${serial_from_dynamic_zone}, which is ahead of master zone's serial ${serial_from_master_zone}."
         proposed_serial_reflecting_current_date=$(date +'%Y%m%d01')
@@ -46,12 +52,17 @@ do
         echo "Updating master zone for ${domain_name} with serial ${updated_serial}."
         sed -i.bak "s/${serial_from_master_zone}\([[:space:]]*;[[:space:]]*Serial\)/${updated_serial}\1/" "${master_zone_file_path}"
         rm -f "${master_zone_file_path}.bak"
-        echo "Overwriting dynamic zone for ${domain_name} with recently updated master zone."
+        master_zone_current_state_description_for_logging="recently updated master zone"
+        should_overwrite_dynamic_zone_file_with_master_zone_file=1
+    fi
+    if [[ ${should_overwrite_dynamic_zone_file_with_master_zone_file} -ne 0 ]]
+    then
+        echo "Overwriting dynamic zone for ${domain_name} with ${master_zone_current_state_description_for_logging}."
         cp -f "${master_zone_file_path}" "${dynamic_zone_file_path}"
         chown bind:bind "${dynamic_zone_file_path}"
         /usr/local/sbin/rndc thaw "${domain_name}"
         did_reset_any_dynamic_zone_file=1
-    fi 
+    fi
 done
 
 if [[ ${did_reset_any_dynamic_zone_file} -eq 0 ]]
