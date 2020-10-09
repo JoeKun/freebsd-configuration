@@ -93,6 +93,9 @@ custom_hooks_dir = "/usr/local/git/custom_hooks"
 [gitlab]
 secret_file = "/usr/local/git/gitlab-shell/.gitlab_shell_secret"
 url = "http+unix://%2Fusr%2Flocal%2Fgit%2Fgitlab%2Ftmp%2Fsockets%2Fgitlab-workhorse.socket"
+# Only needed if a UNIX socket is used in `url` and GitLab is configured to
+# use a relative path (e.g. /gitlab).
+# relative_url_root = '/'
 
 [gitlab.http-settings]
 # read_timeout = 300
@@ -106,3 +109,11 @@ self_signed_cert = false
 # [[concurrency]]
 # rpc = "/gitaly.RepositoryService/GarbageCollect"
 # max_per_repo = 1
+
+# Daily maintenance designates time slots to run daily to optimize and maintain
+# enabled storages.
+# [daily_maintenance]
+# start_hour = 23
+# start_minute = 30
+# duration = "45m"
+# storages = ["default"]
