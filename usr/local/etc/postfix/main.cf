@@ -54,10 +54,6 @@ virtual_alias_domains = proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/dom
 # local mailboxes without requiring any Unix account
 virtual_mailbox_domains = proxy:ldap:/usr/local/etc/postfix/ldap/virtual_mailbox/domains.cf
 
-# List of domains this server accepts email for and relays it to 
-# other mail servers or handlers.
-relay_domains = lists.foo.com
-
 
 #-----------------------------------------------------------
 # Aliases options
@@ -79,9 +75,6 @@ virtual_alias_maps = proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/explic
                      proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/implicit_system_maps_to_mail_attribute.cf
                      proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/implicit_system_maps_to_mail_attribute_with_implied_domain.cf
                      proxy:ldap:/usr/local/etc/postfix/ldap/virtual_alias/implicit_system_maps_to_cn_attribute_with_implied_domain.cf
-
-# Relay domains mapping
-transport_maps = hash:/usr/local/etc/postfix/transport
 
 
 #-----------------------------------------------------------
@@ -235,13 +228,6 @@ non_smtpd_milters = unix:/var/run/rspamd/milter.sock
 
 # Accept mail by default is there is any issue with rspamd.
 milter_default_action = accept
-
-
-#-----------------------------------------------------------
-# Mailman configuration
-#-----------------------------------------------------------
-
-mailman_destination_recipient_limit = 1
 
 
 #-----------------------------------------------------------
