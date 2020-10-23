@@ -498,7 +498,7 @@ And finally, if you normally use `named-reset-dynamic-zone-files` to help you [r
 
 ```
 # cd /usr/local/etc/letsencrypt/renewal-hooks/post
-# ln -s ../../../../../../opt/local/bin/named-reset-dynamic-zone-files
+# ln -s ../../../../../../freebsd-configuration/usr/local/etc/letsencrypt/renewal-hooks/post/named-reset-dynamic-zone-files
 ```
 
 
