@@ -26,7 +26,10 @@ alias la="ls -A"
 alias lla="ls -lA"
 
 # updatedb
-alias updatedb="pushd / && /usr/libexec/locate.updatedb ; popd"
+if [[ $(id -u) -eq 0 ]]
+then
+    alias updatedb="/etc/periodic/weekly/310.locate"
+fi
 
 # Favor some GNU variants of common developer tools.
 if [[ ${+commands[gpatch]} -ne 0 ]]
