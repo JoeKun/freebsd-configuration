@@ -569,7 +569,7 @@ Add `www` user to `ssl` group:
 Install `nginx-ldap-auth-daemon`:
 
 ```
-# pkg install py27-ldap py27-yaml
+# pkg install py37-ldap py37-yaml
 # cd /usr/local
 # ln -s ../../freebsd-configuration/usr/local/nginx-ldap-auth
 # chown root:www /usr/local/nginx-ldap-auth/nginx-ldap-auth-daemon.conf
@@ -1560,6 +1560,7 @@ Install some important dependencies of GateOne:
 ```
 # pkg install sudo
 # pkg install dtach
+# pkg install py27-futures
 # pkg install py27-tornado4
 ```
 

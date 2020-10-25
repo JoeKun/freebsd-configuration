@@ -1,9 +1,9 @@
-#! /usr/local/bin/python2.7
+#! /usr/local/bin/python3.7
 # -*- coding: utf-8 -*-
 #
 # nginx-ldap-auth-daemon
 #
-# Copyright © 2018 Joel Lopes Da Silva.
+# Copyright © 2018-2020 Joel Lopes Da Silva.
 # Copyright © 2014-2015 Nginx, Inc.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -41,8 +41,8 @@ import sys
 import threading
 import yaml
 
-from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
-from SocketServer import ThreadingMixIn
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from socketserver import ThreadingMixIn
 
 
 class AuthenticationContextAttribute:
@@ -124,7 +124,8 @@ class AuthenticationHandler(BaseHTTPRequestHandler):
         else:
             context.action = "decoding credentials"
             try:
-                decoded_authorization = base64.b64decode(authorization_header[len(authorization_header_prefix):])
+                authorization_header_value = authorization_header[len(authorization_header_prefix):]
+                decoded_authorization = base64.b64decode(authorization_header_value).decode('utf-8')
                 user_name, password = decoded_authorization.split(":", 1)
                 context.user_name = user_name
                 context.password = password
@@ -285,7 +286,7 @@ if __name__ == "__main__":
     arguments_group = arguments_parser.add_argument_group(title = "required arguments")
     arguments_group.add_argument("-c", "--configuration", 
         metavar = "/path/to/configuration-file.conf", 
-        type = file, 
+        type = open, 
         dest = "configuration_file", 
         help = "Absolute path to required configuration file.", 
         required = True
