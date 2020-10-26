@@ -1560,8 +1560,8 @@ Install some important dependencies of GateOne:
 ```
 # pkg install sudo
 # pkg install dtach
-# pkg install py27-futures
-# pkg install py27-tornado4
+# pkg install py37-futures
+# pkg install py37-tornado4
 ```
 
 Make sure to load the `pty` kernel module for pseudo-terminal support:
@@ -1595,11 +1595,13 @@ Give `gateone` unprivileged user the ability to call `login` using `sudo` withou
 Proceed with installation:
 
 ```
-$ mkdir -p "$HOME/lib/python$(python -V 2>&1 | grep -o '[0-9].[0-9]')/site-packages"
-$ export PYTHONPATH="$HOME/lib/python$(python -V 2>&1 | grep -o '[0-9].[0-9]')/site-packages"
+$ export PYTHONPATH="$HOME/lib/python3.7/site-packages"
+$ mkdir -p "$PYTHONPATH"
 $ git clone https://github.com/liftoff/GateOne.git gateone
 $ cd gateone
-$ python setup.py install --prefix=/usr/local/gateone
+$ git am /freebsd-configuration/patches/gateone/gateone-python-3-7-compatibility-stop-using-reserved-keywords-async-and-await.patch
+$ git am /freebsd-configuration/patches/gateone/gateone-python-3-7-compatibility-workaround-regression-with-process-pool-executor-shutdown.patch
+$ python3.7 setup.py install --prefix=/usr/local/gateone
 ```
 
 Launch GateOne manually once so it will lay down its own configuration file:

@@ -1,0 +1,472 @@
+From 330276577120da2763ab86738ceb3852d0274f3f Mon Sep 17 00:00:00 2001
+From: Joel Lopes Da Silva <joel@lopes-da-silva.com>
+Date: Sun, 25 Oct 2020 22:32:48 -0700
+Subject: [PATCH] Stop using reserved keywords `async` and `await`.
+
+Since Python 3.7, `async` and `await` have become reserved keyword,
+which can't be used in the names of modules, parameters, or methods.
+
+So replace previous usage of `async` in gateone with `asynchronous`, and
+`await` with `block_await`.
+---
+ gateone/async/__init__.py                     |  1 -
+ gateone/asynchronous/__init__.py              |  1 +
+ .../async.py => asynchronous/asynchronous.py} |  0
+ gateone/core/server.py                        |  2 +-
+ .../html/_modules/gateone/core/server.html    |  2 +-
+ gateone/i18n/de_DE/LC_MESSAGES/gateone.po     | 10 +++---
+ gateone/i18n/es_ES/LC_MESSAGES/gateone.po     | 10 +++---
+ gateone/i18n/fr_FR/LC_MESSAGES/gateone.po     | 10 +++---
+ gateone/i18n/gateone.pot                      | 10 +++---
+ gateone/i18n/pt_PT/LC_MESSAGES/gateone.po     | 10 +++---
+ gateone/i18n/ru_RU/LC_MESSAGES/gateone.po     | 10 +++---
+ terminal/terminal.py                          |  8 ++---
+ termio/termio.py                              | 32 +++++++++----------
+ 13 files changed, 53 insertions(+), 53 deletions(-)
+ delete mode 100644 gateone/async/__init__.py
+ create mode 100644 gateone/asynchronous/__init__.py
+ rename gateone/{async/async.py => asynchronous/asynchronous.py} (100%)
+
+diff --git a/gateone/async/__init__.py b/gateone/async/__init__.py
+deleted file mode 100644
+index 955b15f7bb80..000000000000
+--- a/gateone/async/__init__.py
++++ /dev/null
+@@ -1 +0,0 @@
+-from .async import *
+diff --git a/gateone/asynchronous/__init__.py b/gateone/asynchronous/__init__.py
+new file mode 100644
+index 000000000000..a1ca7189e34d
+--- /dev/null
++++ b/gateone/asynchronous/__init__.py
+@@ -0,0 +1 @@
++from .asynchronous import *
+diff --git a/gateone/async/async.py b/gateone/asynchronous/asynchronous.py
+similarity index 100%
+rename from gateone/async/async.py
+rename to gateone/asynchronous/asynchronous.py
+diff --git a/gateone/core/server.py b/gateone/core/server.py
+index ba0a376f5584..74c06d013e7f 100755
+--- a/gateone/core/server.py
++++ b/gateone/core/server.py
+@@ -401,7 +401,7 @@ from gateone.auth.authentication import CASAuthHandler, PAMAuthHandler
+ from gateone.auth.authentication import SSLAuthHandler
+ from gateone.auth.authorization import require, authenticated, policies
+ from gateone.auth.authorization import applicable_policies
+-from gateone.async import MultiprocessRunner, ThreadedRunner
++from gateone.asynchronous import MultiprocessRunner, ThreadedRunner
+ from .utils import generate_session_id, mkdir_p, touch, noop
+ from .utils import gen_self_signed_ssl, entry_point_files
+ from .utils import merge_handlers, none_fix, convert_to_timedelta, short_hash
+diff --git a/gateone/docs/build/html/_modules/gateone/core/server.html b/gateone/docs/build/html/_modules/gateone/core/server.html
+index 93a061ad1195..a5c3310c8375 100644
+--- a/gateone/docs/build/html/_modules/gateone/core/server.html
++++ b/gateone/docs/build/html/_modules/gateone/core/server.html
+@@ -548,7 +548,7 @@
+ <span class="kn">from</span> <span class="nn">gateone.auth.authentication</span> <span class="kn">import</span> <span class="n">SSLAuthHandler</span>
+ <span class="kn">from</span> <span class="nn">gateone.auth.authorization</span> <span class="kn">import</span> <span class="n">require</span><span class="p">,</span> <span class="n">authenticated</span><span class="p">,</span> <span class="n">policies</span>
+ <span class="kn">from</span> <span class="nn">gateone.auth.authorization</span> <span class="kn">import</span> <span class="n">applicable_policies</span>
+-<span class="kn">from</span> <span class="nn">gateone.async</span> <span class="kn">import</span> <span class="n">MultiprocessRunner</span><span class="p">,</span> <span class="n">ThreadedRunner</span>
++<span class="kn">from</span> <span class="nn">gateone.asynchronous</span> <span class="kn">import</span> <span class="n">MultiprocessRunner</span><span class="p">,</span> <span class="n">ThreadedRunner</span>
+ <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">generate_session_id</span><span class="p">,</span> <span class="n">mkdir_p</span><span class="p">,</span> <span class="n">touch</span><span class="p">,</span> <span class="n">noop</span>
+ <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">gen_self_signed_ssl</span><span class="p">,</span> <span class="n">entry_point_files</span>
+ <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">merge_handlers</span><span class="p">,</span> <span class="n">none_fix</span><span class="p">,</span> <span class="n">convert_to_timedelta</span><span class="p">,</span> <span class="n">short_hash</span>
+diff --git a/gateone/i18n/de_DE/LC_MESSAGES/gateone.po b/gateone/i18n/de_DE/LC_MESSAGES/gateone.po
+index cb26804e9f7a..37e72ae58e9d 100644
+--- a/gateone/i18n/de_DE/LC_MESSAGES/gateone.po
++++ b/gateone/i18n/de_DE/LC_MESSAGES/gateone.po
+@@ -854,27 +854,27 @@ msgid ""
+ "(left, right, top, bottom).  %s is not valid"
+ msgstr "frame_extents () nimmt ein Tupel (oder Liste) der ganzen Zahlen in der Form von: (links, rechts, oben, unten). %s ist nicht gültig"
+ 
+-#: gateone/async/async.py:138
++#: gateone/asynchronous/asynchronous.py:138
+ #, python-format
+ msgid "Exception in Future: %s (id: %s)"
+ msgstr "Ausnahme in Zukunft: %s (ID: %s )"
+ 
+-#: gateone/async/async.py:223
++#: gateone/asynchronous/asynchronous.py:223
+ #, python-format
+ msgid "Shutting down %s"
+ msgstr "Abschalten %s"
+ 
+-#: gateone/async/async.py:429
++#: gateone/asynchronous/asynchronous.py:429
+ #, python-format
+ msgid "Starting the ThreadedRunner executor with %s worker threads."
+ msgstr "Starten des ThreadedRunner Vollstrecker mit %s Worker-Threads."
+ 
+-#: gateone/async/async.py:480
++#: gateone/asynchronous/asynchronous.py:480
+ #, python-format
+ msgid "Starting the MultiprocessRunner executor with %s worker processes."
+ msgstr "Starten des MultiprocessRunner Vollstrecker mit %s Arbeitsprozesse."
+ 
+-#: gateone/async/async.py:513
++#: gateone/asynchronous/asynchronous.py:513
+ msgid "Shutting down the MultiprocessRunner executor."
+ msgstr "Das Herunterfahren des MultiprocessRunner Executor."
+ 
+diff --git a/gateone/i18n/es_ES/LC_MESSAGES/gateone.po b/gateone/i18n/es_ES/LC_MESSAGES/gateone.po
+index 702bb017ce96..25cdaeb5ab64 100644
+--- a/gateone/i18n/es_ES/LC_MESSAGES/gateone.po
++++ b/gateone/i18n/es_ES/LC_MESSAGES/gateone.po
+@@ -854,27 +854,27 @@ msgid ""
+ "(left, right, top, bottom).  %s is not valid"
+ msgstr "frame_extents () toma una tupla (o lista) de los números enteros en forma de: (izquierda, derecha, arriba, abajo). %s no es válido"
+ 
+-#: gateone/async/async.py:138
++#: gateone/asynchronous/asynchronous.py:138
+ #, python-format
+ msgid "Exception in Future: %s (id: %s)"
+ msgstr "Excepción en el futuro: %s (id: %s )"
+ 
+-#: gateone/async/async.py:223
++#: gateone/asynchronous/asynchronous.py:223
+ #, python-format
+ msgid "Shutting down %s"
+ msgstr "Apagado %s"
+ 
+-#: gateone/async/async.py:429
++#: gateone/asynchronous/asynchronous.py:429
+ #, python-format
+ msgid "Starting the ThreadedRunner executor with %s worker threads."
+ msgstr "Inicio del albacea ThreadedRunner con %s subprocesos de trabajo."
+ 
+-#: gateone/async/async.py:480
++#: gateone/asynchronous/asynchronous.py:480
+ #, python-format
+ msgid "Starting the MultiprocessRunner executor with %s worker processes."
+ msgstr "Inicio del albacea MultiprocessRunner con %s procesos de trabajo."
+ 
+-#: gateone/async/async.py:513
++#: gateone/asynchronous/asynchronous.py:513
+ msgid "Shutting down the MultiprocessRunner executor."
+ msgstr "Apagado del albacea MultiprocessRunner."
+ 
+diff --git a/gateone/i18n/fr_FR/LC_MESSAGES/gateone.po b/gateone/i18n/fr_FR/LC_MESSAGES/gateone.po
+index f256f1ab3391..3f8a3e2498fe 100644
+--- a/gateone/i18n/fr_FR/LC_MESSAGES/gateone.po
++++ b/gateone/i18n/fr_FR/LC_MESSAGES/gateone.po
+@@ -854,27 +854,27 @@ msgid ""
+ "(left, right, top, bottom).  %s is not valid"
+ msgstr "frame_extents () prend un tuple (ou une liste) d'entiers sous la forme de: (gauche, droite, haut, bas). %s n'est pas valide"
+ 
+-#: gateone/async/async.py:138
++#: gateone/asynchronous/asynchronous.py:138
+ #, python-format
+ msgid "Exception in Future: %s (id: %s)"
+ msgstr "Exception dans l'avenir: %s (id: %s )"
+ 
+-#: gateone/async/async.py:223
++#: gateone/asynchronous/asynchronous.py:223
+ #, python-format
+ msgid "Shutting down %s"
+ msgstr "Arrêt %s"
+ 
+-#: gateone/async/async.py:429
++#: gateone/asynchronous/asynchronous.py:429
+ #, python-format
+ msgid "Starting the ThreadedRunner executor with %s worker threads."
+ msgstr "Démarrage de l'exécuteur ThreadedRunner avec %s les threads de travail."
+ 
+-#: gateone/async/async.py:480
++#: gateone/asynchronous/asynchronous.py:480
+ #, python-format
+ msgid "Starting the MultiprocessRunner executor with %s worker processes."
+ msgstr "Démarrage de l'exécuteur MultiprocessRunner avec %s des processus de travail."
+ 
+-#: gateone/async/async.py:513
++#: gateone/asynchronous/asynchronous.py:513
+ msgid "Shutting down the MultiprocessRunner executor."
+ msgstr "Arrêt du exécuteur MultiprocessRunner."
+ 
+diff --git a/gateone/i18n/gateone.pot b/gateone/i18n/gateone.pot
+index 34689b9c714a..f5199ac68b34 100644
+--- a/gateone/i18n/gateone.pot
++++ b/gateone/i18n/gateone.pot
+@@ -853,27 +853,27 @@ msgid ""
+ "(left, right, top, bottom).  %s is not valid"
+ msgstr ""
+ 
+-#: gateone/async/async.py:138
++#: gateone/asynchronous/asynchronous.py:138
+ #, python-format
+ msgid "Exception in Future: %s (id: %s)"
+ msgstr ""
+ 
+-#: gateone/async/async.py:223
++#: gateone/asynchronous/asynchronous.py:223
+ #, python-format
+ msgid "Shutting down %s"
+ msgstr ""
+ 
+-#: gateone/async/async.py:429
++#: gateone/asynchronous/asynchronous.py:429
+ #, python-format
+ msgid "Starting the ThreadedRunner executor with %s worker threads."
+ msgstr ""
+ 
+-#: gateone/async/async.py:480
++#: gateone/asynchronous/asynchronous.py:480
+ #, python-format
+ msgid "Starting the MultiprocessRunner executor with %s worker processes."
+ msgstr ""
+ 
+-#: gateone/async/async.py:513
++#: gateone/asynchronous/asynchronous.py:513
+ msgid "Shutting down the MultiprocessRunner executor."
+ msgstr ""
+ 
+diff --git a/gateone/i18n/pt_PT/LC_MESSAGES/gateone.po b/gateone/i18n/pt_PT/LC_MESSAGES/gateone.po
+index ab5dbafd94ea..f6ad0d6cf797 100644
+--- a/gateone/i18n/pt_PT/LC_MESSAGES/gateone.po
++++ b/gateone/i18n/pt_PT/LC_MESSAGES/gateone.po
+@@ -854,27 +854,27 @@ msgid ""
+ "(left, right, top, bottom).  %s is not valid"
+ msgstr "frame_extents () recebe uma tupla (ou lista) de inteiros na forma de: (esquerda, direita, superior e inferior). %s não é válido"
+ 
+-#: gateone/async/async.py:138
++#: gateone/asynchronous/asynchronous.py:138
+ #, python-format
+ msgid "Exception in Future: %s (id: %s)"
+ msgstr "Exceção no futuro: %s (ID: %s )"
+ 
+-#: gateone/async/async.py:223
++#: gateone/asynchronous/asynchronous.py:223
+ #, python-format
+ msgid "Shutting down %s"
+ msgstr "Desligando %s"
+ 
+-#: gateone/async/async.py:429
++#: gateone/asynchronous/asynchronous.py:429
+ #, python-format
+ msgid "Starting the ThreadedRunner executor with %s worker threads."
+ msgstr "Iniciando o executor ThreadedRunner com %s segmentos de trabalho."
+ 
+-#: gateone/async/async.py:480
++#: gateone/asynchronous/asynchronous.py:480
+ #, python-format
+ msgid "Starting the MultiprocessRunner executor with %s worker processes."
+ msgstr "Iniciando o executor MultiprocessRunner com %s processos de trabalho."
+ 
+-#: gateone/async/async.py:513
++#: gateone/asynchronous/asynchronous.py:513
+ msgid "Shutting down the MultiprocessRunner executor."
+ msgstr "Desligar o executor MultiprocessRunner."
+ 
+diff --git a/gateone/i18n/ru_RU/LC_MESSAGES/gateone.po b/gateone/i18n/ru_RU/LC_MESSAGES/gateone.po
+index 8e95c05f1bf7..809fe24257ee 100644
+--- a/gateone/i18n/ru_RU/LC_MESSAGES/gateone.po
++++ b/gateone/i18n/ru_RU/LC_MESSAGES/gateone.po
+@@ -859,27 +859,27 @@ msgid ""
+ "(left, right, top, bottom).  %s is not valid"
+ msgstr "frame_extents () принимает кортеж (или список) целых чисел в виде: (left, right, top, bottom). %s не подходит"
+ 
+-#: gateone/async/async.py:138
++#: gateone/asynchronous/asynchronous.py:138
+ #, python-format
+ msgid "Exception in Future: %s (id: %s)"
+ msgstr "Исключение в будущем: %s (ID: %s )"
+ 
+-#: gateone/async/async.py:223
++#: gateone/asynchronous/asynchronous.py:223
+ #, python-format
+ msgid "Shutting down %s"
+ msgstr "Выключение %s"
+ 
+-#: gateone/async/async.py:429
++#: gateone/asynchronous/asynchronous.py:429
+ #, python-format
+ msgid "Starting the ThreadedRunner executor with %s worker threads."
+ msgstr "Запуск исполнителя ThreadedRunner с %s рабочими потоками."
+ 
+-#: gateone/async/async.py:480
++#: gateone/asynchronous/asynchronous.py:480
+ #, python-format
+ msgid "Starting the MultiprocessRunner executor with %s worker processes."
+ msgstr "Запуск исполнителя MultiprocessRunner с %s рабочими процессами."
+ 
+-#: gateone/async/async.py:513
++#: gateone/asynchronous/asynchronous.py:513
+ msgid "Shutting down the MultiprocessRunner executor."
+ msgstr "Выключение исполнителя MultiprocessRunner."
+ 
+diff --git a/terminal/terminal.py b/terminal/terminal.py
+index fe071f7de2f1..d75f61ce9fc7 100644
+--- a/terminal/terminal.py
++++ b/terminal/terminal.py
+@@ -1771,7 +1771,7 @@ class Terminal(object):
+     RE_SIGINT = re.compile(b'.*\^C', re.MULTILINE|re.DOTALL)
+ 
+     def __init__(self, rows=24, cols=80, em_dimensions=None, temppath='/tmp',
+-    linkpath='/tmp', icondir=None, encoding='utf-8', async=None, debug=False,
++    linkpath='/tmp', icondir=None, encoding='utf-8', asynchronous=None, debug=False,
+     enabled_filetypes="all"):
+         """
+         Initializes the terminal by calling *self.initialize(rows, cols)*.  This
+@@ -1857,7 +1857,7 @@ class Terminal(object):
+         self.linkpath = linkpath
+         self.icondir = icondir
+         self.encoding = encoding
+-        self.async = async
++        self.asynchronous = asynchronous
+         if enabled_filetypes == "all":
+             enabled_filetypes = [
+                 PDFFile,
+@@ -4481,7 +4481,7 @@ class Terminal(object):
+             This places <span class="cursor">(current character)</span> around
+             the cursor location.
+         """
+-        if self.async:
++        if self.asynchrnonous:
+             state_obj = {
+                 'html_cache': HTML_CACHE,
+                 'screen': self.screen,
+@@ -4492,7 +4492,7 @@ class Terminal(object):
+                 'show_cursor': self.expanded_modes['25'],
+                 'class_prefix': self.class_prefix
+             }
+-            self.async.call_singleton(
++            self.asynchrnonous.call_singleton(
+                 spanify_screen, identifier, state_obj, callback=callback)
+         else:
+             scrollback, screen = self.dump_html(renditions=renditions)
+diff --git a/termio/termio.py b/termio/termio.py
+index 840d55bf52e5..f85850c6fd2d 100644
+--- a/termio/termio.py
++++ b/termio/termio.py
+@@ -308,7 +308,7 @@ def get_or_update_metadata(golog_path, user, force_update=False):
+ # Exceptions
+ class Timeout(Exception):
+     """
+-    Used by :meth:`BaseMultiplex.expect` and :meth:`BaseMultiplex.await`;
++    Used by :meth:`BaseMultiplex.expect` and :meth:`BaseMultiplex.block_await`;
+     called when a timeout is reached.
+     """
+     pass
+@@ -920,7 +920,7 @@ class BaseMultiplex(object):
+ 
+         .. note::  This function is non-blocking!
+ 
+-        .. warning::  The *timeout* value gets compared against the time :meth:`expect` was called to create it.  So don't wait too long if you're planning on using :meth:`await`!
++        .. warning::  The *timeout* value gets compared against the time :meth:`expect` was called to create it.  So don't wait too long if you're planning on using :meth:`block_await`!
+ 
+         Here's a simple example that changes a user's password::
+ 
+@@ -933,14 +933,14 @@ class BaseMultiplex(object):
+             >>> print(len(m._patterns)) # To show that there's two in the queue
+                 2
+             >>> m.spawn() # Execute the command
+-            >>> m.await(10) # This will block for up to 10 seconds waiting for self._patterns to be empty (not counting optional patterns)
++            >>> m.block_await(10) # This will block for up to 10 seconds waiting for self._patterns to be empty (not counting optional patterns)
+             Sending Password... 1 patterns remaining.
+             Sending Password... 0 patterns remaining.
+             >>> m.isalive()
+             False
+             >>> # All done!
+ 
+-        .. tip:: The :meth:`await` method will automatically call :meth:`spawn` if not :meth:`isalive`.
++        .. tip:: The :meth:`block_await` method will automatically call :meth:`spawn` if not :meth:`isalive`.
+ 
+         This would result in the password of 'someuser' being changed to 'somepassword'.  How is the order determined?  Every time :meth:`expect` is called it creates a new :class:`Pattern` using the given parameters and appends it to `self._patterns` (which is a list).  As each :class:`Pattern` is matched its *callback* gets called and the :class:`Pattern` is removed from `self._patterns` (unless *sticky* is `True`).  So even though the patterns and callbacks listed above were identical they will get executed and removed in the order they were created as each respective :class:`Pattern` is matched.
+ 
+@@ -956,7 +956,7 @@ class BaseMultiplex(object):
+             ...    m_instance.unexpect(ref1)
+             ...    m_instance.writeline('somepassword')
+             >>> ref2 = m.expect('(?i)password:', send_password)
+-            >>> # spawn() and/or await() and do stuff...
++            >>> # spawn() and/or block_await() and do stuff...
+ 
+         The example above would send 'yes' if asked by the SSH program to accept
+         the host's public key (which would result in it being automatically
+@@ -1010,11 +1010,11 @@ class BaseMultiplex(object):
+             >>> m = Multiplex('echo -e "\\033]0;Some Title\\007"')
+             >>> title_seq_regex = re.compile(r'\\x1b\\][0-2]\;(.*?)(\\x07|\\x1b\\\\)')
+             >>> m.expect(title_seq_regex, handle_xterm_title, preprocess=True) # <-- 'preprocess=True'
+-            >>> m.await()
++            >>> m.block_await()
+             Caught title: Some Title
+             >>>
+ 
+-        **Notes about debugging:** Instead of using `await` to wait for all of your patterns to be matched at once you can make individual calls to `read` to determine if your patterns are being matched in the way that you want.  For example::
++        **Notes about debugging:** Instead of using `block_await` to wait for all of your patterns to be matched at once you can make individual calls to `read` to determine if your patterns are being matched in the way that you want.  For example::
+ 
+             >>> def do_stuff(m_instance, matched):
+             ...     print("Debug: do_stuff() got %s" % repr(matched))
+@@ -1023,7 +1023,7 @@ class BaseMultiplex(object):
+             >>> m.expect('some pattern', do_stuff)
+             >>> m.expect('some other pattern', do_stuff)
+             >>> m.spawn()
+-            >>> # Instead of calling await() just call one read() at a time...
++            >>> # Instead of calling block_await() just call one read() at a time...
+             >>> print(repr(m.read()))
+             ''
+             >>> print(repr(m.read())) # Oops, called read() too soon.  Try again:
+@@ -1043,7 +1043,7 @@ class BaseMultiplex(object):
+             'some pattern'
+             >>> # As you can see, calling read() at-will in an interactive interpreter can be very handy.
+ 
+-        **About asynchronous use:**  This mechanism is non-blocking (with the exception of `await`) and is meant to be used asynchronously.  This means that if the running program has no output, `read` won't result in any patterns being matched.  So you must be careful about timing *or* you need to ensure that `read` gets called either automatically when there's data to be read (IOLoop, EPoll, select, etc) or at regular intervals via a loop.  Also, if you're not calling `read` at an interval (i.e. you're using a mechanism to detect when there's output to be read before calling it e.g. IOLoop) you need to ensure that `timeout_check` is called regularly anyway or timeouts won't get detected if there's no output from the underlying program.  See the `MultiplexPOSIXIOLoop.read` override for an example of what this means and how to do it.
++        **About asynchronous use:**  This mechanism is non-blocking (with the exception of `block_await`) and is meant to be used asynchronously.  This means that if the running program has no output, `read` won't result in any patterns being matched.  So you must be careful about timing *or* you need to ensure that `read` gets called either automatically when there's data to be read (IOLoop, EPoll, select, etc) or at regular intervals via a loop.  Also, if you're not calling `read` at an interval (i.e. you're using a mechanism to detect when there's output to be read before calling it e.g. IOLoop) you need to ensure that `timeout_check` is called regularly anyway or timeouts won't get detected if there's no output from the underlying program.  See the `MultiplexPOSIXIOLoop.read` override for an example of what this means and how to do it.
+         """
+         # Create the Pattern object before we do anything else
+         if isinstance(patterns, (str, unicode)):
+@@ -1093,7 +1093,7 @@ class BaseMultiplex(object):
+             if hash(item) == ref:
+                 self._patterns.pop(i)
+ 
+-    def await(self, timeout=15, **kwargs):
++    def block_await(self, timeout=15, **kwargs):
+         """
+         Blocks until all non-optional patterns inside self._patterns have been
+         removed *or* if the given *timeout* is reached.  *timeout* may be an
+@@ -1102,12 +1102,12 @@ class BaseMultiplex(object):
+         Returns True if all non-optional, non-sticky patterns were handled
+         successfully.
+ 
+-        .. warning:: The timeouts attached to Patterns are set when they are created.  Not when when you call :meth:`await`!
++        .. warning:: The timeouts attached to Patterns are set when they are created.  Not when when you call :meth:`block_await`!
+ 
+         As a convenience, if :meth:`isalive` resolves to False,
+         :meth:`spawn` will be called automatically with *\*\*kwargs*
+ 
+-        await
++        block_await
+             To wait with expectation.
+         """
+         if not self.isalive():
+@@ -1124,7 +1124,7 @@ class BaseMultiplex(object):
+         # This starts up the scheduler that constantly checks patterns
+         output = self.read() # Remember:  read() is non-blocking
+         if output and self.debug and EXTRA_DEBUG:
+-            print("await: %s" % repr(output))
++            print("block_await: %s" % repr(output))
+         while remaining_patterns:
+             # First we need to discount optional patterns
+             remaining_patterns = False
+@@ -1145,7 +1145,7 @@ class BaseMultiplex(object):
+             # Lastly we perform a read() to ensure the output is processed
+             output = self.read() # Remember:  read() is non-blocking
+             if output and self.debug and EXTRA_DEBUG:
+-                print("await: %s" % repr(output))
++                print("block_await: %s" % repr(output))
+             time.sleep(0.01) # So we don't eat up all the CPU
+         return True
+ 
+@@ -1810,9 +1810,9 @@ class MultiplexPOSIXIOLoop(BaseMultiplex):
+ #child.expect('ftp>$', 'cd pub\n')
+ #child.expect('ftp>$', 'get ls-lR.gz\n')
+ #child.expect('ftp>$', 'bye\n')
+-#child.await() # Blocks until all patterns have been matched or a timeout
++#child.block_await() # Blocks until all patterns have been matched or a timeout
+ # NOTE: If this code were called inside of an already-started IOLoop there would
+-# be no need to call await(). Everything would be asynchronous and non-blocking.
++# be no need to call block_await(). Everything would be asynchronous and non-blocking.
+ 
+ def spawn(cmd, rows=24, cols=80, env=None, em_dimensions=None, *args, **kwargs):
+     """
+-- 
+2.28.0
+

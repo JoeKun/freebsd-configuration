@@ -1,0 +1,64 @@
+From 380002ccf89864c4ad447146ea84de3a0ca1e02a Mon Sep 17 00:00:00 2001
+From: Joel Lopes Da Silva <joel@lopes-da-silva.com>
+Date: Sun, 25 Oct 2020 22:33:37 -0700
+Subject: [PATCH] Temporary workaround for regression with Python 3.7.
+
+When running this code with Python 3.7, we encounter the following
+error:
+
+    OSError: handle is closed
+
+That error only seems to happen when shutting down a ProcessPoolExecutor
+with wait=False.
+
+Thus, applying the same temporary workaround as in the following
+pull request from python-adaptive:
+
+    https://github.com/python-adaptive/adaptive/pull/164
+---
+ gateone/asynchronous/asynchronous.py | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/gateone/asynchronous/asynchronous.py b/gateone/asynchronous/asynchronous.py
+index 9e318d527edd..162d03bdb9e9 100644
+--- a/gateone/asynchronous/asynchronous.py
++++ b/gateone/asynchronous/asynchronous.py
+@@ -23,6 +23,7 @@ from itertools import count
+ from collections import Iterable
+ from functools import partial
+ from gateone.core.utils import AutoExpireDict, convert_to_timedelta
++import sys
+ from tornado.ioloop import IOLoop
+ from tornado.ioloop import PeriodicCallback as PC
+ 
+@@ -221,7 +222,12 @@ class AsyncRunner(object):
+             self.io_loop.remove_timeout(self.shutdown_timeout)
+         if self.running:
+             logging.debug(_("Shutting down %s" % repr(self)))
+-            self.executor.shutdown(wait=wait)
++            # FIXME: temporary set wait=True for Python 3.7
++            # This should be reverted when the regression in Python is fixed.
++            # See https://bugs.python.org/issue36281
++            self.executor.shutdown(
++                wait=True if sys.version_info >= (3, 7) else wait
++            )
+         import gc
+         gc.collect()
+ 
+@@ -512,7 +518,12 @@ class MultiprocessRunner(AsyncRunner):
+             if self.running:
+                 logging.info(_(
+                     "Shutting down the MultiprocessRunner executor."))
+-                self.executor.shutdown(wait=wait)
++                # FIXME: temporary set wait=True for Python 3.7
++                # This should be reverted when the regression in Python is fixed.
++                # See https://bugs.python.org/issue36281
++                self.executor.shutdown(
++                    wait=True if sys.version_info >= (3, 7) else wait
++                )
+         import gc
+         gc.collect()
+ 
+-- 
+2.28.0
+
