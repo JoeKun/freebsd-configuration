@@ -1553,9 +1553,9 @@ Configure `nginx` to proxy to `apache`:
 ```
 
 
-## GateOne
+## Gate One
 
-Install some important dependencies of GateOne:
+Install some important dependencies of Gate One:
 
 ```
 # pkg install sudo
@@ -1576,11 +1576,11 @@ And make sure to include the following directive in `/boot/loader.conf`:
 pty_load="YES"
 ```
 
-Add unprivileged user for GateOne:
+Add unprivileged user for Gate One:
 
 ```
 # pw group add gateone -g 647
-# pw user add gateone -u 647 -g 647 -c "GateOne" -d /usr/local/gateone -s /usr/local/bin/zsh -m -k /usr/local/etc/skel
+# pw user add gateone -u 647 -g 647 -c "Gate One" -d /usr/local/gateone -s /usr/local/bin/zsh -m -k /usr/local/etc/skel
 ```
 
 Give `gateone` unprivileged user the ability to call `login` using `sudo` without requiring password authentication.
@@ -1604,7 +1604,7 @@ $ git am /freebsd-configuration/patches/gateone/gateone-python-3-7-compatibility
 $ python3.7 setup.py install --prefix=/usr/local/gateone
 ```
 
-Launch GateOne manually once so it will lay down its own configuration file:
+Launch Gate One manually once so it will lay down its own configuration file:
 
 ```
 $ ~/bin/gateone --settings_dir="$HOME/etc/gateone" --disable_ssl="true" --port=2222 --origins="localhost;127.0.0.1"
@@ -1629,7 +1629,7 @@ Install bootstrap script:
 # chown -R gateone:gateone /freebsd-configuration/usr/local/gateone
 ```
 
-Enable GateOne:
+Enable Gate One:
 
 ```
 # cd /etc/rc.conf.d
@@ -1637,7 +1637,7 @@ Enable GateOne:
 # service gateone start
 ```
 
-Enable GateOne virtual host for `nginx`:
+Enable Gate One virtual host for `nginx`:
 
 ```
 # cd /usr/local/etc/nginx/sites-enabled
