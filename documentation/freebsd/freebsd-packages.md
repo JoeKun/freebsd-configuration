@@ -898,7 +898,6 @@ Keep all options enabled by default, and additionally enable the following:
 
  * `LZ4` in first section;
  * `LDAP` in *Database support* section;
- * `PGSQL` in *Database support* section;
  * `ICU` in *Full text search plugins* section.
 
 See if any dependency is missing:
@@ -1182,8 +1181,7 @@ Once this is setup, you should consider following the steps outlined by Cullum S
 
 Keep all options enabled by default, and additionally enable the following:
 
- * `LDAP`;
- * `PGSQL`.
+ * `LDAP`.
 
 See if any dependency is missing:
 
@@ -1798,7 +1796,7 @@ Here are down below some of the steps where we deviate slightly from that manual
 Keep all options enabled by default, except for `MYSQL` in the *Database backend(s)* section, which you should disable; and additionally enable the following:
 
  * `IMAGICK` in first section;
- * `PNCTL` in first section;
+ * `PCNTL` in first section;
  * `REDIS` in *Caching* section;
  * `PGSQL` in *Database backend(s)* section.
 
