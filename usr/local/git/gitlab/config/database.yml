@@ -8,6 +8,15 @@ production:
   username: gitlab
   password: gitlab_password
   host: localhost
+  # load_balancing:
+  #   hosts:
+  #     - host1.example.com
+  #     - host2.example.com
+  #   discover:
+  #     nameserver: 1.2.3.4
+  #     port: 8600
+  #     record: secondary.postgresql.service.consul
+  #     interval: 300
 
 #
 # Development specific
@@ -19,15 +28,8 @@ development:
   username: postgres
   password: "secure password"
   host: localhost
-  # load_balancing:
-  #   hosts:
-  #     - host1.example.com
-  #     - host2.example.com
-  #   discover:
-  #     nameserver: 1.2.3.4
-  #     port: 8600
-  #     record: secondary.postgresql.service.consul
-  #     interval: 300
+  variables:
+    statement_timeout: 15s
 
 #
 # Staging specific
@@ -51,3 +53,5 @@ test: &test
   password:
   host: localhost
   prepared_statements: false
+  variables:
+    statement_timeout: 15s
