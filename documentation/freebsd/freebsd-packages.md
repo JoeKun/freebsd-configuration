@@ -287,6 +287,32 @@ Unfortunately, `vimpager` 2.06 has a serious bug when used with the latest versi
 ```
 
 
+## `smartd`
+
+```
+# pkg install smartmontools
+
+# cd /usr/local/etc
+# ln -s ../../../freebsd-configuration/usr/local/etc/smartd.conf
+```
+
+Edit `/usr/local/etc/smartd.conf` as necessary, namely regarding the list of drives to monitor, at the bottom of this configuration file.
+
+Enable `smartd`:
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/smartd
+# service smartd start
+```
+
+To include drive health information in your daily status reports, add a line like the following to `/etc/periodic.conf`:
+
+```
+daily_status_smart_devices="/dev/ada0 /dev/ada1 /dev/ada2"
+```
+
+
 ## `bind`
 
 ### Basic configuration
