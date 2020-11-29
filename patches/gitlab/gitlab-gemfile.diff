@@ -1,0 +1,90 @@
+diff --git a/Gemfile b/Gemfile
+index d60fefe29dca..5d7c73e091ed 100644
+--- a/Gemfile
++++ b/Gemfile
+@@ -26,8 +26,7 @@ gem 'marginalia', '~> 1.9.0'
+ 
+ # Authentication libraries
+ gem 'devise', '~> 4.7.2'
+-# TODO: verify ARM compile issue on 3.1.13+ version (see https://gitlab.com/gitlab-org/gitlab/-/merge_requests/18828)
+-gem 'bcrypt', '3.1.12'
++gem 'bcrypt', '3.1.16'
+ gem 'doorkeeper', '~> 5.3.0'
+ gem 'doorkeeper-openid_connect', '~> 1.7.4'
+ gem 'omniauth', '~> 1.8'
+@@ -466,9 +465,9 @@ end
+ # Gitaly GRPC protocol definitions
+ gem 'gitaly', '~> 13.5.0-rc2'
+ 
+-gem 'grpc', '~> 1.30.2'
++gem 'grpc', '~> 1.24.0'
+ 
+-gem 'google-protobuf', '~> 3.12'
++gem 'google-protobuf', '~> 3.8.0'
+ 
+ gem 'toml-rb', '~> 1.0.0'
+ 
+diff --git a/Gemfile.lock b/Gemfile.lock
+index 64179847dd8c..28471a37199c 100644
+--- a/Gemfile.lock
++++ b/Gemfile.lock
+@@ -123,7 +123,7 @@ GEM
+     babosa (1.0.2)
+     base32 (0.3.2)
+     batch-loader (1.4.0)
+-    bcrypt (3.1.12)
++    bcrypt (3.1.16)
+     bcrypt_pbkdf (1.0.0)
+     benchmark-ips (2.3.0)
+     benchmark-memory (0.1.2)
+@@ -478,9 +478,9 @@ GEM
+       signet (~> 0.12)
+     google-cloud-env (1.4.0)
+       faraday (>= 0.17.3, < 2.0)
+-    google-protobuf (3.12.4)
+-    googleapis-common-protos-types (1.0.5)
+-      google-protobuf (~> 3.11)
++    google-protobuf (3.8.0)
++    googleapis-common-protos-types (1.0.4)
++      google-protobuf (~> 3.0)
+     googleauth (0.12.0)
+       faraday (>= 0.17.3, < 2.0)
+       jwt (>= 1.4, < 3.0)
+@@ -526,8 +526,8 @@ GEM
+       graphql (~> 1.6)
+       html-pipeline (~> 2.8)
+       sass (~> 3.4)
+-    grpc (1.30.2)
+-      google-protobuf (~> 3.12)
++    grpc (1.24.0)
++      google-protobuf (~> 3.8)
+       googleapis-common-protos-types (~> 1.0)
+     gssapi (1.2.0)
+       ffi (>= 1.0.1)
+@@ -1277,7 +1277,7 @@ DEPENDENCIES
+   babosa (~> 1.0.2)
+   base32 (~> 0.3.0)
+   batch-loader (~> 1.4.0)
+-  bcrypt (= 3.1.12)
++  bcrypt (= 3.1.16)
+   bcrypt_pbkdf (~> 1.0)
+   benchmark-ips (~> 2.3.0)
+   benchmark-memory (~> 0.1)
+@@ -1360,7 +1360,7 @@ DEPENDENCIES
+   gitlab_omniauth-ldap (~> 2.1.1)
+   gon (~> 6.2)
+   google-api-client (~> 0.33)
+-  google-protobuf (~> 3.12)
++  google-protobuf (~> 3.8.0)
+   gpgme (~> 2.0.19)
+   grape (= 1.4.0)
+   grape-entity (~> 0.7.1)
+@@ -1370,7 +1370,7 @@ DEPENDENCIES
+   graphlient (~> 0.4.0)
+   graphql (~> 1.11.4)
+   graphql-docs (~> 1.6.0)
+-  grpc (~> 1.30.2)
++  grpc (~> 1.24.0)
+   gssapi
+   guard-rspec
+   haml_lint (~> 0.36.0)
