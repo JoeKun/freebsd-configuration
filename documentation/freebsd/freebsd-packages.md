@@ -484,9 +484,9 @@ After you create a new Let's Encrypt signed certificate, you may want to create 
 
 ```
 # cd /etc/ssl/certs
-# ln -s ../../../usr/local/etc/letsencrypt/live/foo.com/fullchain.pem
+# ln -s ../../../usr/local/etc/letsencrypt/live/foo.com/fullchain.pem foo.com_wildcard.pem
 # cd /etc/ssl/private
-# ln -s ../../../usr/local/etc/letsencrypt/live/foo.com/privkey.pem
+# ln -s ../../../usr/local/etc/letsencrypt/live/foo.com/privkey.pem foo.com_wildcard.key
 ```
 
 #### Adjust permissions
