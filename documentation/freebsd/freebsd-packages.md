@@ -1705,22 +1705,22 @@ Install `chruby` to be able to select a specific version of ruby for GitLab:
 Install specific version of ruby for GitLab:
 
 ```
-# wget "https://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.6.tar.gz"
-# tar xvzf ruby-2.6.6.tar.gz
-# cd ruby-2.6.6
-# ./configure --prefix=/opt/rubies/ruby-2.6.6
+# wget "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz"
+# tar xvzf ruby-2.7.2.tar.gz
+# cd ruby-2.7.2
+# ./configure --prefix=/opt/rubies/ruby-2.7.2
 # make
 # make install
 # cd ..
-# rm -R -f ruby-2.6.6 ruby-2.6.6.tar.gz
+# rm -R -f ruby-2.7.2 ruby-2.7.2.tar.gz
 ```
 
 Install `bundler` for that specific version of ruby:
 
 ```
 # source /usr/local/share/chruby/chruby.sh
-# chruby ruby-2.6.6
-# gem install bundler -v "1.17.3"
+# chruby ruby-2.7.2
+# gem install bundler -v "2.1.4"
 ```
 
 Add unprivileged user for GitLab:
