@@ -1,0 +1,27 @@
+#! /usr/bin/env bash
+
+# This script should be run in the directory where AfterLogic WebMail Pro PHP
+# was unpacked.
+
+# This long command was put together for version 8.5.2-build-a3
+# of AfterLogic WebMail Pro PHP.
+
+find . -type f -not -perm 644 \
+    -and -not -path "*/bin/generate_vcards" \
+    -and -not -path "*/bin/naturalselection" \
+    -and -not -path "*/bin/phpcbf" \
+    -and -not -path "*/scripts/phpcbf" \
+    -and -not -path "*/bin/phpcs" \
+    -and -not -path "*/scripts/phpcs" \
+    -and -not -path "*/scripts/phpcs-svn-pre-commit" \
+    -and -not -path "*/bin/sabredav" \
+    -and -not -path "*/bin/vobject" \
+    -and -not -path "./vendor/sabre/vobject/bin/*.php" \
+    -and -not -path "./vendor/sabre/dav/bin/*.php" \
+    -and -not -path "./vendor/sabre/event/examples/*.php" \
+    -and -not -path "./vendor/afterlogic/dav/bin/*.php" \
+    -and -not -path "./vendor/mtdowling/jmespath.php/bin/*.php" \
+    -and -not -path "./vendor/bin/jp.php" \
+    -and -not -path "./vendor/sabre/dav/bin/googlecode_upload.py" \
+    -and -not -path "./dev/*.sh" \
+    -exec chmod 644 {} \;

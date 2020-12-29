@@ -1406,12 +1406,13 @@ Install the web application:
 
 ```
 # cd /usr/local/www
-# wget https://afterlogic.com/download/webmail-pro-php-8.zip
+# wget https://afterlogic.com/download/webmail-pro-php.zip
 # mkdir webmail
 # cd webmail
+# unzip ../webmail-pro-php.zip
+# rm -f ../webmail-pro-php.zip
+# /freebsd-configuration/patches/afterlogic-webmail-pro/afterlogic-webmail-pro-fix-permissions
 # chown -R www:www data
-# unzip ../webmail-pro-php-8.zip
-# rm -f ../webmail-pro-php-8.zip
 ```
 
 Enable `nginx` configuration for AfterLogic WebMail Pro:
@@ -1433,7 +1434,7 @@ Restart `nginx`:
 Follow [these instructions](https://afterlogic.com/docs/webmail-pro-8/installation/compatibility-test) by going to `https://mail.foo.com/?install` with your web browser, in order to figure out if your server meets the minimum requirements to run AfterLogic WebMail Pro. You might need to install additional PHP modules; for example, you might need to do the following:
 
 ```
-# pkg install php73-pdo_mysql
+# pkg install php73-pdo_mysql php73-tokenizer
 # service php-fpm restart
 ```
 
