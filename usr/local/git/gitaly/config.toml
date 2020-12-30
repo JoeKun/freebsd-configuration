@@ -117,3 +117,16 @@ self_signed_cert = false
 # start_minute = 30
 # duration = "45m"
 # storages = ["default"]
+
+# [cgroups]
+# count = 10
+# mountpoint = "/sys/fs/cgroup"
+# hierarchy_root = "gitaly"
+
+# [cgroups.memory]
+# enabled = true
+# limit = 1048576
+
+# [cgroups.cpu]
+# enabled = true
+# shares = 512
