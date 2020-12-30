@@ -140,8 +140,8 @@ diff -ru a/conf.d/10-ssl.conf b/conf.d/10-ssl.conf
  # certificate, just make sure to update the domains in dovecot-openssl.cnf
 -ssl_cert = </etc/ssl/certs/dovecot.pem
 -ssl_key = </etc/ssl/private/dovecot.pem
-+ssl_cert = </etc/ssl/certs/foo.com_wildcard.pem
-+ssl_key = </etc/ssl/private/foo.com_wildcard.key
++ssl_cert = </usr/local/etc/ssl/certs/foo.com_wildcard.pem
++ssl_key = </usr/local/etc/ssl/private/foo.com_wildcard.key
  
  # If key file is password protected, give the password here. Alternatively
  # give it when starting dovecot with -p parameter. Since this file is often

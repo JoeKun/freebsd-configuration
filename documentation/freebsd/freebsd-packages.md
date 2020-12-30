@@ -390,9 +390,9 @@ This will do the right dance with `rndc freeze` and `rndc thaw` on your behalf f
 ```
 # pw group add ssl -g 551
 # pw user add ssl -u 551 -g 551 -c "SSL Unprivileged User" -d /var/empty -s /usr/sbin/nologin
-# mkdir -p /etc/ssl/certs /etc/ssl/private
-# chown root:ssl /etc/ssl/private
-# chmod 710 /etc/ssl/private
+# mkdir -p /usr/local/etc/ssl/certs /usr/local/etc/ssl/private
+# chown root:ssl /usr/local/etc/ssl/private
+# chmod 710 /usr/local/etc/ssl/private
 ```
 
 ### Let's Encrypt
@@ -462,31 +462,31 @@ Install the RFC 2136 plugin for `certbot`:
 Create a configuration file for this plugin:
 
 ```
-# cd /etc/ssl
+# cd /usr/local/etc/ssl
 # mkdir credentials
 # chmod 700 credentials
 # cd credentials
-# ln -s ../../../freebsd-configuration/etc/ssl/credentials/letsencrypt-dns-rfc2136-credentials.ini
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/ssl/credentials/letsencrypt-dns-rfc2136-credentials.ini
 # chmod -H 600 letsencrypt-dns-rfc2136-credentials.ini
 ```
 
-Manually edit `/etc/ssl/credentials/letsencrypt-dns-rfc2136-credentials.ini` to replace the value associated with the `dns_rfc2136_secret` key with the `secret` present in `/var/named/usr/local/etc/namedb/letsencrypt.key`.
+Manually edit `/usr/local/etc/ssl/credentials/letsencrypt-dns-rfc2136-credentials.ini` to replace the value associated with the `dns_rfc2136_secret` key with the `secret` present in `/var/named/usr/local/etc/namedb/letsencrypt.key`.
 
 Invoke `certbot` with the RFC 2136 plugin:
 
 ```
-# certbot certonly --dns-rfc2136 --dns-rfc2136-credentials /etc/ssl/credentials/letsencrypt-dns-rfc2136-credentials.ini --dns-rfc2136-propagation-seconds 180 -d foo.com -d '*.foo.com' -d bar.org -d '*.bar.org'
+# certbot certonly --dns-rfc2136 --dns-rfc2136-credentials /usr/local/etc/ssl/credentials/letsencrypt-dns-rfc2136-credentials.ini --dns-rfc2136-propagation-seconds 180 -d foo.com -d '*.foo.com' -d bar.org -d '*.bar.org'
 ```
 
-#### Create links to certificate in `/etc/ssl`
+#### Create links to certificate in `/usr/local/etc/ssl`
 
-After you create a new Let's Encrypt signed certificate, you may want to create symbolic links to the commonly used components of this certificate, in `/etc/ssl`. For example, assuming you just created a wildcard certificate for foo.com as described above, run the following commands:
+After you create a new Let's Encrypt signed certificate, you may want to create symbolic links to the commonly used components of this certificate, in `/usr/local/etc/ssl`. For example, assuming you just created a wildcard certificate for foo.com as described above, run the following commands:
 
 ```
-# cd /etc/ssl/certs
-# ln -s ../../../usr/local/etc/letsencrypt/live/foo.com/fullchain.pem foo.com_wildcard.pem
-# cd /etc/ssl/private
-# ln -s ../../../usr/local/etc/letsencrypt/live/foo.com/privkey.pem foo.com_wildcard.key
+# cd /usr/local/etc/ssl/certs
+# ln -s ../../letsencrypt/live/foo.com/fullchain.pem foo.com_wildcard.pem
+# cd /usr/local/etc/ssl/private
+# ln -s ../../letsencrypt/live/foo.com/privkey.pem foo.com_wildcard.key
 ```
 
 #### Adjust permissions
