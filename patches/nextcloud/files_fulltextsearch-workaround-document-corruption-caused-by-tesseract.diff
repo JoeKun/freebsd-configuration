@@ -1,0 +1,32 @@
+diff -ru a/lib/Service/FilesService.php b/lib/Service/FilesService.php
+--- a/lib/Service/FilesService.php	2020-12-31 17:25:27.885678000 -0800
++++ b/lib/Service/FilesService.php	2020-12-31 17:24:11.072025000 -0800
+@@ -570,8 +570,16 @@
+ 		$document = $this->generateFilesDocumentFromFile($index->getOwnerId(), $file);
+ 		$document->setIndex($index);
+ 
+-		$this->updateFilesDocumentFromFile($document, $file);
++		try {
++			$this->updateFilesDocumentFromFile($document, $file);
++		} catch (Exception $e) {
++			$index->setStatus(IIndex::INDEX_REMOVE);
++			$document = new FilesDocument($index->getProviderId(), $index->getDocumentId());
++			$document->setIndex($index);
+ 
++			return $document;
++		}
++
+ 		return $document;
+ 	}
+ 
+@@ -714,6 +722,10 @@
+ 			}
+ 		} catch (Throwable $t) {
+ 			$this->manageContentErrorException($document, $t);
++		}
++
++		if (gettype($document) !== "object") {
++			throw new Exception();
+ 		}
+ 
+ 		if ($document->getContent() === null) {
