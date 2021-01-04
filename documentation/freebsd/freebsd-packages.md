@@ -1091,7 +1091,7 @@ Install the DCC daemon to check mail for bulkiness:
 # service dccifd start
 ```
 
-Configure and enable two new `redis` instances dedicated to `rspamd`, including one specifically for the Bayes classifier:
+Configure and enable three new `redis` instances dedicated to `rspamd`, including two specifically for a couple of Bayes classifiers (one for global statistics, and another one for per user statistics):
 
 ```
 # cd /var/db/redis
@@ -1101,16 +1101,20 @@ Configure and enable two new `redis` instances dedicated to `rspamd`, including 
 # cd /usr/local/etc
 # ln -s ../../../freebsd-configuration/usr/local/etc/redis-rspamd.conf
 # ln -s ../../../freebsd-configuration/usr/local/etc/redis-rspamd-bayes.conf
+# ln -s ../../../freebsd-configuration/usr/local/etc/redis-rspamd-bayes-per-user.conf
 
 # cd /usr/local/etc/newsyslog.conf.d
 # ln -s ../../../../freebsd-configuration/usr/local/etc/newsyslog.conf.d/redis-rspamd.conf
 # ln -s ../../../../freebsd-configuration/usr/local/etc/newsyslog.conf.d/redis-rspamd-bayes.conf
+# ln -s ../../../../freebsd-configuration/usr/local/etc/newsyslog.conf.d/redis-rspamd-bayes-per-user.conf
 
 # cd /etc/rc.conf.d/redis.d
 # ln -s ../../../freebsd-configuration/etc/rc.conf.d/redis.d/rspamd
 # ln -s ../../../freebsd-configuration/etc/rc.conf.d/redis.d/rspamd-bayes
+# ln -s ../../../freebsd-configuration/etc/rc.conf.d/redis.d/rspamd-bayes-per-user
 # service redis start rspamd
 # service redis start rspamd-bayes
+# service redis start rspamd-bayes-per-user
 ```
 
 Prepare to install `rspamd`:
@@ -1149,9 +1153,21 @@ Configure `rspamd`:
 # pw group mod clamav -m rspamd
 
 # cd /usr/local/etc/rspamd
+
 # mkdir local.d
 # cd local.d
-# for file_name in antivirus.conf classifier-bayes.conf dcc.conf dkim_signing.conf mx_check.conf phishing.conf redis.conf replies.conf worker-controller.inc worker-normal.inc worker-proxy.inc; do ln -s ../../../../../freebsd-configuration/usr/local/etc/rspamd/local.d/${file_name}; done
+# for file_name in antivirus.conf classifier-bayes.conf classifier-bayes-per-user.conf dcc.conf dkim_signing.conf mx_check.conf phishing.conf redis.conf replies.conf statistics_group.conf worker-controller.inc worker-normal.inc worker-proxy.inc; do ln -s ../../../../../freebsd-configuration/usr/local/etc/rspamd/local.d/${file_name}; done
+# cd ..
+
+# mkdir lua
+# cd lua
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/rspamd/lua/bayes_per_user_learn.lua
+# cd ..
+
+# mkdir override.d
+# cd override.d
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/rspamd/override.d/statistic.conf
+# cd ..
 ```
 
 Manually edit the following key in `/usr/local/etc/rspamd/local.d/worker-controller.inc`:

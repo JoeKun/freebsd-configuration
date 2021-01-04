@@ -222,6 +222,9 @@ smtpd_data_restrictions = permit_mynetworks
 # Rspamd configuration
 #-----------------------------------------------------------
 
+# Split multiple recipient messages before sending them through the milter.
+sendmail_destination_recipient_limit = 1
+
 # Filter mail through rspamd's milter socket.
 smtpd_milters = unix:/var/run/rspamd/milter.sock
 non_smtpd_milters = unix:/var/run/rspamd/milter.sock

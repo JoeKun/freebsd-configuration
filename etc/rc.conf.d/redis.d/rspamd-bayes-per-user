@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/redis.d/rspamd-bayes: system configuration for redis instance dedicated to rspamd's Bayes per user classifier
+
+redis_profiles="${redis_profiles} rspamd-bayes-per-user"
+

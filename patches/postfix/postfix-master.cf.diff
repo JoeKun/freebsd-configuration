@@ -1,10 +1,12 @@
---- a/master.cf	2016-08-24 15:48:41.131858000 -0700
-+++ b/master.cf	2016-08-25 16:18:37.766617000 -0700
-@@ -10,22 +10,19 @@
+diff -ru a/master.cf b/master.cf
+--- a/master.cf	2021-01-03 23:06:21.203137000 -0800
++++ b/master.cf	2021-01-03 23:06:25.310340000 -0800
+@@ -10,22 +10,21 @@
  #               (yes)   (yes)   (no)    (never) (100)
  # ==========================================================================
  smtp      inet  n       -       n       -       -       smtpd
 +  -o smtpd_sasl_auth_enable=no
++  -o content_filter=sendmail
  #smtp      inet  n       -       n       -       1       postscreen
  #smtpd     pass  -       -       n       -       -       smtpd
  #dnsblog   unix  -       -       n       -       0       dnsblog
@@ -29,6 +31,18 @@
 +  -o smtpd_recipient_restrictions=
 +  -o smtpd_relay_restrictions=permit_sasl_authenticated,reject
 +  -o milter_macro_daemon_name=ORIGINATING
++  -o content_filter=sendmail
  #smtps     inet  n       -       n       -       -       smtpd
  #  -o syslog_name=postfix/smtps
  #  -o smtpd_tls_wrappermode=yes
+@@ -131,3 +130,10 @@
+ #mailman   unix  -       n       n       -       -       pipe
+ #  flags=FRX user=list argv=/usr/lib/mailman/bin/postfix-to-mailman.py
+ #  ${nexthop} ${user}
++
++# Special content filter used to split multiple recipient mail before going
++# through the milter.
++sendmail   unix  -       n       n       -       -       pipe
++  flags=ORq user=mailnull null_sender=
++  argv=/usr/local/sbin/sendmail -G -i -f ${sender} -- ${recipient}
++

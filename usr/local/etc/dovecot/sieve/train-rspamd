@@ -36,5 +36,5 @@ esac
 logger -p mail.info "${script_name}: Classifying message for ${email} with identifier ${message_identifier} as ${mail_category}."
 
 rspamc_action="learn_${mail_category}"
-exec /usr/local/bin/rspamc -h /var/run/rspamd/rspamd.sock "${rspamc_action}"
+exec /usr/local/bin/rspamc -h /var/run/rspamd/rspamd.sock -c "bayes_per_user" -d "${email}" "${rspamc_action}"
 
