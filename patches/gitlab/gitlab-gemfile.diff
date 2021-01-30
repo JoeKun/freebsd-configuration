@@ -1,8 +1,8 @@
 diff --git a/Gemfile b/Gemfile
-index d60fefe29dca..5d7c73e091ed 100644
+index c7ed1cd4d71e..9896368ce609 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -26,8 +26,7 @@ gem 'marginalia', '~> 1.9.0'
+@@ -23,8 +23,7 @@ gem 'marginalia', '~> 1.10.0'
  
  # Authentication libraries
  gem 'devise', '~> 4.7.2'
@@ -12,9 +12,9 @@ index d60fefe29dca..5d7c73e091ed 100644
  gem 'doorkeeper', '~> 5.3.0'
  gem 'doorkeeper-openid_connect', '~> 1.7.4'
  gem 'omniauth', '~> 1.8'
-@@ -466,9 +465,9 @@ end
+@@ -464,9 +463,9 @@ end
  # Gitaly GRPC protocol definitions
- gem 'gitaly', '~> 13.5.0-rc2'
+ gem 'gitaly', '~> 13.8.0.pre.rc2'
  
 -gem 'grpc', '~> 1.30.2'
 +gem 'grpc', '~> 1.24.0'
@@ -25,10 +25,10 @@ index d60fefe29dca..5d7c73e091ed 100644
  gem 'toml-rb', '~> 1.0.0'
  
 diff --git a/Gemfile.lock b/Gemfile.lock
-index 64179847dd8c..28471a37199c 100644
+index b370024b95b0..bb6c98e65116 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -123,7 +123,7 @@ GEM
+@@ -126,7 +126,7 @@ GEM
      babosa (1.0.2)
      base32 (0.3.2)
      batch-loader (1.4.0)
@@ -37,7 +37,7 @@ index 64179847dd8c..28471a37199c 100644
      bcrypt_pbkdf (1.0.0)
      benchmark-ips (2.3.0)
      benchmark-memory (0.1.2)
-@@ -478,9 +478,9 @@ GEM
+@@ -480,9 +480,9 @@ GEM
        signet (~> 0.12)
      google-cloud-env (1.4.0)
        faraday (>= 0.17.3, < 2.0)
@@ -47,10 +47,10 @@ index 64179847dd8c..28471a37199c 100644
 +    google-protobuf (3.8.0)
 +    googleapis-common-protos-types (1.0.4)
 +      google-protobuf (~> 3.0)
-     googleauth (0.12.0)
+     googleauth (0.14.0)
        faraday (>= 0.17.3, < 2.0)
        jwt (>= 1.4, < 3.0)
-@@ -526,8 +526,8 @@ GEM
+@@ -529,8 +529,8 @@ GEM
        graphql (~> 1.6)
        html-pipeline (~> 2.8)
        sass (~> 3.4)
@@ -61,7 +61,7 @@ index 64179847dd8c..28471a37199c 100644
        googleapis-common-protos-types (~> 1.0)
      gssapi (1.2.0)
        ffi (>= 1.0.1)
-@@ -1277,7 +1277,7 @@ DEPENDENCIES
+@@ -1292,7 +1292,7 @@ DEPENDENCIES
    babosa (~> 1.0.2)
    base32 (~> 0.3.0)
    batch-loader (~> 1.4.0)
@@ -70,16 +70,16 @@ index 64179847dd8c..28471a37199c 100644
    bcrypt_pbkdf (~> 1.0)
    benchmark-ips (~> 2.3.0)
    benchmark-memory (~> 0.1)
-@@ -1360,7 +1360,7 @@ DEPENDENCIES
+@@ -1374,7 +1374,7 @@ DEPENDENCIES
    gitlab_omniauth-ldap (~> 2.1.1)
    gon (~> 6.2)
    google-api-client (~> 0.33)
 -  google-protobuf (~> 3.12)
 +  google-protobuf (~> 3.8.0)
    gpgme (~> 2.0.19)
-   grape (= 1.4.0)
+   grape (~> 1.5.1)
    grape-entity (~> 0.7.1)
-@@ -1370,7 +1370,7 @@ DEPENDENCIES
+@@ -1384,7 +1384,7 @@ DEPENDENCIES
    graphlient (~> 0.4.0)
    graphql (~> 1.11.4)
    graphql-docs (~> 1.6.0)

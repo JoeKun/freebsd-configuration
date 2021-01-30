@@ -1,8 +1,8 @@
 diff --git a/ruby/Gemfile b/ruby/Gemfile
-index d8564dca8779..775425dd3176 100644
+index 1a9f3ea8fd6b..ff73044381ec 100644
 --- a/ruby/Gemfile
 +++ b/ruby/Gemfile
-@@ -7,7 +7,7 @@ gem 'activesupport', '~> 6.0.3.3'
+@@ -7,7 +7,7 @@ gem 'activesupport', '~> 6.0.3.4'
  gem 'rdoc', '~> 6.0'
  gem 'gitlab-gollum-lib', '~> 4.2.7.9', require: false
  gem 'gitlab-gollum-rugged_adapter', '~> 0.4.4.2', require: false
@@ -28,7 +28,7 @@ index d8564dca8779..775425dd3176 100644
 +  gem 'grpc-tools', '= 1.0.1'
  end
 diff --git a/ruby/Gemfile.lock b/ruby/Gemfile.lock
-index a633e067f0d9..818ff664ec3e 100644
+index acfc05c8747b..98489efca465 100644
 --- a/ruby/Gemfile.lock
 +++ b/ruby/Gemfile.lock
 @@ -70,13 +70,13 @@ GEM
@@ -51,7 +51,7 @@ index a633e067f0d9..818ff664ec3e 100644
      i18n (1.8.5)
        concurrent-ruby (~> 1.0)
      ice_nine (0.11.2)
-@@ -202,9 +202,9 @@ DEPENDENCIES
+@@ -204,9 +204,9 @@ DEPENDENCIES
    gitlab-gollum-rugged_adapter (~> 0.4.4.2)
    gitlab-labkit (~> 0.13.2)
    gitlab-markup (~> 1.7.1)
