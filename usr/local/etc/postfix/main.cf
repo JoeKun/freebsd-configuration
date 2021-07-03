@@ -8,7 +8,7 @@
 #-----------------------------------------------------------
 
 biff = no
-compatibility_level = 2
+compatibility_level = 3.6
 mail_owner = postfix
 setgid_group = maildrop
 

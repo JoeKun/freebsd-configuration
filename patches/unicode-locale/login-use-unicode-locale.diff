@@ -1,22 +1,20 @@
---- a/login.conf	2020-09-10 16:56:59.951323000 -0700
-+++ b/login.conf	2020-10-28 23:52:37.829593000 -0700
+--- a/login.conf	2021-07-03 15:44:44.154187000 -0700
++++ b/login.conf	2021-07-03 15:45:22.948238000 -0700
 @@ -26,7 +26,7 @@
  	:passwd_format=sha512:\
  	:copyright=/etc/COPYRIGHT:\
- 	:welcome=/etc/motd:\
+ 	:welcome=/var/run/motd:\
 -	:setenv=BLOCKSIZE=K:\
 +	:setenv=BLOCKSIZE=K,LC_COLLATE=C:\
  	:mail=/var/mail/$:\
  	:path=/sbin /bin /usr/sbin /usr/bin /usr/local/sbin /usr/local/bin ~/bin:\
  	:nologin=/var/run/nologin:\
-@@ -47,7 +47,9 @@
- 	:umtxp=unlimited:\
- 	:priority=0:\
+@@ -49,7 +49,7 @@
  	:ignoretime@:\
--	:umask=022:
-+	:umask=022:\
-+	:charset=UTF-8:\
+ 	:umask=022:\
+ 	:charset=UTF-8:\
+-	:lang=C.UTF-8:
 +	:lang=en_US.UTF-8:
  
- 
  #
+ # A collection of common class names - forward them all to 'default'

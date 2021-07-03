@@ -1,8 +1,8 @@
---- a/login.conf	2020-10-28 23:52:37.829593000 -0700
-+++ b/login.conf	2020-10-28 23:57:06.373951000 -0700
+--- a/login.conf	2021-07-03 15:45:22.948238000 -0700
++++ b/login.conf	2021-07-03 15:47:04.193020000 -0700
 @@ -27,7 +27,7 @@
  	:copyright=/etc/COPYRIGHT:\
- 	:welcome=/etc/motd:\
+ 	:welcome=/var/run/motd:\
  	:setenv=BLOCKSIZE=K,LC_COLLATE=C:\
 -	:mail=/var/mail/$:\
 +	:mail=/var/mail/local/$:\
