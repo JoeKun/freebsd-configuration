@@ -1,28 +1,28 @@
 diff --git a/Gemfile b/Gemfile
-index ab8e7cc3b907..a87283e45b81 100644
+index d6e5d0e94e28..ff26c151b759 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -479,9 +479,9 @@ end
+@@ -477,9 +477,9 @@ end
  # Gitaly GRPC protocol definitions
- gem 'gitaly', '~> 13.9.0.pre.rc1'
+ gem 'gitaly', '~> 13.11.0.pre.rc1'
  
 -gem 'grpc', '~> 1.30.2'
 +gem 'grpc', '~> 1.24.0'
  
--gem 'google-protobuf', '~> 3.12'
+-gem 'google-protobuf', '~> 3.14.0'
 +gem 'google-protobuf', '~> 3.8.0'
  
  gem 'toml-rb', '~> 1.0.0'
  
 diff --git a/Gemfile.lock b/Gemfile.lock
-index c0a95042e014..defab7a80dfb 100644
+index cb186a1565b3..1895f9c58a36 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -508,9 +508,9 @@ GEM
+@@ -511,9 +511,9 @@ GEM
        signet (~> 0.12)
      google-cloud-env (1.4.0)
        faraday (>= 0.17.3, < 2.0)
--    google-protobuf (3.12.4)
+-    google-protobuf (3.14.0)
 -    googleapis-common-protos-types (1.0.5)
 -      google-protobuf (~> 3.11)
 +    google-protobuf (3.8.0)
@@ -31,7 +31,7 @@ index c0a95042e014..defab7a80dfb 100644
      googleauth (0.14.0)
        faraday (>= 0.17.3, < 2.0)
        jwt (>= 1.4, < 3.0)
-@@ -557,8 +557,8 @@ GEM
+@@ -560,8 +560,8 @@ GEM
        graphql (~> 1.6)
        html-pipeline (~> 2.8)
        sass (~> 3.4)
@@ -42,16 +42,16 @@ index c0a95042e014..defab7a80dfb 100644
        googleapis-common-protos-types (~> 1.0)
      gssapi (1.2.0)
        ffi (>= 1.0.1)
-@@ -1442,7 +1442,7 @@ DEPENDENCIES
+@@ -1445,7 +1445,7 @@ DEPENDENCIES
    gitlab_omniauth-ldap (~> 2.1.1)
-   gon (~> 6.2)
+   gon (~> 6.4.0)
    google-api-client (~> 0.33)
--  google-protobuf (~> 3.12)
+-  google-protobuf (~> 3.14.0)
 +  google-protobuf (~> 3.8.0)
    gpgme (~> 2.0.19)
    grape (~> 1.5.2)
    grape-entity (~> 0.7.1)
-@@ -1452,7 +1452,7 @@ DEPENDENCIES
+@@ -1455,7 +1455,7 @@ DEPENDENCIES
    graphlient (~> 0.4.0)
    graphql (~> 1.11.8)
    graphql-docs (~> 1.6.0)
