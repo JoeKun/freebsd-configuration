@@ -1,0 +1,20 @@
+diff --git a/ext/pg_query/include/pg_config.h b/ext/pg_query/include/pg_config.h
+index 3d4e174ac1d3..49b4ac827144 100644
+--- a/ext/pg_query/include/pg_config.h
++++ b/ext/pg_query/include/pg_config.h
+@@ -502,7 +502,7 @@
+ #define HAVE_STDLIB_H 1
+ 
+ /* Define to 1 if you have the `strchrnul' function. */
+-/* #undef HAVE_STRCHRNUL */
++#define HAVE_STRCHRNUL 1
+ 
+ /* Define to 1 if you have the `strerror_r' function. */
+ #define HAVE_STRERROR_R 1
+diff --git a/ext/pg_query/pg_query_ruby.sym b/ext/pg_query/pg_query_ruby.sym
+index ff9b69a6132e..369773781e47 100644
+--- a/ext/pg_query/pg_query_ruby.sym
++++ b/ext/pg_query/pg_query_ruby.sym
+@@ -1 +1,2 @@
+ _Init_pg_query
++Init_pg_query
