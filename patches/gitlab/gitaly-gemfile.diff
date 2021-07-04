@@ -1,15 +1,8 @@
 diff --git a/ruby/Gemfile b/ruby/Gemfile
-index d2b3d2ea0e11..cfe35ee18abf 100644
+index 00215cc55e9e..3dfbb6dbd9d9 100644
 --- a/ruby/Gemfile
 +++ b/ruby/Gemfile
-@@ -1,13 +1,13 @@
- source 'https://rubygems.org'
- 
--gem 'rugged', '~> 1.0.1'
-+gem 'rugged', '~> 1.1.0'
- gem 'github-linguist', '~> 7.12', require: 'linguist'
- gem 'gitlab-markup', '~> 1.7.1'
- gem 'activesupport', '~> 6.0.3.4'
+@@ -7,7 +7,7 @@ gem 'activesupport', '~> 6.0.3.4'
  gem 'rdoc', '~> 6.0'
  gem 'gitlab-gollum-lib', '~> 4.2.7.10.gitlab.1', require: false
  gem 'gitlab-gollum-rugged_adapter', '~> 0.4.4.3.gitlab.1', require: false
@@ -35,7 +28,7 @@ index d2b3d2ea0e11..cfe35ee18abf 100644
 +  gem 'grpc-tools', '= 1.0.1'
  end
 diff --git a/ruby/Gemfile.lock b/ruby/Gemfile.lock
-index 83c5f20f73db..820ea433fd01 100644
+index 32d761f9f3f7..20f1587e139e 100644
 --- a/ruby/Gemfile.lock
 +++ b/ruby/Gemfile.lock
 @@ -74,13 +74,13 @@ GEM
@@ -58,15 +51,6 @@ index 83c5f20f73db..820ea433fd01 100644
      i18n (1.8.5)
        concurrent-ruby (~> 1.0)
      ice_nine (0.11.2)
-@@ -183,7 +183,7 @@ GEM
-     rubocop-ast (0.2.0)
-       parser (>= 2.7.0.1)
-     ruby-progressbar (1.10.1)
--    rugged (1.0.1)
-+    rugged (1.1.0)
-     sanitize (4.6.6)
-       crass (~> 1.0.2)
-       nokogiri (>= 1.4.4)
 @@ -223,9 +223,9 @@ DEPENDENCIES
    gitlab-gollum-rugged_adapter (~> 0.4.4.3.gitlab.1)
    gitlab-labkit (~> 0.15.0)
@@ -80,12 +64,3 @@ index 83c5f20f73db..820ea433fd01 100644
    licensee (~> 9.14.1)
    pry (~> 0.12.2)
    rbtrace
-@@ -233,7 +233,7 @@ DEPENDENCIES
-   rspec
-   rspec-parameterized
-   rubocop (~> 0.69)
--  rugged (~> 1.0.1)
-+  rugged (~> 1.1.0)
-   sentry-raven (~> 3.0)
-   timecop
- 

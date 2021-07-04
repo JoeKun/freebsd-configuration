@@ -1725,7 +1725,7 @@ Install specific version of ruby for GitLab:
 # wget "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz"
 # tar xvzf ruby-2.7.2.tar.gz
 # cd ruby-2.7.2
-# ./configure --prefix=/opt/rubies/ruby-2.7.2
+# ./configure --enable-shared --prefix=/opt/rubies/ruby-2.7.2
 # make
 # make install
 # cd ..

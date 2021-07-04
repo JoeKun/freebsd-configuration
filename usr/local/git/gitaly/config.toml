@@ -117,6 +117,7 @@ self_signed_cert = false
 # start_minute = 30
 # duration = "45m"
 # storages = ["default"]
+# disabled = false
 
 # [cgroups]
 # count = 10
