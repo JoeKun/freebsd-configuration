@@ -1,7 +1,7 @@
 diff -ru a/php.ini b/php.ini
---- a/php.ini	2019-05-08 18:14:06.000000000 -0700
-+++ b/php.ini	2019-05-13 14:41:03.732022000 -0700
-@@ -401,7 +401,7 @@
+--- a/php.ini	2021-07-04 10:03:29.897820000 -0700
++++ b/php.ini	2021-07-04 10:04:31.412161000 -0700
+@@ -398,7 +398,7 @@
  
  ; Maximum amount of memory a script may consume (128MB)
  ; http://php.net/memory-limit
@@ -10,8 +10,14 @@ diff -ru a/php.ini b/php.ini
  
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ; Error handling and logging ;
-@@ -1797,20 +1797,20 @@
+@@ -1784,22 +1784,26 @@
+ [dba]
+ ;dba.default_handler=
  
++[apcu]
++; Determines if APCu is enabled for the CLI version of PHP
++apc.enable_cli=1
++
  [opcache]
  ; Determines if Zend OPCache is enabled
 -;opcache.enable=1
@@ -36,7 +42,7 @@ diff -ru a/php.ini b/php.ini
  
  ; The maximum percentage of "wasted" memory until a restart is scheduled.
  ;opcache.max_wasted_percentage=5
-@@ -1828,14 +1828,14 @@
+@@ -1817,14 +1821,14 @@
  ; How often (in seconds) to check file timestamps for changes to the shared
  ; memory storage allocation. ("1" means validate once per second, but only
  ; once per request. "0" means always validate)
@@ -51,5 +57,5 @@ diff -ru a/php.ini b/php.ini
 -;opcache.save_comments=1
 +opcache.save_comments=1
  
- ; If enabled, a fast shutdown sequence is used for the accelerated code
- ; Depending on the used Memory Manager this may cause some incompatibilities.
+ ; Allow file existence override (file_exists, etc.) performance feature.
+ ;opcache.enable_file_override=0
