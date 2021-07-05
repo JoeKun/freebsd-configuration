@@ -1,6 +1,6 @@
 diff -ru a/php-fpm.d/www.conf b/php-fpm.d/www.conf
 --- a/php-fpm.d/www.conf	2021-06-02 18:20:16.000000000 -0700
-+++ b/php-fpm.d/www.conf	2021-07-04 10:32:12.305566000 -0700
++++ b/php-fpm.d/www.conf	2021-07-05 08:45:54.573625000 -0700
 @@ -37,7 +37,7 @@
  ;                                  FreeBSD for security reasons;
  ;   '/path/to/unix/socket' - to listen on a unix socket.
@@ -23,3 +23,18 @@ diff -ru a/php-fpm.d/www.conf b/php-fpm.d/www.conf
  ; When POSIX Access Control Lists are supported you can set them using
  ; these options, value is a comma separated list of user/group names.
  ; When set, listen.owner and listen.group are ignored
+@@ -411,10 +411,10 @@
+ ; the current environment.
+ ; Default Value: clean env
+ ;env[HOSTNAME] = $HOSTNAME
+-;env[PATH] = /usr/local/bin:/usr/bin:/bin
+-;env[TMP] = /tmp
+-;env[TMPDIR] = /tmp
+-;env[TEMP] = /tmp
++env[PATH] = /usr/local/bin:/usr/bin:/bin
++env[TMP] = /tmp
++env[TMPDIR] = /tmp
++env[TEMP] = /tmp
+ 
+ ; Additional php.ini defines, specific to this pool of workers. These settings
+ ; overwrite the values previously defined in the php.ini. The directives are the
