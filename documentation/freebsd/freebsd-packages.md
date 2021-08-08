@@ -252,7 +252,7 @@ Manually edit `hostname` in `/etc/rc.conf.d/hostname`.
 # pkg install par_format
 # pkg install gmake
 # pkg install pwgen
-# pkg install py37-mdv
+# pkg install py38-mdv
 # pkg install pstree
 ```
 
@@ -400,7 +400,7 @@ This will do the right dance with `rndc freeze` and `rndc thaw` on your behalf f
 A great option to get a valid SSL certificate is [Let's Encrypt](https://www.letsencrypt.org/). To use it, you'll need to install the following:
 
 ```
-# pkg install py37-certbot
+# pkg install py38-certbot
 ```
 
 Let's discuss at a high level two different ways to generate Let's Encrypt signed certificates with `certbot`.
@@ -456,7 +456,7 @@ Restart `bind`:
 Install the RFC 2136 plugin for `certbot`:
 
 ```
-# pkg install py37-certbot-dns-rfc2136
+# pkg install py38-certbot-dns-rfc2136
 ```
 
 Create a configuration file for this plugin:
