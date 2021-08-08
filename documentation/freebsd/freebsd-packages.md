@@ -595,7 +595,7 @@ Add `www` user to `ssl` group:
 Install `nginx-ldap-auth-daemon`:
 
 ```
-# pkg install py37-ldap py37-yaml
+# pkg install py38-ldap py38-yaml
 # cd /usr/local
 # ln -s ../../freebsd-configuration/usr/local/nginx-ldap-auth
 # chown root:www /usr/local/nginx-ldap-auth/nginx-ldap-auth-daemon.conf
