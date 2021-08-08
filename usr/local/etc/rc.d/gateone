@@ -11,19 +11,20 @@ rcvar="${name}_enable"
 
 load_rc_config $name
 
-python_interpreter="/usr/local/bin/python3.7"
+python_interpreter="/usr/local/bin/python3.8"
 python_major_and_minor_version=$("${python_interpreter}" -V 2>&1 | grep -o "[0-9].[0-9]")
 
 : ${gateone_enable:=NO}
 : ${gateone_user:="${name}"}
 : ${gateone_group:="${name}"}
 : ${gateone_home:="/usr/local/gateone"}
-: ${gateone_env:="HOME=\"${gateone_home}\" PATH=\"${PATH}:/usr/local/sbin:/usr/local/bin\" PYTHONPATH=\"${gateone_home}/lib/python${python_major_and_minor_version}/site-packages\""}
+#: ${gateone_env:="HOME=\"${gateone_home}\" PATH=\"${PATH}:/usr/local/sbin:/usr/local/bin\" PYTHONPATH=\"${gateone_home}/lib/python${python_major_and_minor_version}/site-packages\""}
+: ${gateone_env:="HOME=\"${gateone_home}\" PATH=\"${PATH}:/usr/local/sbin:/usr/local/bin\""}
 
-procname="${gateone_home}/bin/${name}"
+procname="${gateone_home}/.local/bin/${name}"
 command_interpreter="${python_interpreter}"
 
 command="/usr/sbin/daemon"
-command_args="-f ${procname} --settings_dir=\"${gateone_home}/etc/${name}\""
+command_args="-f ${procname} --settings_dir=\"${gateone_home}/.local/etc/${name}\""
 
 run_rc_command "$1"

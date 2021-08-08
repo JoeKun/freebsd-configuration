@@ -1601,8 +1601,9 @@ Install some important dependencies of Gate One:
 ```
 # pkg install sudo
 # pkg install dtach
-# pkg install py37-futures
-# pkg install py37-tornado4
+# pkg install py38-future
+# pkg install py38-tornado4
+# pkg install py38-pip
 ```
 
 Make sure to load the `pty` kernel module for pseudo-terminal support:
@@ -1636,19 +1637,20 @@ Give `gateone` unprivileged user the ability to call `login` using `sudo` withou
 Proceed with installation:
 
 ```
-$ export PYTHONPATH="$HOME/lib/python3.7/site-packages"
-$ mkdir -p "$PYTHONPATH"
+$ cd ~
+$ ln -s ../../../freebsd-configuration/usr/local/gateone/.zshenv
+$ ln -s ../../../freebsd-configuration/usr/local/gateone/.zshrc
 $ git clone https://github.com/liftoff/GateOne.git gateone
 $ cd gateone
-$ git am /freebsd-configuration/patches/gateone/gateone-python-3-7-compatibility-stop-using-reserved-keywords-async-and-await.patch
-$ git am /freebsd-configuration/patches/gateone/gateone-python-3-7-compatibility-workaround-regression-with-process-pool-executor-shutdown.patch
-$ python3.7 setup.py install --prefix=/usr/local/gateone
+$ git am /freebsd-configuration/patches/gateone/gateone-python-3-8-compatibility-stop-using-reserved-keywords-async-and-await.patch
+$ git am /freebsd-configuration/patches/gateone/gateone-python-3-8-compatibility-workaround-regression-with-process-pool-executor-shutdown.patch
+$ pip install .
 ```
 
 Launch Gate One manually once so it will lay down its own configuration file:
 
 ```
-$ ~/bin/gateone --settings_dir="$HOME/etc/gateone" --disable_ssl="true" --port=2222 --origins="localhost;127.0.0.1"
+$ ~/.local/bin/gateone --settings_dir="$HOME/.local/etc/gateone" --disable_ssl="true" --port=2222 --origins="localhost;127.0.0.1"
 ```
 
 Interrupt with Control+C.
@@ -1656,9 +1658,9 @@ Interrupt with Control+C.
 Replace `50terminal.conf`:
 
 ```
-$ cd ~/etc/gateone
+$ cd ~/.local/etc/gateone
 $ rm -f 50terminal.conf
-$ ln -s ../../../../../freebsd-configuration/usr/local/gateone/etc/gateone/50terminal.conf
+$ ln -s ../../../../../../../freebsd-configuration/usr/local/gateone/.local/etc/gateone/50terminal.conf
 ```
 
 Install bootstrap script:
