@@ -1,8 +1,8 @@
 diff --git a/Gemfile b/Gemfile
-index 68e4f2df1ffd..0941f9730b97 100644
+index ecb1e526e4d3..9e0539d51b15 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -477,7 +477,7 @@ gem 'gitaly', '~> 14.1.0.pre.rc3'
+@@ -479,7 +479,7 @@ gem 'gitaly', '~> 14.2.0.pre.rc2'
  # KAS GRPC protocol definitions
  gem 'kas-grpc', '~> 0.0.2'
  
@@ -12,10 +12,10 @@ index 68e4f2df1ffd..0941f9730b97 100644
  gem 'google-protobuf', '~> 3.17.1'
  
 diff --git a/Gemfile.lock b/Gemfile.lock
-index 190435b796f6..11413bbe8a94 100644
+index 3ff3f6ca76f8..a022c7ba11b4 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -580,8 +580,8 @@ GEM
+@@ -573,8 +573,8 @@ GEM
        graphql (~> 1.6)
        html-pipeline (~> 2.8)
        sass (~> 3.4)
@@ -26,7 +26,7 @@ index 190435b796f6..11413bbe8a94 100644
        googleapis-common-protos-types (~> 1.0)
      gssapi (1.2.0)
        ffi (>= 1.0.1)
-@@ -1510,7 +1510,7 @@ DEPENDENCIES
+@@ -1499,7 +1499,7 @@ DEPENDENCIES
    graphlient (~> 0.4.0)
    graphql (~> 1.11.8)
    graphql-docs (~> 1.6.0)
