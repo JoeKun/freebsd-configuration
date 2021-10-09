@@ -531,7 +531,7 @@ And finally, if you normally use `named-reset-dynamic-zone-files` to help you [r
 ## OpenLDAP
 
 ```
-# pkg install openldap-server
+# pkg install openldap24-server
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/slapd
 # cd /usr/local/etc/openldap
