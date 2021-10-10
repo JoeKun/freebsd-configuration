@@ -37,6 +37,7 @@ gitlab_pid_path=${gitlab_pid_path:-"$gitlab_root/tmp/pids"}
 gitlab_socket_path=${gitlab_socket_path:-"$gitlab_root/tmp/sockets"}
 gitlab_rails_socket=${gitlab_rails_socket:-"$gitlab_socket_path/gitlab.socket"}
 gitlab_web_server_pid_path=${gitlab_web_server_pid_path:-"$gitlab_pid_path/puma.pid"}
+gitlab_sidekiq_pid_path=${gitlab_sidekiq_pid_path:-"$gitlab_pid_path/sidekiq-cluster.pid"}
 gitlab_mail_room_enabled=${gitlab_mail_room_enabled:-"false"}
 gitlab_mail_room_pid_path=${gitlab_mail_room_pid_path:-"$gitlab_pid_path/mail_room.pid"}
 gitlab_workhorse_dir=${gitlab_workhorse_dir:-"$(cd $gitlab_root/../gitlab-workhorse 2> /dev/null && pwd)"}
@@ -64,14 +65,9 @@ pid_path=${pid_path:-"$gitlab_pid_path"}
 socket_path=${socket_path:-"$gitlab_socket_path"}
 rails_socket=${rails_socket:-"$gitlab_rails_socket"}
 web_server_pid_path=${web_server_pid_path:-"$gitlab_web_server_pid_path"}
+sidekiq_pid_path=${sidekiq_pid_path:-"$gitlab_sidekiq_pid_path"}
 mail_room_enabled=${mail_room_enabled:-"$gitlab_mail_room_enabled"}
 mail_room_pid_path=${mail_room_pid_path:-"$gitlab_mail_room_pid_path"}
-
-if [ -z "$gitlab_sidekiq_workers" ]; then
-  sidekiq_pid_path="$pid_path/sidekiq.pid"
-else
-  sidekiq_pid_path="$pid_path/sidekiq-cluster.pid"
-fi
 
 ### Environment variables
 run_env="env RAILS_ENV=$gitlab_rails_environment SIDEKIQ_WORKERS=$gitlab_sidekiq_workers HOME=$gitlab_home $gitlab_additional_environment_variables"

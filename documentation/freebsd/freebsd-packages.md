@@ -1724,21 +1724,21 @@ Install `chruby` to be able to select a specific version of ruby for GitLab:
 Install specific version of ruby for GitLab:
 
 ```
-# wget "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz"
-# tar xvzf ruby-2.7.2.tar.gz
-# cd ruby-2.7.2
-# ./configure --enable-shared --prefix=/opt/rubies/ruby-2.7.2
+# wget "https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.4.tar.gz"
+# tar xvzf ruby-2.7.4.tar.gz
+# cd ruby-2.7.4
+# ./configure --enable-shared --prefix=/opt/rubies/ruby-2.7.4
 # make
 # make install
 # cd ..
-# rm -R -f ruby-2.7.2 ruby-2.7.2.tar.gz
+# rm -R -f ruby-2.7.4 ruby-2.7.4.tar.gz
 ```
 
 Install `bundler` for that specific version of ruby:
 
 ```
 # source /usr/local/share/chruby/chruby.sh
-# chruby ruby-2.7.2
+# chruby ruby-2.7.4
 # gem install bundler -v "2.1.4"
 ```
 
