@@ -1,8 +1,17 @@
 diff --git a/Gemfile b/Gemfile
-index 1e6648df48bf..bc66b2768a05 100644
+index 87a0cff84c1f..bccaa9a2ae36 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -479,7 +479,7 @@ gem 'gitaly', '~> 14.3.0.pre.rc2'
+@@ -17,7 +17,7 @@ gem 'default_value_for', '~> 3.4.0'
+ # Supported DBs
+ gem 'pg', '~> 1.1'
+ 
+-gem 'rugged', '~> 1.2'
++gem 'rugged', '~> 1.1'
+ gem 'grape-path-helpers', '~> 1.7.0'
+ 
+ gem 'faraday', '~> 1.0'
+@@ -483,7 +483,7 @@ gem 'gitaly', '~> 14.4.0.pre.rc43'
  # KAS GRPC protocol definitions
  gem 'kas-grpc', '~> 0.0.2'
  
@@ -12,10 +21,10 @@ index 1e6648df48bf..bc66b2768a05 100644
  gem 'google-protobuf', '~> 3.17.1'
  
 diff --git a/Gemfile.lock b/Gemfile.lock
-index a6b7f598ec6c..84ebf658b0d1 100644
+index 270ea4532f92..e69b0597b043 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -572,8 +572,8 @@ GEM
+@@ -570,8 +570,8 @@ GEM
        graphql (~> 1.6)
        html-pipeline (~> 2.8)
        sass (~> 3.4)
@@ -26,7 +35,16 @@ index a6b7f598ec6c..84ebf658b0d1 100644
        googleapis-common-protos-types (~> 1.0)
      gssapi (1.2.0)
        ffi (>= 1.0.1)
-@@ -1486,7 +1486,7 @@ DEPENDENCIES
+@@ -1133,7 +1133,7 @@ GEM
+     rubyntlm (0.6.2)
+     rubypants (0.2.0)
+     rubyzip (2.0.0)
+-    rugged (1.2.0)
++    rugged (1.1.0)
+     safe_yaml (1.0.4)
+     safety_net_attestation (0.4.0)
+       jwt (~> 2.0)
+@@ -1492,7 +1492,7 @@ DEPENDENCIES
    graphlient (~> 0.4.0)
    graphql (~> 1.11.8)
    graphql-docs (~> 1.6.0)
@@ -35,3 +53,12 @@ index a6b7f598ec6c..84ebf658b0d1 100644
    gssapi
    guard-rspec
    haml_lint (~> 0.36.0)
+@@ -1611,7 +1611,7 @@ DEPENDENCIES
+   ruby-saml (~> 1.13.0)
+   ruby_parser (~> 3.15)
+   rubyzip (~> 2.0.0)
+-  rugged (~> 1.2)
++  rugged (~> 1.1)
+   sanitize (~> 5.2.1)
+   sassc-rails (~> 2.1.0)
+   sd_notify (~> 0.1.0)

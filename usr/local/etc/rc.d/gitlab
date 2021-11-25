@@ -286,7 +286,7 @@ start_gitlab() {
     echo "The Sidekiq job dispatcher is already running with pid $spid, not restarting"
   else
     echo "Starting GitLab Sidekiq"
-    su - $gitlab_user -c "$run_env ${app_root}/bin/background_jobs start"
+    su - $gitlab_user -c "$run_env ${app_root}/bin/background_jobs start > /dev/null"
   fi
 
   if [ "$gitlab_workhorse_status" = "0" ]; then
@@ -468,7 +468,7 @@ reload_gitlab(){
   echo "Done."
 
   echo "Restarting GitLab Sidekiq since it isn't capable of reloading its config..."
-  su - $gitlab_user -c "$run_env ${app_root}/bin/background_jobs restart"
+  su - $gitlab_user -c "$run_env ${app_root}/bin/background_jobs restart > /dev/null"
 
   if [ "$mail_room_enabled" = true ]; then
     echo "Restarting GitLab MailRoom since it isn't capable of reloading its config..."
