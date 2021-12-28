@@ -1,8 +1,15 @@
 diff --git a/ruby/Gemfile b/ruby/Gemfile
-index 662252527f9d..a01596dff2d4 100644
+index bec450d04760..c8f452a89626 100644
 --- a/ruby/Gemfile
 +++ b/ruby/Gemfile
-@@ -7,7 +7,7 @@ gem 'activesupport', '~> 6.1.4.1'
+@@ -1,13 +1,13 @@
+ source 'https://rubygems.org'
+ 
+-gem 'rugged', '~> 1.2'
++gem 'rugged', '~> 1.1'
+ gem 'github-linguist', '~> 7.12', require: 'linguist'
+ gem 'gitlab-markup', '~> 1.7.1'
+ gem 'activesupport', '~> 6.1.4.1'
  gem 'rdoc', '~> 6.0'
  gem 'gitlab-gollum-lib', '~> 4.2.7.10.gitlab.1', require: false
  gem 'gitlab-gollum-rugged_adapter', '~> 0.4.4.4.gitlab.1', require: false
@@ -11,18 +18,20 @@ index 662252527f9d..a01596dff2d4 100644
  gem 'sentry-raven', '~> 3.0', require: false
  gem 'faraday', '~> 1.0'
  gem 'rbtrace', require: false
-@@ -29,5 +29,5 @@ group :development, :test do
+@@ -29,7 +29,7 @@ group :development, :test do
    gem 'factory_bot', require: false
    gem 'pry', '~> 0.12.2', require: false
  
 -  gem 'grpc-tools', '= 1.30.2'
 +  gem 'grpc-tools', '= 1.0.1'
  end
+ 
+ # Gems required in omnibus-gitlab pipeline
 diff --git a/ruby/Gemfile.lock b/ruby/Gemfile.lock
-index 05e75a524139..afceea6281cc 100644
+index 415ca4b16752..a994baf94b12 100644
 --- a/ruby/Gemfile.lock
 +++ b/ruby/Gemfile.lock
-@@ -77,10 +77,10 @@ GEM
+@@ -84,10 +84,10 @@ GEM
      google-protobuf (3.17.3)
      googleapis-common-protos-types (1.1.0)
        google-protobuf (~> 3.14)
@@ -36,8 +45,17 @@ index 05e75a524139..afceea6281cc 100644
      i18n (1.8.10)
        concurrent-ruby (~> 1.0)
      ice_nine (0.11.2)
-@@ -225,8 +225,8 @@ DEPENDENCIES
-   gitlab-labkit (~> 0.21.1)
+@@ -192,7 +192,7 @@ GEM
+       parser (>= 2.7.0.1)
+     ruby-progressbar (1.10.1)
+     rubyzip (2.3.2)
+-    rugged (1.2.0)
++    rugged (1.1.0)
+     sanitize (4.6.6)
+       crass (~> 1.0.2)
+       nokogiri (>= 1.4.4)
+@@ -238,8 +238,8 @@ DEPENDENCIES
+   gitlab-license_finder
    gitlab-markup (~> 1.7.1)
    google-protobuf (~> 3.17.0)
 -  grpc (~> 1.30.2)
@@ -47,3 +65,12 @@ index 05e75a524139..afceea6281cc 100644
    licensee (~> 9.14.1)
    pry (~> 0.12.2)
    rbtrace
+@@ -247,7 +247,7 @@ DEPENDENCIES
+   rspec
+   rspec-parameterized
+   rubocop (~> 0.69)
+-  rugged (~> 1.2)
++  rugged (~> 1.1)
+   sentry-raven (~> 3.0)
+   timecop
+ 
