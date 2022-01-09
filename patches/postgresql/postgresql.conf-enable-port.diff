@@ -1,7 +1,7 @@
 diff -ru a/postgresql.conf b/postgresql.conf
---- a/postgresql.conf	2019-10-20 17:29:38.956271000 -0700
-+++ b/postgresql.conf	2019-10-20 17:31:33.525534000 -0700
-@@ -60,7 +60,7 @@
+--- a/postgresql.conf	2022-01-08 21:05:44.536917000 -0800
++++ b/postgresql.conf	2022-01-08 21:07:11.699687000 -0800
+@@ -61,7 +61,7 @@
  					# comma-separated list of addresses;
  					# defaults to 'localhost'; use '*' for all
  					# (change requires restart)
