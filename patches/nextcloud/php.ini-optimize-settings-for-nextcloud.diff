@@ -1,16 +1,16 @@
 diff -ru a/php.ini b/php.ini
---- a/php.ini	2021-07-04 10:03:29.897820000 -0700
-+++ b/php.ini	2021-07-04 10:04:31.412161000 -0700
-@@ -398,7 +398,7 @@
+--- a/php.ini	2022-04-06 19:48:39.185151000 -0700
++++ b/php.ini	2022-04-06 19:40:39.387726000 -0700
+@@ -406,7 +406,7 @@
  
- ; Maximum amount of memory a script may consume (128MB)
+ ; Maximum amount of memory a script may consume
  ; http://php.net/memory-limit
 -memory_limit = 128M
 +memory_limit = 512M
  
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ; Error handling and logging ;
-@@ -1784,22 +1784,26 @@
+@@ -1764,22 +1764,26 @@
  [dba]
  ;dba.default_handler=
  
@@ -42,7 +42,7 @@ diff -ru a/php.ini b/php.ini
  
  ; The maximum percentage of "wasted" memory until a restart is scheduled.
  ;opcache.max_wasted_percentage=5
-@@ -1817,14 +1821,14 @@
+@@ -1797,14 +1801,14 @@
  ; How often (in seconds) to check file timestamps for changes to the shared
  ; memory storage allocation. ("1" means validate once per second, but only
  ; once per request. "0" means always validate)

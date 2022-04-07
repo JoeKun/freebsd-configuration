@@ -1,6 +1,6 @@
 diff -ru a/php-fpm.d/www.conf b/php-fpm.d/www.conf
---- a/php-fpm.d/www.conf	2021-06-02 18:20:16.000000000 -0700
-+++ b/php-fpm.d/www.conf	2021-07-05 08:45:54.573625000 -0700
+--- a/php-fpm.d/www.conf	2022-04-01 23:40:20.000000000 -0700
++++ b/php-fpm.d/www.conf	2022-04-06 19:33:42.897576000 -0700
 @@ -37,7 +37,7 @@
  ;                                  FreeBSD for security reasons;
  ;   '/path/to/unix/socket' - to listen on a unix socket.
@@ -10,8 +10,8 @@ diff -ru a/php-fpm.d/www.conf b/php-fpm.d/www.conf
  
  ; Set listen(2) backlog.
  ; Default Value: 511 (-1 on FreeBSD and OpenBSD)
-@@ -48,9 +48,9 @@
- ; BSD-derived systems allow connections regardless of permissions.
+@@ -49,9 +49,9 @@
+ ; and group can be specified either by name or by their numeric IDs.
  ; Default Values: user and group are set as the running user
  ;                 mode is set to 0660
 -;listen.owner = www
@@ -23,7 +23,7 @@ diff -ru a/php-fpm.d/www.conf b/php-fpm.d/www.conf
  ; When POSIX Access Control Lists are supported you can set them using
  ; these options, value is a comma separated list of user/group names.
  ; When set, listen.owner and listen.group are ignored
-@@ -411,10 +411,10 @@
+@@ -412,10 +412,10 @@
  ; the current environment.
  ; Default Value: clean env
  ;env[HOSTNAME] = $HOSTNAME
