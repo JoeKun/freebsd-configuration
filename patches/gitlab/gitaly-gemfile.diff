@@ -1,5 +1,5 @@
 diff --git a/ruby/Gemfile b/ruby/Gemfile
-index 70dd9c594c98..4f9e7e7d17df 100644
+index 78296dff887f..a829dac3e24a 100644
 --- a/ruby/Gemfile
 +++ b/ruby/Gemfile
 @@ -1,6 +1,6 @@
@@ -9,9 +9,9 @@ index 70dd9c594c98..4f9e7e7d17df 100644
 +gem 'rugged', '~> 1.3'
  gem 'github-linguist', '~> 7.12', require: 'linguist'
  gem 'gitlab-markup', '~> 1.7.1'
- gem 'activesupport', '~> 6.1.4.4'
+ gem 'activesupport', '~> 6.1.4.6'
 diff --git a/ruby/Gemfile.lock b/ruby/Gemfile.lock
-index fd0dea027e0d..e9bad703e7fc 100644
+index 752883d801d1..cd1e3b7ccedc 100644
 --- a/ruby/Gemfile.lock
 +++ b/ruby/Gemfile.lock
 @@ -190,7 +190,7 @@ GEM
