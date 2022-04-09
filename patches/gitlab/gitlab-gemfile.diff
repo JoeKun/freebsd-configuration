@@ -1,8 +1,8 @@
 diff --git a/Gemfile b/Gemfile
-index 31683e8552fb..95df63771678 100644
+index 7423bba8e629..743b793c939f 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -17,7 +17,7 @@ gem 'default_value_for', '~> 3.4.0'
+@@ -19,7 +19,7 @@ gem 'default_value_for', '~> 3.4.0'
  # Supported DBs
  gem 'pg', '~> 1.1'
  
@@ -12,10 +12,10 @@ index 31683e8552fb..95df63771678 100644
  
  gem 'faraday', '~> 1.0'
 diff --git a/Gemfile.lock b/Gemfile.lock
-index 7fc880f6c9c5..d68f482296f0 100644
+index f97c2bf67ec2..f8e7a12af71d 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -1132,7 +1132,7 @@ GEM
+@@ -1143,7 +1143,7 @@ GEM
      rubyntlm (0.6.2)
      rubypants (0.2.0)
      rubyzip (2.3.2)
@@ -24,7 +24,7 @@ index 7fc880f6c9c5..d68f482296f0 100644
      safe_yaml (1.0.4)
      safety_net_attestation (0.4.0)
        jwt (~> 2.0)
-@@ -1608,7 +1608,7 @@ DEPENDENCIES
+@@ -1637,7 +1637,7 @@ DEPENDENCIES
    ruby-saml (~> 1.13.0)
    ruby_parser (~> 3.15)
    rubyzip (~> 2.3.2)
