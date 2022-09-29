@@ -17,23 +17,23 @@
 @                       IN      NS      ns4
 @                       IN      NS      ns5
 
-; i.ns.buddyns.com: USA, California
-ns1                     IN      A       31.220.30.73
-ns1                     IN      AAAA    2a04:bdc7:100:1b::3
+; i.pro.ns.buddyns.com: USA, California
+ns1                     IN      A       172.96.140.41
+ns1                     IN      AAAA    2605:9880:200:1300:31:59:50:8
 
-; d.ns.buddyns.com: USA, New York
+; d.pro.ns.buddyns.com: USA, New York
 ns2                     IN      A       107.191.99.111
 ns2                     IN      AAAA    2604:180:2:4cf::3
 
-; g.ns.buddyns.com: USA, Seattle
+; g.pro.ns.buddyns.com: USA, Seattle
 ns3                     IN      A       192.184.93.99
 ns3                     IN      AAAA    2604:180:1:92a::3
 
-; j.ns.buddyns.com: Europe, Netherlands
+; j.pro.ns.buddyns.com: Europe, Netherlands
 ns4                     IN      A       185.34.136.178
 ns4                     IN      AAAA    2a00:dcc7:d3ff:88b2::1
 
-; l.ns.buddyns.com: Asia, Japan
+; l.pro.ns.buddyns.com: Asia, Japan
 ns5                     IN      A       45.77.29.133
 ns5                     IN      AAAA    2001:19f0:7001:381::3
 
