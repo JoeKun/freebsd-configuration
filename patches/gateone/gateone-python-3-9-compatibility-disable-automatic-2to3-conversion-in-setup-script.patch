@@ -1,0 +1,44 @@
+From 9244d44c20974a83f5a92b35cb4b88826cfacca5 Mon Sep 17 00:00:00 2001
+From: Joel Lopes Da Silva <joel@lopes-da-silva.com>
+Date: Sun, 6 Nov 2022 21:42:49 -0800
+Subject: [PATCH] Disable automatic 2to3 conversion in setup script.
+
+---
+ setup.py | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index ac3e55d26d78..d300dff8ae65 100755
+--- a/setup.py
++++ b/setup.py
+@@ -31,16 +31,17 @@ if major == 2 and minor == 6:
+ if major == 3:
+     PYTHON3 = True
+     from subprocess import getstatusoutput
+-    extra['use_2to3'] = True # Automatically convert to Python 3; love it!
+-    try:
+-        from distutils.command.build_py import build_py_2to3 as build_py
+-    except ImportError:
+-        print("Python 3.X support requires the 2to3 tool.")
+-        print(
+-            "It normally comes with Python 3.X but (apparenty) not on your "
+-            "distribution.\nPlease find out what package you need to get 2to3"
+-            "and install it.")
+-        sys.exit(1)
++    from distutils.command.build_py import build_py
++    #extra['use_2to3'] = True # Automatically convert to Python 3; love it!
++    #try:
++    #    from distutils.command.build_py import build_py_2to3 as build_py
++    #except ImportError:
++    #    print("Python 3.X support requires the 2to3 tool.")
++    #    print(
++    #        "It normally comes with Python 3.X but (apparenty) not on your "
++    #        "distribution.\nPlease find out what package you need to get 2to3"
++    #        "and install it.")
++    #    sys.exit(1)
+ 
+ def which(binary, path=None):
+     """
+-- 
+2.38.1
+
