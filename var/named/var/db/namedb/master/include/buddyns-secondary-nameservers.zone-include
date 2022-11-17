@@ -29,9 +29,9 @@ ns2                     IN      AAAA    2604:180:2:4cf::3
 ns3                     IN      A       192.184.93.99
 ns3                     IN      AAAA    2604:180:1:92a::3
 
-; j.pro.ns.buddyns.com: Europe, Netherlands
-ns4                     IN      A       185.34.136.178
-ns4                     IN      AAAA    2a00:dcc7:d3ff:88b2::1
+; j.pro.ns.buddyns.com: Europe, United Kingdom
+ns4                     IN      A       37.143.61.179
+ns4                     IN      AAAA    2a01:a500:2766::5c3f:d10b
 
 ; l.pro.ns.buddyns.com: Asia, Japan
 ns5                     IN      A       45.77.29.133
