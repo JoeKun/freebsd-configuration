@@ -1722,6 +1722,13 @@ Install other required dependencies:
 # pkg install sudo bash icu cmake pkgconf node npm phantomjs krb5 gmake go libtool bison re2 yarn libgit2 ruby rubygem-bundler
 ```
 
+Install a custom FreeBSD equivalent of Linux's `nproc` command:
+
+```
+# cd /opt/local/bin
+# ln -s ../../../freebsd-configuration/opt/local/bin/nproc
+```
+
 Install `chruby` to be able to select a specific version of ruby for GitLab:
 
 ```
