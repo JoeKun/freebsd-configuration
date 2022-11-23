@@ -34,8 +34,8 @@ bin_dir = "/usr/local/git/gitaly/_build/bin"
 # key_path = '/usr/local/git/key.pem'
 
 # # Git settings
-# [git]
-# bin_path = "/usr/bin/git"
+[git]
+bin_path = "/usr/local/bin/git"
 # catfile_cache_size = 100
 #
 # # Set this setting to `true` to start ignoring gitconfig files installed in
