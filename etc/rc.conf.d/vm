@@ -1,0 +1,7 @@
+# /etc/rc.conf.d/vm: system configuration for vm
+
+vm_enable="YES"
+vm_dir="zfs:storage/var/virtual-machines"
+vm_list="baz"
+vm_delay="5"
+

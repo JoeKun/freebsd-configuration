@@ -2253,3 +2253,109 @@ Enable `plexmediaserver-plexpass` daemon:
 # service plexmediaserver_plexpass start
 ```
 
+## Ubuntu virtual machine with bhyve
+
+Install `vm-bhyve` with its associated firmware package for booting virtual machines with UEFI:
+
+```
+# pkg install vm-bhyve bhyve-firmware
+```
+
+Load required kernel modules:
+
+```
+# kldload if_bridge
+# kldload if_tap
+# kldload nmdm
+# kldload vmm
+```
+
+And ensure `/boot/loader.conf` contains:
+
+```
+# Virtual machine support
+if_bridge_load="YES"
+if_tap_load="YES"
+nmdm_load="YES"
+vmm_load="YES"
+```
+
+Create new dataset for virtual machines:
+
+```
+# zfs create -o compression=gzip -o exec=off -o setuid=off storage/var/virtual-machines
+```
+
+Enable `vm` service:
+
+```
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/vm
+```
+
+From this point forward, we'll assume you want one virtual machine with Ubuntu Server 22.04.1 LTS (Jammy Jellyfish), named `baz`. If you prefer a different name for this machine, please edit commands below, as well as the variable `vm_list` in `/etc/rc.conf.d`.
+
+Prepare scaffolding for virtual machines:
+
+```
+# vm init
+# cp -f /usr/local/share/examples/vm-bhyve/* /var/virtual-machines/.templates/
+# cd /var/virtual-machines/.templates
+# ln -s ../../../freebsd-configuration/var/virtual-machines/.templates/ubuntu-uefi-zvol.conf
+```
+
+Setup NAT network for virtual machines following [this guide](https://github.com/churchers/vm-bhyve/wiki/NAT-Configuration):
+
+```
+# vm switch create -a 172.16.0.1/24 public
+```
+
+Ensure the relevant portions of `/etc/pf.conf` are enabled (specifically, anything to do with `vm_if` and `vm_subnet`), and if needed restart `pf`.
+
+We also need to install `tmux` which is much easier to work with than the default console for `vm-bhyve`:
+
+```
+# pkg install tmux
+```
+
+And enable `tmux` as the default console:
+
+```
+# echo "console=tmux" >> /var/virtual-machines/.config/system.conf
+```
+
+Download an ISO image for Ubuntu Server 22.04.1 LTS (Jammy Jellyfish):
+
+```
+# vm iso "https://releases.ubuntu.com/22.04.1/ubuntu-22.04.1-live-server-amd64.iso"
+```
+
+Create a new virtual machine using our special template `ubuntu-uefi-zvol` and with an appropriate amount of system resources:
+
+```
+# vm create -t ubuntu-uefi-zvol -s 250G -m 6G -c 2 baz
+```
+
+Start installing the previously downloaded ISO image onto this new `baz` virtual machine:
+
+```
+# vm install baz ubuntu-22.04.1-live-server-amd64.iso
+```
+
+And very quickly, within the next 10 seconds, attach the console to the newly started virtual machine, while still in GRUB:
+
+```
+# vm console baz
+```
+
+And press the down arrow, then the up arrow again. Then follow instructions [here](https://github.com/churchers/vm-bhyve/issues/398) to edit the boot parameters of the "Install Ubuntu Server" option, by adding `vga=normal console=tty0 console=ttyS0,115200n8` right after `linux /casper/vmlinuz`. Then hit ^+X (control + X) to save and boot with this option.
+
+You should now be able to boot successfully into the installer. Go through it as usual, making sure to configure networking manually with the following settings:
+
+ - Subnet: 172.16.0.0/24
+ - Address: 172.16.0.10
+ - Gateway: 172.16.0.1
+ - Name servers: 75.75.75.75,75.75.76.76
+ - Search domains: none (leave empty)
+
+When the installation is over, you can log into your machine for the first time. You can also detach the console by pressing ^+B and then D (control + B and then D).
