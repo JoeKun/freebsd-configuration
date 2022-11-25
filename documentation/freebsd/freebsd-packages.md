@@ -2359,3 +2359,33 @@ You should now be able to boot successfully into the installer. Go through it as
  - Search domains: none (leave empty)
 
 When the installation is over, you can log into your machine for the first time. You can also detach the console by pressing ^+B and then D (control + B and then D).
+
+If you would like to share a directory between the FreeBSD host machine and the Ubuntu virtual machine, you could create a dedicated dataset:
+
+```
+# zfs create -o compression=gzip -o exec=off -o setuid=off storage/var/virtual-shares
+# zfs create storage/var/virtual-shares/baz
+```
+
+And then append the following to the file `/var/virtual-machines/baz/baz.conf`:
+
+```
+bhyve_options="-s 8,virtio-9p,storage=/var/virtual-shares/baz"
+```
+
+Then, restart the virtual machine, and install `9mount` on it:
+
+```
+# apt install 9mount
+```
+
+And add a permanent mounting rule for this shared directory:
+
+```
+# echo "9pnet_virtio" >> /etc/initramfs-tools/modules
+# update-initramfs -u
+
+# mkdir /storage
+# echo "storage /storage 9p trans=virtio,version=9p2000.L,rw 0 0" >> /etc/fstab
+# mount -a
+```
