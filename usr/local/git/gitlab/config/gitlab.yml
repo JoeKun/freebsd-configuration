@@ -632,13 +632,13 @@ production: &base
       cron: "30 * * * *"
 
   registry:
-    # enabled: true
-    # host: registry.example.com
+    enabled: true
+    host: registry.gitlab.foo.com
     # port: 5005
-    # api_url: http://localhost:5000/ # internal address to the registry, will be used by GitLab to directly communicate with API
-    # key: config/registry.key
-    # path: shared/registry
-    # issuer: gitlab-issuer
+    api_url: http://baz.local:5000/ # internal address to the registry, will be used by GitLab to directly communicate with API
+    key: /usr/local/etc/ssl/private/foo.com_wildcard.key
+    path: /var/virtual-shares/baz/gitlab-container-registry/var/lib/registry
+    issuer: gitlab-issuer
     # notification_secret: '' # only set it when you use Geo replication feature without built-in Registry
 
     # Add notification settings if you plan to use Geo Replication for the registry

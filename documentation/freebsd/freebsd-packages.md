@@ -1906,6 +1906,7 @@ Add unprivileged user for GitLab:
 # pw group add git -g 617
 # pw user add git -u 617 -g 617 -c "GitLab" -d /usr/local/git -s /usr/local/bin/zsh -m -k /usr/local/etc/skel
 # pw group mod redis -m git
+# pw group mod ssl -m git
 ```
 
 Lay down configuration and local scripts for this unprivileged user:
@@ -1957,6 +1958,36 @@ $ bundle config build.charlock_holmes --with-opt-include=/usr/local/include --wi
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/gitlab
 # service gitlab start
+```
+
+
+## Gitlab Container Registry
+
+Copy a few important files in the virtual share for the Ubuntu virtual machine:
+
+```
+# mkdir -p /var/virtual-shares/baz/gitlab-container-registry
+# cd /var/virtual-shares/baz/gitlab-container-registry
+# cp -av /freebsd-configuration/var/virtual-shares/baz/gitlab-container-registry/{etc,usr} .
+# mkdir -p etc/ssl/certs
+# cp -av $(readlink -f /usr/local/etc/ssl/certs/foo.com_wildcard.pem) etc/ssl/certs/foo.com_wildcard.pem
+```
+
+On the virtual machine:
+
+```
+# adduser --system --disabled-password --no-create-home --home /nonexistent --gecos 'GitLab' --uid 617 --group git
+# cd /storage/gitlab-container-registry/usr/src
+# docker build --build-arg GITLAB_CONTAINER_REGISTRY_VERSION=v3.60.2-gitlab --build-arg GITLAB_UID=617 -t gitlab-container-registry:v3.60.2-baz .
+# docker run -d -p 5000:5000 --restart=always --name gitlab-container-registry -v /storage/gitlab-container-registry/etc/docker/registry/config.yml:/etc/docker/registry/config.yml -v /storage/gitlab-container-registry/etc/ssl/certs/foo.com_wildcard.pem:/etc/ssl/certs/foo.com_wildcard.pem -v /storage/gitlab-container-registry/var/lib/registry:/var/lib/registry gitlab-container-registry:v3.60.2-baz
+```
+
+Back on the FreeBSD host machine, enable GitLab Container Registry virtual host for `nginx`:
+
+```
+# cd /usr/local/etc/nginx/sites-enabled
+# ln -s ../../../../../freebsd-configuration/usr/local/etc/nginx/sites-enabled/registry.gitlab.foo.com.conf
+# service nginx restart
 ```
 
 

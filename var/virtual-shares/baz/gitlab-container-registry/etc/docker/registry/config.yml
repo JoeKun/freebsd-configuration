@@ -1,0 +1,28 @@
+# /etc/docker/registry/config.yml: Configuration file for Docker Registry
+
+version: 0.1
+log:
+    fields:
+        service: registry
+storage:
+    cache:
+        blobdescriptor: inmemory
+    filesystem:
+        rootdirectory: /var/lib/registry
+    delete:
+        enabled: true
+http:
+    addr: :5000
+    headers:
+        X-Content-Type-Options: [nosniff]
+auth:
+    token:
+        realm: https://gitlab.foo.com/jwt/auth
+        service: container_registry
+        issuer: gitlab-issuer
+        rootcertbundle: /etc/ssl/certs/foo.com_wildcard.pem
+health:
+    storagedriver:
+        enabled: true
+        interval: 10s
+        threshold: 3
