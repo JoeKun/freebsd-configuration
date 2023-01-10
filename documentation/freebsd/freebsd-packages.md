@@ -1137,7 +1137,7 @@ See if any dependency is missing:
 If any, install the dependencies using `pkg`. For example:
 
 ```
-# pkg install devel/ragel devel/ninja security/libsodium devel/hyperscan lang/luajit
+# pkg install devel/ragel devel/ninja security/libsodium devel/hyperscan lang/luajit-devel
 ```
 
 Then proceed to installing `rspamd`:
