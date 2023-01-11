@@ -1897,7 +1897,7 @@ Install `bundler` for that specific version of ruby:
 ```
 # source /usr/local/share/chruby/chruby.sh
 # chruby ruby-2.7.5
-# gem install bundler -v "2.3.6"
+# gem install bundler -v "2.3.23"
 ```
 
 Add unprivileged user for GitLab:
