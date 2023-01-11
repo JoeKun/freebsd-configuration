@@ -1,5 +1,5 @@
 diff --git a/Gemfile b/Gemfile
-index 8a8c0a444a98..d0fe58efae64 100644
+index 87869f6f1e40..0f9780e8f4ed 100644
 --- a/Gemfile
 +++ b/Gemfile
 @@ -39,7 +39,7 @@ gem 'default_value_for', '~> 3.4.0'
@@ -11,11 +11,29 @@ index 8a8c0a444a98..d0fe58efae64 100644
  gem 'grape-path-helpers', '~> 1.7.1'
  
  gem 'faraday', '~> 1.0'
+@@ -551,7 +551,7 @@ gem 'valid_email', '~> 0.1'
+ gem 'json', '~> 2.5.1'
+ gem 'json_schemer', '~> 0.2.18'
+ gem 'oj', '~> 3.13.21'
+-gem 'oj-introspect', '~> 0.7'
++gem 'oj-introspect', '~> 0.7.0'
+ gem 'multi_json', '~> 1.14.1'
+ gem 'yajl-ruby', '~> 1.4.3', require: 'yajl'
+ 
 diff --git a/Gemfile.lock b/Gemfile.lock
-index 8bf67a41f453..795607146eb1 100644
+index c6345cb7f5dd..5bc005602968 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -1262,7 +1262,7 @@ GEM
+@@ -970,7 +970,7 @@ GEM
+       train-core
+       wmi-lite (~> 1.0)
+     oj (3.13.23)
+-    oj-introspect (0.7.1)
++    oj-introspect (0.7.0)
+       oj (>= 3.13.23)
+     omniauth (2.1.0)
+       hashie (>= 3.4.6)
+@@ -1299,7 +1299,7 @@ GEM
      rubyntlm (0.6.3)
      rubypants (0.2.0)
      rubyzip (2.3.2)
@@ -24,7 +42,16 @@ index 8bf67a41f453..795607146eb1 100644
      safe_yaml (1.0.4)
      safety_net_attestation (0.4.0)
        jwt (~> 2.0)
-@@ -1775,7 +1775,7 @@ DEPENDENCIES
+@@ -1743,7 +1743,7 @@ DEPENDENCIES
+   octokit (~> 4.15)
+   ohai (~> 16.10)
+   oj (~> 3.13.21)
+-  oj-introspect (~> 0.7)
++  oj-introspect (~> 0.7.0)
+   omniauth (~> 2.1.0)
+   omniauth-alicloud (~> 2.0.0)
+   omniauth-atlassian-oauth2 (~> 0.2.0)
+@@ -1815,7 +1815,7 @@ DEPENDENCIES
    ruby-saml (~> 1.13.0)
    ruby_parser (~> 3.15)
    rubyzip (~> 2.3.2)

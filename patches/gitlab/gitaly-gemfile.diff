@@ -1,5 +1,5 @@
 diff --git a/ruby/Gemfile b/ruby/Gemfile
-index a39b4f19ff84..6dbf11d47bcc 100644
+index 5c9feca5cebc..b4f301b266e5 100644
 --- a/ruby/Gemfile
 +++ b/ruby/Gemfile
 @@ -1,6 +1,6 @@
@@ -11,19 +11,19 @@ index a39b4f19ff84..6dbf11d47bcc 100644
  gem 'gitlab-markup', '~> 1.7.1'
  gem 'activesupport', '~> 6.1.6.1'
 diff --git a/ruby/Gemfile.lock b/ruby/Gemfile.lock
-index c835745fda34..b7d1075ba91f 100644
+index 85f0f5c03d14..66d04bfa103f 100644
 --- a/ruby/Gemfile.lock
 +++ b/ruby/Gemfile.lock
-@@ -191,7 +191,7 @@ GEM
+@@ -171,7 +171,7 @@ GEM
        parser (>= 2.7.0.1)
      ruby-progressbar (1.10.1)
      rubyzip (2.3.2)
 -    rugged (1.2.0)
 +    rugged (1.5.0)
-     sanitize (6.0.0)
-       crass (~> 1.0.2)
-       nokogiri (>= 1.12.0)
-@@ -246,7 +246,7 @@ DEPENDENCIES
+     sawyer (0.8.2)
+       addressable (>= 2.3.5)
+       faraday (> 0.8, < 2.0)
+@@ -218,7 +218,7 @@ DEPENDENCIES
    rspec
    rspec-parameterized
    rubocop (~> 0.69)
