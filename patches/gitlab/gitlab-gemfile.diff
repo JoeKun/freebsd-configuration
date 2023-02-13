@@ -1,10 +1,10 @@
 diff --git a/Gemfile b/Gemfile
-index 417dc56637da..8523af8d3a6c 100644
+index 96517b56ff91..1df9036b9d6f 100644
 --- a/Gemfile
 +++ b/Gemfile
 @@ -39,7 +39,7 @@ gem 'default_value_for', '~> 3.4.0'
  # Supported DBs
- gem 'pg', '~> 1.4.3'
+ gem 'pg', '~> 1.4.5'
  
 -gem 'rugged', '~> 1.2'
 +gem 'rugged', '~> 1.5'
@@ -21,10 +21,10 @@ index 417dc56637da..8523af8d3a6c 100644
  gem 'yajl-ruby', '~> 1.4.3', require: 'yajl'
  
 diff --git a/Gemfile.lock b/Gemfile.lock
-index 087d4d8aeec0..6d54ecd3b04c 100644
+index ea1771e5af3b..960e944cfdd3 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -970,7 +970,7 @@ GEM
+@@ -973,7 +973,7 @@ GEM
        train-core
        wmi-lite (~> 1.0)
      oj (3.13.23)
@@ -33,7 +33,7 @@ index 087d4d8aeec0..6d54ecd3b04c 100644
        oj (>= 3.13.23)
      omniauth (2.1.0)
        hashie (>= 3.4.6)
-@@ -1299,7 +1299,7 @@ GEM
+@@ -1302,7 +1302,7 @@ GEM
      rubyntlm (0.6.3)
      rubypants (0.2.0)
      rubyzip (2.3.2)
@@ -42,7 +42,7 @@ index 087d4d8aeec0..6d54ecd3b04c 100644
      safe_yaml (1.0.4)
      safety_net_attestation (0.4.0)
        jwt (~> 2.0)
-@@ -1741,7 +1741,7 @@ DEPENDENCIES
+@@ -1745,7 +1745,7 @@ DEPENDENCIES
    octokit (~> 4.15)
    ohai (~> 16.10)
    oj (~> 3.13.21)
@@ -51,7 +51,7 @@ index 087d4d8aeec0..6d54ecd3b04c 100644
    omniauth (~> 2.1.0)
    omniauth-alicloud (~> 2.0.0)
    omniauth-atlassian-oauth2 (~> 0.2.0)
-@@ -1813,7 +1813,7 @@ DEPENDENCIES
+@@ -1817,7 +1817,7 @@ DEPENDENCIES
    ruby-saml (~> 1.13.0)
    ruby_parser (~> 3.15)
    rubyzip (~> 2.3.2)
