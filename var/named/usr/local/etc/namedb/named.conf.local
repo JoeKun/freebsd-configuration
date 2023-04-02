@@ -12,58 +12,53 @@ acl myself {
 
 // BuddyNS domain name service transfer servers:
 //
-//  - a.transfer.buddyns.com (not in updated list of transfer servers for BuddyNS);
-//  - b.transfer.buddyns.com (not in updated list of transfer servers for BuddyNS);
-//  - c.transfer.buddyns.com;
 //  - b.ns.buddyns.com;
+//  - c.ns.buddyns.com;
 //  - d.ns.buddyns.com;
 //  - e.ns.buddyns.com;
+//  - f.ns.buddyns.com;
 //  - g.ns.buddyns.com;
 //  - h.ns.buddyns.com;
 //  - i.ns.buddyns.com;
 //  - j.ns.buddyns.com;
 //  - k.ns.buddyns.com;
 //  - l.ns.buddyns.com;
-//  - de.gc.buddyns.com;
+//  - uz5c0c3s8l2rl9wzv47ju3fxnk8l4ly0r56j888sg6nqrmy0db4mn2.b.ast.ns.buddyns.com;
 //  - vegas.gc.buddyns.com;
 //  - nyc.gc.buddyns.com;
-//  - lux.gc.buddyns.com;
-//  - static.3.6.203.116.clients.your-server.de.
+//  - lux.gc.buddyns.com.
 //
 // Based on information from https://www.buddyns.com/support/setup/zone-transfer/advanced/
 acl buddyns-transfer {
-	173.244.206.26;
-	2607:f0d0:1005:72::100;
-
-	88.198.106.11;
-	2a01:4f8:d12:d01::10:100;
-
-	103.6.87.125;
-	2403:2500:4000::f3e;
-
 	108.61.224.67;
 	2001:19f0:6400:8642::3;
+
+	116.203.6.3;
+	2a01:4f8:1c0c:8115::3;
 
 	107.191.99.111;
 	2604:180:2:4cf::3;
 
-	185.22.172.112;
-	2a00:1838:20:2::cd5e:68e9;
+	193.109.120.66;
+	2a10:1fc0:1::e313:41be;
+
+	103.6.87.125;
+	2403:2500:4000::f3e;
 
 	192.184.93.99;
 	2604:180:1:92a::3;
 
 	119.252.20.56;
-	2401:1400:1:1201::1:7853:1a5;
+	2406:d500:2::de4f:f105;
 
-	31.220.30.73;
-	2a04:bdc7:100:1b::3;
+	172.96.140.41;
+	2605:9880:200:1300:31:59:50:8;
 
-	185.34.136.178;
-	2a00:dcc7:d3ff:88b2::1;
+	37.143.61.179;
+	2a01:a500:2766::5c3f:d10b;
 
-	185.136.176.247;
-	2a06:fdc0:fade:2f7::1;
+	195.20.17.193;
+	2a10:1fc0:d::ae75:f39a;
 
 	45.77.29.133;
 	2001:19f0:7001:381::3;
@@ -79,9 +74,6 @@ acl buddyns-transfer {
 
 	104.244.78.122;
 	2605:6400:30:fd6e::3;
-
-	116.203.6.3;
-	2a01:4f8:1c0c:8115::3;
 };
 
 // baz.org
