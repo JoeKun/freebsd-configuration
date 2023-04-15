@@ -4,7 +4,7 @@ diff -ru a/php.ini b/php.ini
 @@ -406,7 +406,7 @@
  
  ; Maximum amount of memory a script may consume
- ; http://php.net/memory-limit
+ ; https://php.net/memory-limit
 -memory_limit = 128M
 +memory_limit = 512M
  

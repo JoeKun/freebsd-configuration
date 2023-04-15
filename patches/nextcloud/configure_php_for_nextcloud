@@ -1,8 +1,8 @@
 #! /bin/sh
 
 cd /usr/local/etc
-patch --posix -p1 -i /freebsd-configuration/patches/php/php.ini-optimize-settings-for-nextcloud.diff
-patch --posix -p1 -i /freebsd-configuration/patches/php/php-fpm.d-www.conf-optimize-settings-for-nextcloud.diff
+patch --posix -p1 -i /freebsd-configuration/patches/nextcloud/php.ini-optimize-settings-for-nextcloud.diff
+patch --posix -p1 -i /freebsd-configuration/patches/nextcloud/php-fpm.d-www.conf-optimize-settings-for-nextcloud.diff
 
 apcu_php_extension_configuration_file_path="$(pwd)/php/ext-20-apcu.ini"
 apcu_php_extension_configuration_file_contents="extension=apcu.so"
