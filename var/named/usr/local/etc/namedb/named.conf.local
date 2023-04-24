@@ -28,7 +28,7 @@ acl myself {
 //  - nyc.gc.buddyns.com;
 //  - lux.gc.buddyns.com.
 //
-// Based on information from https://www.buddyns.com/support/setup/zone-transfer/advanced/
+// Based on information from https://www.buddyns.com/support/setup/zone-transfer/
 acl buddyns-transfer {
 	108.61.224.67;
 	2001:19f0:6400:8642::3;
@@ -51,8 +51,8 @@ acl buddyns-transfer {
 	119.252.20.56;
 	2406:d500:2::de4f:f105;
 
-	172.96.140.41;
-	2605:9880:200:1300:31:59:50:8;
+	216.73.156.203;
+	2602:fafd:902:51::a;
 
 	37.143.61.179;
 	2a01:a500:2766::5c3f:d10b;
