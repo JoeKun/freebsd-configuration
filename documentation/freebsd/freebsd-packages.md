@@ -2044,7 +2044,7 @@ If any, install the dependencies using `pkg`. For example:
 
 ```
 # pkg install php81-pecl-imagick-im7 php81-pecl-redis php81-pecl-APCu
-# pkg install math/php81-bcmath ftp/php81-curl math/php81-gmp devel/php81-pcntl sysutils/php81-posix textproc/php81-simplexml textproc/php81-xmlreader textproc/php81-xmlwriter textproc/php81-xsl www/php81-opcache
+# pkg install math/php81-bcmath ftp/php81-curl math/php81-gmp devel/php81-pcntl devel/php81-sysvsem sysutils/php81-posix textproc/php81-simplexml textproc/php81-xmlreader textproc/php81-xmlwriter textproc/php81-xsl www/php81-opcache
 ```
 
 Then proceed to installing `nextcloud`:
