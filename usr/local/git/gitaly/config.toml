@@ -127,3 +127,10 @@ self_signed_cert = false
 # memory_bytes = 12884901888 # 12gb
 # cpu_shares = 512
 # cpu_quota_us = 200000
+
+# # Server-side backups
+# [backup]
+# # The destination object-storage URL.
+# go_cloud_url = "gs://gitaly-backups"
+# # Optional: defaults to pointer
+# # layout = "pointer"
