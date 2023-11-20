@@ -70,10 +70,6 @@ dir = "/usr/local/git/gitlab/log"
 # [prometheus]
 # grpc_latency_buckets = [0.001, 0.005, 0.025, 0.1, 0.5, 1.0, 10.0, 30.0, 60.0, 300.0, 1500.0]
 
-[gitlab-shell]
-# The directory where gitlab-shell is installed
-dir = "/usr/local/git/gitlab-shell"
-
 [hooks]
 custom_hooks_dir = "/usr/local/git/custom_hooks"
 
@@ -134,3 +130,8 @@ self_signed_cert = false
 # go_cloud_url = "gs://gitaly-backups"
 # # Optional: defaults to pointer
 # # layout = "pointer"
+
+# # Negotiation timeouts for remote Git operations
+# [timeout]
+# upload_pack_negotiation = "10m"
+# upload_archive_negotiation = "1m"

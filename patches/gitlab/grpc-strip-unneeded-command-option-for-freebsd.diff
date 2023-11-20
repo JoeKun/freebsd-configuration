@@ -1,0 +1,70 @@
+diff --git a/Makefile b/Makefile
+index 099720e4294a..c659486d7f49 100644
+--- a/Makefile
++++ b/Makefile
+@@ -233,6 +233,9 @@ AR = ar
+ endif
+ STRIP ?= strip --strip-unneeded
+ else
++ifeq ($(SYSTEM),FreeBSD)
++STRIP ?= strip --strip-unneeded
++else
+ ifeq ($(SYSTEM),Darwin)
+ ifeq ($(origin AR), default)
+ AR = libtool
+@@ -253,6 +256,7 @@ STRIP ?= strip
+ endif
+ endif
+ endif
++endif
+ INSTALL ?= install
+ RM ?= rm -f
+ PKG_CONFIG ?= pkg-config
+diff --git a/src/ruby/ext/grpc/extconf.rb b/src/ruby/ext/grpc/extconf.rb
+index 6d2ae2136189..4a6a36b1beb0 100644
+--- a/src/ruby/ext/grpc/extconf.rb
++++ b/src/ruby/ext/grpc/extconf.rb
+@@ -18,6 +18,7 @@ require 'mkmf'
+ windows = RUBY_PLATFORM =~ /mingw|mswin/
+ windows_ucrt = RUBY_PLATFORM =~ /(mingw|mswin).*ucrt/
+ bsd = RUBY_PLATFORM =~ /bsd/
++freebsd = RUBY_PLATFORM =~ /freebsd/
+ darwin = RUBY_PLATFORM =~ /darwin/
+ linux = RUBY_PLATFORM =~ /linux/
+ cross_compiling = ENV['RCD_HOST_RUBY_VERSION'] # set by rake-compiler-dock in build containers
+@@ -95,7 +96,12 @@ grpc_lib_dir = File.join(output_dir, 'libs', grpc_config)
+ ENV['BUILDDIR'] = output_dir
+ 
+ strip_tool = RbConfig::CONFIG['STRIP']
+-strip_tool += ' -x' if apple_toolchain
++if freebsd
++  strip_tool = strip_tool.sub(" -x", "")
++  strip_tool += ' --strip-unneeded'
++elsif apple_toolchain
++  strip_tool += ' -x'
++end
+ 
+ unless windows
+   puts 'Building internal gRPC into ' + grpc_lib_dir
+diff --git a/templates/Makefile.template b/templates/Makefile.template
+index 372259a38da0..192e33fc022d 100644
+--- a/templates/Makefile.template
++++ b/templates/Makefile.template
+@@ -282,6 +282,9 @@
+   endif
+   STRIP ?= strip --strip-unneeded
+   else
++  ifeq ($(SYSTEM),FreeBSD)
++  STRIP ?= strip --strip-unneeded
++  else
+   ifeq ($(SYSTEM),Darwin)
+   ifeq ($(origin AR), default)
+   AR = libtool
+@@ -302,6 +305,7 @@
+   endif
+   endif
+   endif
++  endif
+   INSTALL ?= install
+   RM ?= rm -f
+   PKG_CONFIG ?= pkg-config
