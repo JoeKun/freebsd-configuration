@@ -266,13 +266,6 @@ Manually edit `hostname` in `/etc/rc.conf.d/hostname`.
 # ln -s ../../../freebsd-configuration/usr/local/etc/vimpagerrc
 ```
 
-Unfortunately, `vimpager` 2.06 has a serious bug when used with the latest version of `vim`. So we can compile it from source after applying a small patch, and then install it in an alternate directory so the binary that gets picked up is the patched one.
-
-```
-# cd /freebsd-configuration/patches/vimpager
-# ./install_patched_vimpager_2_06
-```
-
 
 ## `pf`
 
