@@ -130,13 +130,6 @@ autocmd VimEnter * set mouse-=a
 " Disable automatic continuation of comments after new lines
 autocmd VimEnter * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
-" For some reason, on FreeBSD, the syntax highlighting adjustments in
-" /usr/local/etc/vim/syntax/diff.vim just seem to visually disable syntax
-" highlighting for diff files. That is very peculiar because the exact same
-" vim configuration works just fine on macOS.
-" What follows is a horrible hack to workaround that bug on FreeBSD.
-autocmd FileType diff,git* call timer_start(100, { tid -> execute("syntax on") })
-
 " Uncomment the following line if you want to display line numbers
 "set number
 
