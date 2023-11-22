@@ -679,7 +679,7 @@ Manually edit the following in `/usr/local/etc/nginx/sites-enabled/admin.foo.com
 ## MySQL
 
 ```
-# pkg install mysql57-server
+# pkg install mysql80-server
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/mysql
 # service mysql-server start
