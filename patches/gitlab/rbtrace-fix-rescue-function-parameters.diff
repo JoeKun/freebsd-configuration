@@ -1,0 +1,13 @@
+diff --git a/ext/rbtrace.c b/ext/rbtrace.c
+index db2e1843c15a..675706872b85 100644
+--- a/ext/rbtrace.c
++++ b/ext/rbtrace.c
+@@ -876,7 +876,7 @@ eval_inspect(VALUE rb_code) {
+ }
+ 
+ static VALUE
+-rescue_inspect(VALUE arg) {
++rescue_inspect(VALUE arg, VALUE exc) {
+   VALUE exception = rb_errinfo(); /* get last exception */
+   rb_set_errinfo(Qnil);
+   return rb_funcall(exception, rb_intern("inspect"), 0);

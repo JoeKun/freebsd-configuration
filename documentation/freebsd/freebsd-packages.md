@@ -1878,6 +1878,7 @@ Install specific version of ruby for GitLab:
 # wget "https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.4.tar.gz"
 # tar xvzf ruby-3.1.4.tar.gz
 # cd ruby-3.1.4
+# patch -p0 -i /usr/ports/lang/ruby31/files/patch-util.c
 # ./configure --enable-shared --prefix=/opt/rubies/ruby-3.1.4
 # make
 # make install
@@ -1890,7 +1891,7 @@ Install `bundler` for that specific version of ruby:
 ```
 # source /usr/local/share/chruby/chruby.sh
 # chruby ruby-3.1.4
-# gem install bundler -v "2.4.19"
+# gem install bundler -v "2.4.20"
 ```
 
 Add unprivileged user for GitLab:

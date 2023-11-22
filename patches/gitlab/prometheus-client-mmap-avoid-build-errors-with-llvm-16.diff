@@ -1,0 +1,12 @@
+diff --git a/ext/fast_mmaped_file/extconf.rb b/ext/fast_mmaped_file/extconf.rb
+index 4187a1d139df..c0e9a72bfc78 100644
+--- a/ext/fast_mmaped_file/extconf.rb
++++ b/ext/fast_mmaped_file/extconf.rb
+@@ -2,6 +2,7 @@ require 'mkmf'
+ require 'fileutils'
+ 
+ $CFLAGS << ' -std=c99 -D_POSIX_C_SOURCE=200809L -Wall -Wextra'
++$CFLAGS << ' -Wno-error=incompatible-function-pointer-types'
+ 
+ if enable_config('fail-on-warning')
+   $CFLAGS << ' -Werror'

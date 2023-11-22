@@ -1,0 +1,13 @@
+diff --git a/Gemfile.lock b/Gemfile.lock
+index 052a59d6b7f7..3b88cd838d1b 100644
+--- a/Gemfile.lock
++++ b/Gemfile.lock
+@@ -1061,7 +1061,7 @@ GEM
+       net-protocol
+     net-ssh (6.0.0)
+     netrc (0.11.0)
+-    nio4r (2.5.8)
++    nio4r (2.5.9)
+     no_proxy_fix (0.1.2)
+     nokogiri (1.15.4)
+       mini_portile2 (~> 2.8.2)

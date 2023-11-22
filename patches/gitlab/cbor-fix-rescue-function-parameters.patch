@@ -1,0 +1,46 @@
+From adc9426693ef6d989757aa02d79edcc9fc0e9b7a Mon Sep 17 00:00:00 2001
+From: nanaya <me@nanaya.net>
+Date: Sun, 29 Oct 2023 23:56:27 +0900
+Subject: [PATCH] Fix rescue function parameters
+
+---
+ ext/cbor/buffer_class.c   | 3 ++-
+ ext/cbor/unpacker_class.c | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/ext/cbor/buffer_class.c b/ext/cbor/buffer_class.c
+index cf5ffa9b69ba..b423f3af9ebb 100644
+--- a/ext/cbor/buffer_class.c
++++ b/ext/cbor/buffer_class.c
+@@ -254,10 +254,11 @@ static VALUE read_until_eof_rescue(VALUE args)
+     return Qnil;
+ }
+ 
+-static VALUE read_until_eof_error(VALUE args)
++static VALUE read_until_eof_error(VALUE args, VALUE error)
+ {
+     /* ignore EOFError */
+     UNUSED(args);
++    UNUSED(error);
+     return Qnil;
+ }
+ 
+diff --git a/ext/cbor/unpacker_class.c b/ext/cbor/unpacker_class.c
+index fbf79f3c0a60..cab8112fe5e2 100644
+--- a/ext/cbor/unpacker_class.c
++++ b/ext/cbor/unpacker_class.c
+@@ -261,9 +261,10 @@ static VALUE Unpacker_each_impl(VALUE self)
+     }
+ }
+ 
+-static VALUE Unpacker_rescue_EOFError(VALUE self)
++static VALUE Unpacker_rescue_EOFError(VALUE self, VALUE error)
+ {
+     UNUSED(self);
++    UNUSED(error);
+     return Qnil;
+ }
+ 
+-- 
+2.42.0
+
