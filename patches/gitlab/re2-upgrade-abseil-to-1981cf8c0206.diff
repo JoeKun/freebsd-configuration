@@ -1,0 +1,25 @@
+diff --git a/dependencies.yml b/dependencies.yml
+index 3d7fb5c2532a..404d11c58687 100644
+--- a/dependencies.yml
++++ b/dependencies.yml
+@@ -3,5 +3,5 @@ libre2:
+   version: '2023-11-01'
+   sha256: 4e6593ac3c71de1c0f322735bc8b0492a72f66ffccfad76e259fa21c41d27d8a
+ abseil:
+-  version: '20230802.1'
+-  sha256: 987ce98f02eefbaf930d6e38ab16aa05737234d7afbab2d5c4ea7adbe50c28ed
++  version: '1981cf8c0206657a16f73f48d43a313c65485d5e'
++  sha256: 19a8056f07061b110f315d4d84320010ee27436f6879eca93a02590871ad62cc
+diff --git a/ext/re2/recipes.rb b/ext/re2/recipes.rb
+index 18e5d01f9d70..61438be19c12 100644
+--- a/ext/re2/recipes.rb
++++ b/ext/re2/recipes.rb
+@@ -27,7 +27,7 @@ def load_recipes
+ 
+   abseil_recipe = build_recipe('abseil', dependencies['abseil']['version']) do |recipe|
+     recipe.files = [{
+-      url: "https://github.com/abseil/abseil-cpp/archive/refs/tags/#{recipe.version}.tar.gz",
++      url: "https://github.com/abseil/abseil-cpp/archive/#{recipe.version}.tar.gz",
+       sha256: dependencies['abseil']['sha256']
+     }]
+   end
