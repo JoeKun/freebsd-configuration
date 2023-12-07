@@ -272,6 +272,12 @@ EOF
 # cp -av ../efi0/* .
 ```
 
+ * Reboot.
+
+```
+# reboot
+```
+
 
 ## Upgrade base system
 
