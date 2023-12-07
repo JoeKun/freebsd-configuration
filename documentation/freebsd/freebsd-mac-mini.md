@@ -139,24 +139,77 @@ $ sudo dd if=FreeBSD-11.0-BETA4-amd64-memstick.img of=/dev/disk2 bs=4m
 # gpart show ada2
 ```
  
- * Destroy previous partition table on the disks, if any.
+ * Destroy previous partition table on the drives, if any.
 
 ```
 # gpart destroy -F ada0
 # gpart destroy -F ada1
 ```
 
- * If those disks have previously been used as vdevs of a previous ZFS pool, you may want to zero out a few sectors at the beginning and at the end of the disks to prevent an annoying warning later on with the `zpool create` command.
- 
-```
-# dd if=/dev/zero of=/dev/ada0 bs=1m count=1
-# dd if=/dev/zero of=/dev/ada0 bs=1m oseek=`diskinfo ada0 | awk '{print int($3 / (1024*1024)) - 4;}'`
+ * If those drives have previously been used as vdevs of a previous ZFS pool, you may want to zero out a few sectors at the beginning and at the end of the drives to prevent an annoying warning later on with the `zpool create` command. In order to do that, create a new temporary script named `wipe_drive` with the following command:
 
-# dd if=/dev/zero of=/dev/ada1 bs=1m count=1
-# dd if=/dev/zero of=/dev/ada1 bs=1m oseek=`diskinfo ada1 | awk '{print int($3 / (1024*1024)) - 4;}'`
+```
+# cat << 'EOF' > /tmp/wipe_drive
+#! /bin/sh
+#
+# wipe_drive
+#
+# Utility script to completely wipe the contents of a storage block device.
+#
+# This is built for FreeBSD, and simply zeroes out a few sectors
+# at the beginning and end of the block device.
+#
+
+drive_id=$1
+
+if [ -z ${drive_id} ]
+then
+    /bin/echo "usage: $0 <drive_id>" >&2
+    /bin/echo "" >&2
+    /bin/echo "Completely wipes the contents of a storage block device." >&2
+    /bin/echo "" >&2
+    /bin/echo "You may find the valid <drive_id> by using commands such as:" >&2
+    /bin/echo "# camcontrol devlist" >&2
+    /bin/echo "# nvmecontrol devlist" >&2
+    /bin/echo "# geom disk list" >&2
+    exit 1
+fi
+
+/bin/echo "About to completely wipe the contents of /dev/${drive_id}..."
+/bin/echo ""
+
+/sbin/geom disk list ${drive_id}
+
+/bin/echo -n "Are you sure you want to completely wipe the contents of /dev/${drive_id}? [yes/no] "
+read confirmation_text
+
+if [ $(/bin/echo ${confirmation_text} | /usr/bin/tr '[:upper:]' '[:lower:]') != yes ]
+then
+    /bin/echo "Aborting due to non-affirmative answer: ${confirmation_text}." >&2
+    exit
+fi
+
+/usr/sbin/diskinfo ${drive_id} | \
+while read disk sector_size size sectors other
+do
+    /bin/echo "Deleting MBR, GPT Primary, ZFS(L0L1)/other partition table..."
+    /bin/dd if=/dev/zero of=/dev/${drive_id} bs=${sector_size} count=8192
+    /bin/echo "Deleting GEOM metadata, GPT Secondary(L2L3)..."
+    /bin/dd if=/dev/zero of=/dev/${drive_id} bs=${sector_size} oseek=$(expr ${sectors} - 8192) count=8192
+done
+EOF
 ```
 
- * Create new GPT partitioned disks.
+ * Make the script executable, and wipe the relevant drives.
+
+```
+# chmod +x /tmp/wipe_drive
+
+# /tmp/wipe_drive ada0
+# /tmp/wipe_drive ada1
+```
+
+ * Create new GPT partition tables.
 
 ```
 # gpart create -s gpt ada0
