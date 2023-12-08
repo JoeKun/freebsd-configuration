@@ -1796,7 +1796,7 @@ You should now be able to boot successfully into the installer. Go through it as
 
 When the installation is over, you can log into your machine for the first time. You can also detach the console by pressing ^+B and then D (control + B and then D).
 
-If you want to be able to reach this virtual machine from the FreeBSD host using the `baz.local` address, just install `avahi-dawmon` on the virtual machine:
+If you want to be able to reach this virtual machine from the FreeBSD host using the `baz.local` address, just install `avahi-daemon` on the virtual machine:
 
 ```
 # apt install avahi-daemon
