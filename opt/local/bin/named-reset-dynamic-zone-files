@@ -23,24 +23,24 @@
 cd /var/named/var/db/namedb
 
 did_reset_any_dynamic_zone_file=0
-for master_zone_file_path in master/*.zone
+for primary_zone_file_path in primary/*.zone
 do
-    domain_name=$(basename "${master_zone_file_path}" ".zone")
-    dynamic_zone_file_path="master-dynamic/${domain_name}.zone"
+    domain_name=$(basename "${primary_zone_file_path}" ".zone")
+    dynamic_zone_file_path="primary-dynamic/${domain_name}.zone"
     /usr/local/sbin/rndc -q freeze "${domain_name}"
     serial_from_dynamic_zone=$(/usr/local/sbin/named-checkzone "${domain_name}" "${dynamic_zone_file_path}" | grep -o "loaded serial[[:space:]]*[0-9]*" | grep -o "[0-9]*$")
-    serial_from_master_zone=$(/usr/local/sbin/named-checkzone "${domain_name}" "${master_zone_file_path}" | grep -o "loaded serial[[:space:]]*[0-9]*" | grep -o "[0-9]*$")
-    should_overwrite_dynamic_zone_file_with_master_zone_file=0
-    master_zone_current_state_description_for_logging="master zone"
-    if [[ ${serial_from_dynamic_zone} -eq ${serial_from_master_zone} ]]
+    serial_from_primary_zone=$(/usr/local/sbin/named-checkzone "${domain_name}" "${primary_zone_file_path}" | grep -o "loaded serial[[:space:]]*[0-9]*" | grep -o "[0-9]*$")
+    should_overwrite_dynamic_zone_file_with_primary_zone_file=0
+    primary_zone_current_state_description_for_logging="primary zone"
+    if [[ ${serial_from_dynamic_zone} -eq ${serial_from_primary_zone} ]]
     then
         /usr/local/sbin/rndc -q thaw "${domain_name}"
-    elif [[ ${serial_from_dynamic_zone} -lt ${serial_from_master_zone} ]]
+    elif [[ ${serial_from_dynamic_zone} -lt ${serial_from_primary_zone} ]]
     then
-        echo "Dynamic zone for ${domain_name} has serial ${serial_from_dynamic_zone}, which is behind that of master zone's serial ${serial_from_master_zone}."
-        should_overwrite_dynamic_zone_file_with_master_zone_file=1
+        echo "Dynamic zone for ${domain_name} has serial ${serial_from_dynamic_zone}, which is behind that of primary zone's serial ${serial_from_primary_zone}."
+        should_overwrite_dynamic_zone_file_with_primary_zone_file=1
     else
-        echo "Dynamic zone for ${domain_name} has serial ${serial_from_dynamic_zone}, which is ahead of master zone's serial ${serial_from_master_zone}."
+        echo "Dynamic zone for ${domain_name} has serial ${serial_from_dynamic_zone}, which is ahead of primary zone's serial ${serial_from_primary_zone}."
         proposed_serial_reflecting_current_date=$(date +'%Y%m%d01')
         updated_serial=""
         if [[ ${proposed_serial_reflecting_current_date} -gt ${serial_from_dynamic_zone} ]]
@@ -49,16 +49,16 @@ do
         else
             updated_serial=$((serial_from_dynamic_zone + 1))
         fi
-        echo "Updating master zone for ${domain_name} with serial ${updated_serial}."
-        sed -i.bak "s/${serial_from_master_zone}\([[:space:]]*;[[:space:]]*Serial\)/${updated_serial}\1/" "${master_zone_file_path}"
-        rm -f "${master_zone_file_path}.bak"
-        master_zone_current_state_description_for_logging="recently updated master zone"
-        should_overwrite_dynamic_zone_file_with_master_zone_file=1
+        echo "Updating primary zone for ${domain_name} with serial ${updated_serial}."
+        sed -i.bak "s/${serial_from_primary_zone}\([[:space:]]*;[[:space:]]*Serial\)/${updated_serial}\1/" "${primary_zone_file_path}"
+        rm -f "${primary_zone_file_path}.bak"
+        primary_zone_current_state_description_for_logging="recently updated primary zone"
+        should_overwrite_dynamic_zone_file_with_primary_zone_file=1
     fi
-    if [[ ${should_overwrite_dynamic_zone_file_with_master_zone_file} -ne 0 ]]
+    if [[ ${should_overwrite_dynamic_zone_file_with_primary_zone_file} -ne 0 ]]
     then
-        echo "Overwriting dynamic zone for ${domain_name} with ${master_zone_current_state_description_for_logging}."
-        cp -f "${master_zone_file_path}" "${dynamic_zone_file_path}"
+        echo "Overwriting dynamic zone for ${domain_name} with ${primary_zone_current_state_description_for_logging}."
+        cp -f "${primary_zone_file_path}" "${dynamic_zone_file_path}"
         chown bind:bind "${dynamic_zone_file_path}"
         /usr/local/sbin/rndc thaw "${domain_name}"
         did_reset_any_dynamic_zone_file=1
@@ -67,6 +67,6 @@ done
 
 if [[ ${did_reset_any_dynamic_zone_file} -eq 0 ]]
 then
-    echo "All master zone files are up-to-date with serial numbers from dynamic zone files. Nothing to reset."
+    echo "All primary zone files are up-to-date with serial numbers from dynamic zone files. Nothing to reset."
 fi
 

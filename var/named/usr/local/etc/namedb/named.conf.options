@@ -47,8 +47,8 @@ allow-recursion {
 
 // By default, zones cannot be transferred to anyone.
 // This is mostly useful for zones for which this server is a
-// slave Name Server.
-// For zones for which this server is a master Name
+// secondary Name Server.
+// For zones for which this server is a primary Name
 // Server, we have to override this directive by putting an
 // "allow-transfer" section within the "zone" section.
 allow-transfer {
@@ -57,9 +57,9 @@ allow-transfer {
 
 // By default, zone changes will be notified.
 // This is mostly useful for zones for which this server is a
-// master Name Server.
-// For zones for which this server is a slave Name Server, we
-// have to override this directive by putting a "notify no;"
+// primary Name Server.
+// For zones for which this server is a secondary Name Server,
+// we have to override this directive by putting a "notify no;"
 // within the "zone" section.
 notify yes;
 

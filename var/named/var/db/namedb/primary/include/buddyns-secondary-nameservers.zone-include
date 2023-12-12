@@ -1,4 +1,4 @@
-; /var/db/namedb/master/include/buddyns-secondary-nameservers.zone-include
+; /var/db/namedb/primary/include/buddyns-secondary-nameservers.zone-include
 ; named zone file include for BuddyNS secondary nameservers.
 ; 
 ; Cf. http://www.buddyns.com/support/setup-vanity/#addresses

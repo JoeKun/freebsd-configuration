@@ -77,7 +77,7 @@ acl buddyns-transfer {
 };
 
 // baz.org
-masters baz {
+primaries baz {
 	123.45.67.89;
 };
 
@@ -90,12 +90,12 @@ include "/usr/local/etc/namedb/letsencrypt.key";
 
 
 //-----------------------------------------------------------
-// DNS Zones Configuration as master
+// DNS Zones Configuration as primary
 //-----------------------------------------------------------
 
 zone "foo.com" {
-	type master;
-	file "master-dynamic/foo.com.zone";
+	type primary;
+	file "primary-dynamic/foo.com.zone";
 	allow-query {
 		any;
 	};
@@ -113,13 +113,13 @@ zone "foo.com" {
 
 
 //-----------------------------------------------------------
-// DNS Zones Configuration as slave
+// DNS Zones Configuration as secondary
 //-----------------------------------------------------------
 
 zone "bar.com" {
-	type slave;
-	file "slave/bar.com.zone";
-	masters {
+	type secondary;
+	file "secondary/bar.com.zone";
+	primaries {
 		baz;
 	};
 	allow-query {

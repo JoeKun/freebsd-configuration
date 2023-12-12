@@ -311,7 +311,7 @@ daily_status_smart_devices="/dev/ada0 /dev/ada1 /dev/ada2"
 ### Basic configuration
 
 ```
-# pkg install bind916
+# pkg install bind918
 
 # mkdir /var/named
 # cd /var/named
@@ -349,14 +349,14 @@ Here are a few additional considerations in case you need to use RFC 2136 dynami
 
 If you tend to prefer handcrafting your DNS zone files, you may want to keep two directories in `/var/named/var/db/namedb`:
 
- * one named `master` where you keep your handcrafted zone files;
- * another one named `master-dynamic` where you keep the zone files that can be dynamically modified by `bind`.
+ * one named `primary` where you keep your handcrafted zone files;
+ * another one named `primary-dynamic` where you keep the zone files that can be dynamically modified by `bind`.
 
-Assuming you only use dynamic updates for transient challenge related records (such as those for generating Let's Encrypt certificates), the idea is that the source of truth for what the zone file should look like, in terms of both content and formatting, remains in `master`, which will only ever be handcrafted, whereas you can point `bind` to a copy of the zone file in `master-dynamic`, which `bind` is entitled to modify when it handles a dynamic update.
+Assuming you only use dynamic updates for transient challenge related records (such as those for generating Let's Encrypt certificates), the idea is that the source of truth for what the zone file should look like, in terms of both content and formatting, remains in `primary`, which will only ever be handcrafted, whereas you can point `bind` to a copy of the zone file in `primary-dynamic`, which `bind` is entitled to modify when it handles a dynamic update.
 
-When setting this up initially, just copy all `.zone` files from `master` into `master-dynamic`, and make sure both `master-dynamic` and all `.zone` files in that directory are owned by `bind:bind`.
+When setting this up initially, just copy all `.zone` files from `primary` into `primary-dynamic`, and make sure both `primary-dynamic` and all `.zone` files in that directory are owned by `bind:bind`.
 
-Then, make sure your `zone` configuration blocks in `/var/named/usr/local/etc/namedb/named.conf.local` refer to the zone file in the `master-dynamic` directory.
+Then, make sure your `zone` configuration blocks in `/var/named/usr/local/etc/namedb/named.conf.local` refer to the zone file in the `primary-dynamic` directory.
 
 From this point on, in order to edit the dynamic zone, you need to freeze it first with `rndc freeze`, and then thaw it with `rndc thaw` once you're done editing it.
 
@@ -367,13 +367,13 @@ Since that is quite error prone, an easier approach is to leverage the script `n
 # ln -s ../../../freebsd-configuration/opt/local/bin/named-reset-dynamic-zone-files
 ```
 
-The right way to perform manual edits to your zone files in a way that can be applied by `named-reset-dynamic-zone-files` is to never manually edit `.zone` files in the `master-dynamic` directory; instead, you should edit them in the `master` directory, and then call:
+The right way to perform manual edits to your zone files in a way that can be applied by `named-reset-dynamic-zone-files` is to never manually edit `.zone` files in the `primary-dynamic` directory; instead, you should edit them in the `primary` directory, and then call:
 
 ```
 # named-reset-dynamic-zone-files
 ```
 
-This will do the right dance with `rndc freeze` and `rndc thaw` on your behalf for any `.zone` file present in the `master` directory, and update the serial number in the SOA record as appropriate.
+This will do the right dance with `rndc freeze` and `rndc thaw` on your behalf for any `.zone` file present in the `primary` directory, and update the serial number in the SOA record as appropriate.
 
 
 ## SSL
