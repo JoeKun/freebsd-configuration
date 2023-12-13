@@ -66,6 +66,13 @@ notify yes;
 // Don't show the version of BIND9 used here.
 version "";
 
+// Prevent listening on network interface dedicated to bhyve
+// virtual machines.
+listen-on {
+	! 172.16.0.1;
+	any;
+};
+
 // IPv6 support
 listen-on-v6 {
 	any;
