@@ -28,8 +28,8 @@ do
     domain_name=$(basename "${primary_zone_file_path}" ".zone")
     dynamic_zone_file_path="primary-dynamic/${domain_name}.zone"
     /usr/local/sbin/rndc -q freeze "${domain_name}"
-    serial_from_dynamic_zone=$(/usr/local/sbin/named-checkzone "${domain_name}" "${dynamic_zone_file_path}" | grep -o "loaded serial[[:space:]]*[0-9]*" | grep -o "[0-9]*$")
-    serial_from_primary_zone=$(/usr/local/sbin/named-checkzone "${domain_name}" "${primary_zone_file_path}" | grep -o "loaded serial[[:space:]]*[0-9]*" | grep -o "[0-9]*$")
+    serial_from_dynamic_zone=$(/usr/local/bin/named-checkzone "${domain_name}" "${dynamic_zone_file_path}" | grep -o "loaded serial[[:space:]]*[0-9]*" | grep -o "[0-9]*$")
+    serial_from_primary_zone=$(/usr/local/bin/named-checkzone "${domain_name}" "${primary_zone_file_path}" | grep -o "loaded serial[[:space:]]*[0-9]*" | grep -o "[0-9]*$")
     should_overwrite_dynamic_zone_file_with_primary_zone_file=0
     primary_zone_current_state_description_for_logging="primary zone"
     if [[ ${serial_from_dynamic_zone} -eq ${serial_from_primary_zone} ]]
