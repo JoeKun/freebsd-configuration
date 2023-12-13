@@ -58,10 +58,7 @@ allow-transfer {
 // By default, zone changes will be notified.
 // This is mostly useful for zones for which this server is a
 // primary Name Server.
-// For zones for which this server is a secondary Name Server,
-// we have to override this directive by putting a "notify no;"
-// within the "zone" section.
-notify yes;
+notify primary-only;
 
 // Don't show the version of BIND9 used here.
 version "";
