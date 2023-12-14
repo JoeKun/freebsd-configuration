@@ -4,7 +4,7 @@ FreeBSD includes OpenSSH as part of the base operating system. Here are instruct
 
 ## Enable `sshd` service
 
-In case you haven't selected `sshd` as one of the enabled services in the FreeBSD installer, you can enable by setting `sshd_enable="YES"` in your system configuration.
+In case you haven’t selected `sshd` as one of the enabled services in the FreeBSD installer, you can enable by setting `sshd_enable="YES"` in your system configuration.
 
 ```console
 # cat << EOF > /etc/rc.conf.d/sshd
@@ -26,7 +26,7 @@ This section goes over how to login as `root` via SSH using an SSH key.
 
 ### Generate SSH key on your client machine
 
-On your client machine, such as your primary laptop, if you don't already have an SSH key, you may generate one.
+On your client machine, such as your primary laptop, if you don’t already have an SSH key, you may generate one.
 
 ```console
 % ssh-keygen -t rsa -b 4096 -C my_username@my_domain.com
@@ -42,7 +42,7 @@ First copy your public SSH key from your client machine. For example, if your cl
 % cat ~/.ssh/id_rsa.pub | tr -d '\n' | pbcopy
 ```
 
-Going forward, we'll refer to this public key you just copied as:
+Going forward, we’ll refer to this public key you just copied as:
 
 ```
 ssh-rsa […] my_username@my_domain.com
@@ -81,7 +81,7 @@ Then reload the `sshd` service.
 
 As seen in the following [FreeBSD commit](https://svnweb.freebsd.org/base?view=revision&revision=294909), FreeBSD developers have made a conscious decision to deviate from the new default value of `UseDNS` since OpenSSH 6.8p1.
 
-Unfortunately, leaving `UseDNS` enabled can result in significant delays when logging in, especially from a client machine in a network where the public IP address doesn't have a proper reverse DNS entry. Furthermore, `UseDNS` seems [pretty pointless for most people](http://unix.stackexchange.com/questions/56941/what-is-the-point-of-sshd-usedns-option#answer-56947).
+Unfortunately, leaving `UseDNS` enabled can result in significant delays when logging in, especially from a client machine in a network where the public IP address doesn’t have a proper reverse DNS entry. Furthermore, `UseDNS` seems [pretty pointless for most people](http://unix.stackexchange.com/questions/56941/what-is-the-point-of-sshd-usedns-option#answer-56947).
 
 For those reasons, disabling `UseDNS` can be a good idea. [^2]
 

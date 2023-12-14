@@ -6,13 +6,13 @@ For small scale FreeBSD environments, such as those involving a single FreeBSD s
 
 Indeed, for such upgrades, the ABI usually changes, and requires all compiled software outside of the base operating system being re-compiled, and reinstalled.
 
-Even though `poudriere` can build packages for different versions of FreeBSD, because it relies on `jail`, and a `jail` uses the same FreeBSD kernel as the host, it's not supported to run a `jail` for a new major version of FreeBSD before upgrading at least the base system.
+Even though `poudriere` can build packages for different versions of FreeBSD, because it relies on `jail`, and a `jail` uses the same FreeBSD kernel as the host, it’s not supported to run a `jail` for a new major version of FreeBSD before upgrading at least the base system.
 
-In other words, with `poudriere`, we can easily build binary packages for *older* versions of FreeBSD, but we can't quite as easily build binary packages for *newer* versions of FreeBSD.
+In other words, with `poudriere`, we can easily build binary packages for *older* versions of FreeBSD, but we can’t quite as easily build binary packages for *newer* versions of FreeBSD.
 
 This conundrum was actually discussed in the `freebsd-ports` mailing list a few years ago, in this thread: [Correct order when upgrading to 11.0 Release with Poudriere](https://lists.freebsd.org/pipermail/freebsd-ports/2017-January/106807.html).
 
-That's why it can be helpful to use a separate server dedicated to building binary packages with `poudriere`.
+That’s why it can be helpful to use a separate server dedicated to building binary packages with `poudriere`.
 
 In this procedure, the approach followed will be to setup a dedicated virtual machine for `poudriere`, so it can be upgraded to a future major version of FreeBSD ahead of its host, and thus, enable upgrades of the host with shorter downtime.
 
@@ -22,7 +22,7 @@ In this procedure, the approach followed will be to setup a dedicated virtual ma
  * Install `poudriere` on a dedicated virtual machine with `bhyve`.
  * Configure the FreeBSD host server to use exclusively the binary packages produced by `poudriere` running on that virtual machine.
  * Setup storage for built packages in such a way that the virtual machine can remain powered off most of the time, only powering it on when actually using `poudriere` to build packages.
- * Expose `poudriere`'s web interface right from the FreeBSD host server.
+ * Expose `poudriere`’s web interface right from the FreeBSD host server.
 
 
 ## Pre-requisites
@@ -33,7 +33,7 @@ See [Network file sharing with NFS on FreeBSD](freebsd-network-file-sharing-nfs.
 Second, create a FreeBSD guest virtual machine for `poudriere`.  
 See [FreeBSD guest virtual machine in FreeBSD host with `bhyve`](freebsd-bhyve-freebsd-guest.md).
 
-Going forward, let's assume the virtual machine name is `my_poudriere`. Furthermore, the following commands are assumed to be executed on this virtual machine, unless otherwise noted.
+Going forward, let’s assume the virtual machine name is `my_poudriere`. Furthermore, the following commands are assumed to be executed on this virtual machine, unless otherwise noted.
 
 Several things below use `my_poudriere` to identify a component that pertains to this setup, whether it be certificate file names, jail names, names of configuration files or repositories.
 
@@ -173,7 +173,7 @@ Enable building ports using multiple concurrent jobs.
 ALLOW_MAKE_JOBS=yes
 ```
 
-Finally, set a base URL for `poudriere`'s web interface.
+Finally, set a base URL for `poudriere`’s web interface.
 
 ```ini
 URL_BASE=http://pkg.my_domain.tld
@@ -188,13 +188,13 @@ Create dedicated jail for `poudriere` to build binary packages for the `amd64` a
 # poudriere jail -c -j my_poudriere-amd64-14-0 -v 14.0-RELEASE
 ```
 
-Clone a new ports tree for the current quarterly branch from FreeBSD's official ports tree: `2023Q4`.
+Clone a new ports tree for the current quarterly branch from FreeBSD’s official ports tree: `2023Q4`.
 
 ```console
 # poudriere ports -c -p 2023Q4 -B 2023Q4
 ```
 
-In addition to that, let's clone a `default` ports tree so we'll be able to easily set default options that will apply to all ports trees.
+In addition to that, let’s clone a `default` ports tree so we’ll be able to easily set default options that will apply to all ports trees.
 
 ```console
 # poudriere ports -c -B 2023Q4
@@ -203,7 +203,7 @@ In addition to that, let's clone a `default` ports tree so we'll be able to easi
 
 ## Create initial list of packages to build
 
-For now, let's start with building our own version of the packages we installed above from the default FreeBSD-maintained binary package repository.
+For now, let’s start with building our own version of the packages we installed above from the default FreeBSD-maintained binary package repository.
 
 ```console
 # cat << EOF > /usr/local/etc/poudriere.d/pkglist
@@ -307,7 +307,7 @@ Add a new entry to the package list.
 # echo "misc/figlet" >> /usr/local/etc/poudriere.d/pkglist
 ```
 
-If the default set of options for this package don't suit you, you may customize them with the `options` command.
+If the default set of options for this package don’t suit you, you may customize them with the `options` command.
 
 ```console
 # poudriere options -c -n misc/figlet
@@ -322,7 +322,7 @@ And start building again.
 
 ## Switch to a new quarterly ports branch
 
-Clone a new ports tree for the new quarterly branch from FreeBSD's official ports tree: `2024Q1`.
+Clone a new ports tree for the new quarterly branch from FreeBSD’s official ports tree: `2024Q1`.
 
 ```console
 # poudriere ports -c -p 2024Q1 -B 2024Q1
@@ -335,4 +335,4 @@ Recreate the default ports tree to target the same branch.
 # poudriere ports -c -B 2024Q1
 ```
 
-It's sad to have to recreate the default ports tree entirely, but there is [no built-in support to switch branches for an existing ports tree in `poudriere` yet](https://github.com/freebsd/poudriere/issues/508).
+It’s sad to have to recreate the default ports tree entirely, but there is [no built-in support to switch branches for an existing ports tree in `poudriere` yet](https://github.com/freebsd/poudriere/issues/508).

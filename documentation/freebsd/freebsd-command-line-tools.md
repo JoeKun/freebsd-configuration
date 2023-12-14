@@ -4,7 +4,7 @@ Your experience managing a FreeBSD server can be elevated using some essential c
 
 ## Build required packages using `poudriere`
 
-If you're using `poudriere` following [this guide](freebsd-poudriere.md), then add a few entries to the list of packages built by `poudriere`.
+If you’re using `poudriere` following [this guide](freebsd-poudriere.md), then add a few entries to the list of packages built by `poudriere`.
 
 ```console
 # cat << EOF >> /usr/local/etc/poudriere.d/pkglist
@@ -161,7 +161,7 @@ Replace default configuration file for `vimpager` with a symbolic links to relev
 
 Install the Terminal Markdown Viewer package. [^1]
 
-[^1]: If you're using `poudriere`, make sure to build the package `devel/py-mdv` following the pattern described [above](#build-required-packages-using-poudriere).
+[^1]: If you’re using `poudriere`, make sure to build the package `devel/py-mdv` following the pattern described [above](#build-required-packages-using-poudriere).
 
 ```console
 # pkg install py39-mdv
@@ -172,7 +172,7 @@ Install the Terminal Markdown Viewer package. [^1]
 
 Install the `mutt` package. [^2]
 
-[^2]: If you're using `poudriere`, make sure to build the package `mail/mutt` following the pattern described [above](#build-required-packages-using-poudriere).
+[^2]: If you’re using `poudriere`, make sure to build the package `mail/mutt` following the pattern described [above](#build-required-packages-using-poudriere).
 
 ```console
 # pkg install mutt
@@ -185,13 +185,13 @@ Feel free to check the sample configuration files for `mutt` in the [`home/my_us
 
 Install the `irssi` and `irssi-scripts` packages. [^3]
 
-[^3]: If you're using `poudriere`, make sure to build the packages `irc/irssi` and `irc/irssi-scripts` following the pattern described [above](#build-required-packages-using-poudriere).
+[^3]: If you’re using `poudriere`, make sure to build the packages `irc/irssi` and `irc/irssi-scripts` following the pattern described [above](#build-required-packages-using-poudriere).
 
 ```console
 # pkg install irssi irssi-scripts
 ```
 
-To launch `irssi` in a `screen` upon rebooting, add the following entry to the user's `crontab` using `crontab -e`.
+To launch `irssi` in a `screen` upon rebooting, add the following entry to the user’s `crontab` using `crontab -e`.
 
 ```
 @reboot screen -d -m -S irc env TERM=xterm-256color irssi

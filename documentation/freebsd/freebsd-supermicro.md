@@ -33,7 +33,7 @@ Find device identifier for USB flash drive to be used for installing FreeBSD by 
 $ diskutil list
 ```
 
-Let's assume going forward that the USB flash drive corresponds to `/dev/disk27`.
+Let’s assume going forward that the USB flash drive corresponds to `/dev/disk27`.
 
 Make sure to unmount all volumes from the USB flash drive using the Disk Utility application.
 
@@ -48,7 +48,7 @@ $ sudo dd if=FreeBSD-14.0-RELEASE-amd64-memstick.img of=/dev/disk27 bs=4m
 
 If you intend to use NVMe M.2 drives in a PCIe 4.0 Expansion Card Adapter as noted above, you will need to setup the relevant PCIe slot with PCIe bifurcation, following [these instructions](https://forums.servethehome.com/index.php?threads/supermicro-x11-s-d-px-bifurcation.22598/#post-210803).
 
-Look for the motherboard's block diagram in the user manual.
+Look for the motherboard’s block diagram in the user manual.
 
 In this specific scenario, assuming you insert the add-in card in slot 6 of the X12SPi-TF motherboard, then you need to configure PCIe output *IOU0 (IIO PCIe Port 1)* for PCIe bifurcation.
 
@@ -76,7 +76,7 @@ Then navigate to the *Save & Exit* tab, and select *Save Changes and Reset*.
 # camcontrol devlist
 ```
 
- * Going forward, let's assume that `nda0`, `nda1` and `nda2` are the device identifiers of the SSD drives to install the system on.
+ * Going forward, let’s assume that `nda0`, `nda1` and `nda2` are the device identifiers of the SSD drives to install the system on.
  * Find the serial number of each of the SSD drives by looking at the output of one of the following commands.
 
 ```console
@@ -165,7 +165,7 @@ EOF
 # gpart create -s gpt nda2
 ```
 
- * Going forward, for partitioning purposes, we'll be using GPT labels that include the serial number of the respective drive, as `-sn0`, `-sn1` and `-sn2`. While this is pretty verbose, the GPT labels will be used very rarely, and for the occasional disaster recovery scenario, it may be more convenient to have the serial number embedded in the GPT label, to make sure no mistake is made about which drive to take offline.
+ * Going forward, for partitioning purposes, we’ll be using GPT labels that include the serial number of the respective drive, as `-sn0`, `-sn1` and `-sn2`. While this is pretty verbose, the GPT labels will be used very rarely, and for the occasional disaster recovery scenario, it may be more convenient to have the serial number embedded in the GPT label, to make sure no mistake is made about which drive to take offline.
  * Create partitions for ZFS.
 
 ```console

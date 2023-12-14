@@ -81,9 +81,9 @@ And reload the `mountd` service.
 
 ## Example configuration
 
-Let's create a network file share named `stuff` restricted to one specific machine on your network.
+Let’s create a network file share named `stuff` restricted to one specific machine on your network.
 
-We'll assume that specific machine has a stable IP address, and is reachable using the host name `my_client`. You can make that work by simply adding a new entry mapping that IP address to the name `my_client` in `/etc/hosts`.
+We’ll assume that specific machine has a stable IP address, and is reachable using the host name `my_client`. You can make that work by simply adding a new entry mapping that IP address to the name `my_client` in `/etc/hosts`.
 
 ### Server side
 
@@ -101,7 +101,7 @@ Set the `sharenfs` property on this new dataset to make it available to the mach
 
 ### Client side
 
-Assuming your machine `my_client` is actually running FreeBSD too, you could add an entry mapping the IP address of your server to the name `my_server`  in the client's `/etc/hosts` file.
+Assuming your machine `my_client` is actually running FreeBSD too, you could add an entry mapping the IP address of your server to the name `my_server`  in the client’s `/etc/hosts` file.
 
 Mount the new share as read-write on your client machine.
 

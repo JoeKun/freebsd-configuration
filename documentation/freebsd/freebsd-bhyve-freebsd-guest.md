@@ -1,6 +1,6 @@
 # FreeBSD guest virtual machine in FreeBSD host with `bhyve`
 
-This is partly inspired from [`vermaden`'s great article on `bhyve`](https://vermaden.wordpress.com/2023/08/18/freebsd-bhyve-virtualization/).
+This is partly inspired from [`vermaden`’s great article on `bhyve`](https://vermaden.wordpress.com/2023/08/18/freebsd-bhyve-virtualization/).
 
 ## Initial `bhyve` configuration for FreeBSD host
 
