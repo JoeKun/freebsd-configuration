@@ -6,7 +6,7 @@ Enable a few services on your file server running FreeBSD.
 
 ### `nfsd`
 
-```
+```console
 # cat << EOF > /etc/rc.conf.d/nfsd
 # /etc/rc.conf.d/nfsd: system configuration for nfsd
 
@@ -16,7 +16,7 @@ EOF
 
 ### `statd`
 
-```
+```console
 # cat << EOF > /etc/rc.conf.d/statd
 # /etc/rc.conf.d/statd: system configuration for statd
 
@@ -26,7 +26,7 @@ EOF
 
 ### `lockd`
 
-```
+```console
 # cat << EOF > /etc/rc.conf.d/lockd
 # /etc/rc.conf.d/lockd: system configuration for lockd
 
@@ -36,7 +36,7 @@ EOF
 
 ### `rpcbind`
 
-```
+```console
 # cat << EOF > /etc/rc.conf.d/rpcbind
 # /etc/rc.conf.d/rpcbind: system configuration for rpcbind
 
@@ -46,7 +46,7 @@ EOF
 
 ### `mountd`
 
-```
+```console
 # cat << EOF > /etc/rc.conf.d/mountd
 # /etc/rc.conf.d/mountd: system configuration for mountd
 
@@ -60,13 +60,13 @@ EOF
 
 First, create an empty `/etc/exports` file to avoid a warning upon starting those services.
 
-```
+```console
 # touch /etc/exports
 ```
 
 Then start the `nfsd`, `statd` and `lockd` services.
 
-```
+```console
 # service nfsd start
 # service statd start
 # service lockd start
@@ -74,7 +74,7 @@ Then start the `nfsd`, `statd` and `lockd` services.
 
 And reload the `mountd` service.
 
-```
+```console
 # service mountd reload
 ```
 
@@ -89,13 +89,13 @@ We'll assume that specific machine has a stable IP address, and is reachable usi
 
 Assuming you have a ZFS pool named `storage`, mounted at `/storage`, create a dedicated  dataset named `stuff`.
 
-```
+```console
 # zfs create storage/stuff
 ```
 
 Set the `sharenfs` property on this new dataset to make it available to the machine `my_client`.
 
-```
+```console
 # zfs set sharenfs='-alldirs,my_client' storage/stuff
 ```
 
@@ -105,14 +105,14 @@ Assuming your machine `my_client` is actually running FreeBSD too, you could add
 
 Mount the new share as read-write on your client machine.
 
-```
+```console
 # mkdir -p /data/stuff
 # mount -t nfs -o rw my_server:/storage/stuff /data/stuff
 ```
 
 To make sure this share is automatically mounted upon startup, add a new line to your `/etc/fstab`.
 
-```
+```console
 # cat << EOF >> /etc/fstab
 my_server:/storage/stuff			/data/stuff		nfs		rw		0		0
 EOF

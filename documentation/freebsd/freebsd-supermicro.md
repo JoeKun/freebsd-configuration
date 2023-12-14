@@ -23,13 +23,13 @@ However, with a Supermicro motherboard such as the X12SPi-TF, Virtual Media Supp
 
 Download latest FreeBSD 14 image for AMD64 architecture, in `memstick` format.
 
-```
+```console
 $ wget https://download.freebsd.org/releases/ISO-IMAGES/14.0/FreeBSD-14.0-RELEASE-amd64-memstick.img
 ```
 
 Find device identifier for USB flash drive to be used for installing FreeBSD by looking at the output of the following command.
 
-```
+```console
 $ diskutil list
 ```
 
@@ -39,7 +39,7 @@ Make sure to unmount all volumes from the USB flash drive using the Disk Utility
 
 Expand the image to USB flash drive using the following command.
 
-```
+```console
 $ sudo dd if=FreeBSD-14.0-RELEASE-amd64-memstick.img of=/dev/disk27 bs=4m
 ```
 
@@ -72,14 +72,14 @@ Then navigate to the *Save & Exit* tab, and select *Save Changes and Reset*.
  * When the partitioning dialog comes up, choose the *Shell* option.
  * Find the device identifiers of the SSD drives to install the system on by looking at the output of the following command.
 
-```
+```console
 # camcontrol devlist
 ```
 
  * Going forward, let's assume that `nda0`, `nda1` and `nda2` are the device identifiers of the SSD drives to install the system on.
  * Find the serial number of each of the SSD drives by looking at the output of one of the following commands.
 
-```
+```console
 # dmesg | grep -i nda0 | grep -i serial
 # nvmecontrol identify nvme0 | grep -i serial
 ```
@@ -87,7 +87,7 @@ Then navigate to the *Save & Exit* tab, and select *Save Changes and Reset*.
  * Going forward, we will refer to these serial numbers as `sn0`, `sn1` and `sn2` respectively for `nda0`, `nda1` and `nda2`.
  * Destroy previous partition table on the drives, if any.
 
-```
+```console
 # gpart destroy -F nda0
 # gpart destroy -F nda1
 # gpart destroy -F nda2
@@ -95,7 +95,7 @@ Then navigate to the *Save & Exit* tab, and select *Save Changes and Reset*.
 
  * If those drives have previously been used as vdevs of a previous ZFS pool, you may want to zero out a few sectors at the beginning and at the end of the drives to prevent an annoying warning later on with the `zpool create` command. In order to do that, create a new temporary script named `wipe_drive` with the following command:
 
-```
+```console
 # cat << 'EOF' > /tmp/wipe_drive
 #! /bin/sh
 #
@@ -149,7 +149,7 @@ EOF
 
  * Make the script executable, and wipe the relevant drives.
 
-```
+```console
 # chmod +x /tmp/wipe_drive
 
 # /tmp/wipe_drive nda0
@@ -159,7 +159,7 @@ EOF
 
  * Create new GPT partition tables.
 
-```
+```console
 # gpart create -s gpt nda0
 # gpart create -s gpt nda1
 # gpart create -s gpt nda2
@@ -168,7 +168,7 @@ EOF
  * Going forward, for partitioning purposes, we'll be using GPT labels that include the serial number of the respective drive, as `-sn0`, `-sn1` and `-sn2`. While this is pretty verbose, the GPT labels will be used very rarely, and for the occasional disaster recovery scenario, it may be more convenient to have the serial number embedded in the GPT label, to make sure no mistake is made about which drive to take offline.
  * Create partitions for ZFS.
 
-```
+```console
 # gpart add -a 4k -t efi -l boot-sn0 -s 200m nda0
 # gpart add -a 4k -t freebsd-swap -l swap-sn0 -s 100g nda0
 # gpart add -a 4k -t freebsd-zfs -l system-sn0 nda0
@@ -184,7 +184,7 @@ EOF
 
  * Create the ZFS pool.
 
-```
+```console
 # zpool create -o ashift=12 -o altroot=/mnt -m none system mirror /dev/gpt/system-sn0 /dev/gpt/system-sn1 /dev/gpt/system-sn2
 # zfs set mountpoint=/ system
 # zfs set checksum=blake3 system
@@ -221,7 +221,7 @@ EOF
 
  * Prepare EFI mount points.
 
-```
+```console
 # mkdir /mnt/boot
 # cd /mnt/boot
 # mkdir efi
@@ -240,7 +240,7 @@ EOF
 
  * Prepare `fstab` file.
 
-```
+```console
 # cat << EOF > /tmp/bsdinstall_etc/fstab
 # Device            Mountpoint      FStype      Options         Dump    Pass#
 /dev/gpt/boot-sn0   /boot/efi       msdosfs     rw              2       2
@@ -258,13 +258,13 @@ EOF
  * The next dialog will will offer the option to *open a shell in the new system*; choose this option.
  * Configure ZFS to load and mount the file systems automatically at boot.
 
-```
+```console
 # echo 'zfs_enable="YES"' >> /etc/rc.conf
 ```
 
  * Replicate contents of EFI boot partition from the first drive to the second drive.
 
-```
+```console
 # cd /boot/efi1
 # cp -av ../efi0/* .
 
@@ -274,14 +274,14 @@ EOF
 
  * Reboot.
 
-```
+```console
 # reboot
 ```
 
 
 ## Upgrade base system
 
-```
+```console
 # freebsd-update fetch
 # freebsd-update install
 # reboot

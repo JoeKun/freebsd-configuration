@@ -6,7 +6,7 @@ FreeBSD includes OpenSSH as part of the base operating system. Here are instruct
 
 In case you haven't selected `sshd` as one of the enabled services in the FreeBSD installer, you can enable by setting `sshd_enable="YES"` in your system configuration.
 
-```
+```console
 # cat << EOF > /etc/rc.conf.d/sshd
 # /etc/rc.conf.d/sshd: system configuration for sshd
 
@@ -16,7 +16,7 @@ EOF
 
 Then start the `sshd` service.
 
-```
+```console
 # service sshd start
 ```
 
@@ -28,7 +28,7 @@ This section goes over how to login as `root` via SSH using an SSH key.
 
 On your client machine, such as your primary laptop, if you don't already have an SSH key, you may generate one.
 
-```
+```console
 % ssh-keygen -t rsa -b 4096 -C my_username@my_domain.com
 ```
 
@@ -38,7 +38,7 @@ I suggest you simply replace `my_username@my_domain.com` with your regular email
 
 First copy your public SSH key from your client machine. For example, if your client machine is a Mac, you can do so using the `pbcopy` in the Terminal.
 
-```
+```console
 % cat ~/.ssh/id_rsa.pub | tr -d '\n' | pbcopy
 ```
 
@@ -52,7 +52,7 @@ Obviously, the real public key is considerably longer, as it will contain a lot 
 
 On the FreeBSD server, add this public key to the `~/.ssh/authorized_keys` file.
 
-```
+```console
 # mkdir -p ~/.ssh
 # chmod 700 ~/.ssh
 # touch ~/.ssh/authorized_keys
@@ -63,7 +63,7 @@ On the FreeBSD server, add this public key to the `~/.ssh/authorized_keys` file.
 
 Allowing `root` login with an SSH key can be achieved by setting the configuration option `PermitRootLogin prohibit-password` in `/etc/ssh/sshd_config`. [^1]
 
-```
+```console
 # cd /etc/ssh
 # sed -i '' 's/^#PermitRootLogin no$/PermitRootLogin prohibit-password/' sshd_config
 ```
@@ -72,7 +72,7 @@ Allowing `root` login with an SSH key can be achieved by setting the configurati
 
 Then reload the `sshd` service.
 
-```
+```console
 # service sshd reload
 ```
 
@@ -87,13 +87,13 @@ For those reasons, disabling `UseDNS` can be a good idea. [^2]
 
 [^2]: An equivalent patch for `sshd_config` can also be found in this `freebsd-configuration` repository at the following location: `patches/sshd/sshd-disable-usedns-configuration-option.diff`.
 
-```
+```console
 # cd /etc/ssh
 # sed -i '' 's/^#UseDNS yes$/UseDNS no/' sshd_config
 ```
 
 Then reload the `sshd` service.
 
-```
+```console
 # service sshd reload
 ```

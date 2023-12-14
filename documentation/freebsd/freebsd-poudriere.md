@@ -44,13 +44,13 @@ If you have a more creative name for your virtual machine, I suggest you change 
 
 First, install `git` using the default FreeBSD-maintained binary package repository.
 
-```
+```console
 # pkg install git
 ```
 
 Add basic configuration for `git`.
 
-```
+```console
 # git config --global user.name "John Smith"
 # git config --global user.email "john@smith.com"
 ```
@@ -60,7 +60,7 @@ Add basic configuration for `git`.
 
 Prepare directories for the certificate and private key.
 
-```
+```console
 # mkdir -p /usr/local/etc/ssl/certs
 # mkdir -p /usr/local/etc/ssl/private
 # chmod 700 /usr/local/etc/ssl/private
@@ -68,15 +68,17 @@ Prepare directories for the certificate and private key.
 
 Generate a 4096-bit RSA key.
 
-```
+```console
 # openssl genrsa -out /usr/local/etc/ssl/private/my_poudriere.key 4096
 # chmod 600 /usr/local/etc/ssl/private/my_poudriere.key
 ```
 
 Generate public certificate gets generated from the private key.
 
-```
-# openssl rsa -in /usr/local/etc/ssl/private/my_poudriere.key -pubout -out /usr/local/etc/ssl/certs/my_poudriere.cert
+```console
+# openssl rsa \
+    -in /usr/local/etc/ssl/private/my_poudriere.key \
+    -pubout -out /usr/local/etc/ssl/certs/my_poudriere.cert
 ```
 
 
@@ -84,7 +86,7 @@ Generate public certificate gets generated from the private key.
 
 Next, install `poudriere` using the default FreeBSD-maintained binary package repository.
 
-```
+```console
 # pkg install poudriere
 ```
 
@@ -95,7 +97,7 @@ Next, install `poudriere` using the default FreeBSD-maintained binary package re
 
 On the FreeBSD host `my_server`, create a dedicated dataset for `poudriere` data in the `system` pool, as well as children datasets for `packages` and `logs`.
 
-```
+```console
 # zfs create system/var/poudriere
 # zfs create system/var/poudriere/packages
 # zfs create system/var/poudriere/logs
@@ -103,7 +105,7 @@ On the FreeBSD host `my_server`, create a dedicated dataset for `poudriere` data
 
 Make sure you have an entry for the `my_poudriere` virtual machine in `/etc/hosts`, and set the `sharenfs` property on both of these datasets.
 
-```
+```console
 # zfs set sharenfs='-alldirs,-maproot=root,my_poudriere' system/var/poudriere/packages
 # zfs set sharenfs='-alldirs,-maproot=root,my_poudriere' system/var/poudriere/logs
 ```
@@ -112,7 +114,7 @@ Make sure you have an entry for the `my_poudriere` virtual machine in `/etc/host
 
 Back on the `my_poudriere` virtual machine, create a dedicated dataset for `poudriere`, and corresponding directories for `packages` and `logs`.
 
-```
+```console
 # zfs create system/usr/local/poudriere
 # mkdir -p /usr/local/poudriere/data/packages
 # mkdir -p /usr/local/poudriere/data/logs
@@ -120,14 +122,14 @@ Back on the `my_poudriere` virtual machine, create a dedicated dataset for `poud
 
 Make sure you have an entry for the `my_server` host in `/etc/hosts`, and mount the `packages` and `logs` network shares inside this new `poudriere` dataset.
 
-```
+```console
 # mount -t nfs -o rw my_server:/var/poudriere/packages /usr/local/poudriere/data/packages
 # mount -t nfs -o rw my_server:/var/poudriere/logs /usr/local/poudriere/data/logs
 ```
 
 To make sure these shares are automatically mounted upon startup, add a couple of new lines to your `/etc/fstab`.
 
-```
+```console
 # cat << EOF >> /etc/fstab
 
 # Poudriere data
@@ -141,25 +143,25 @@ EOF
 
 Update `/usr/local/etc/poudriere.conf` to disable the usage of ZFS by `poudriere`.
 
-```
+```ini
 NO_ZFS=yes
 ```
 
 Set a specific host name for downloading the FreeBSD base system for jails.
 
-```
+```ini
 FREEBSD_HOST=https://download.FreeBSD.org
 ```
 
 Specify where the private key for signing packages can be found.
 
-```
+```ini
 PKG_REPO_SIGNING_KEY=/usr/local/etc/ssl/private/my_poudriere.key
 ```
 
 Change a few settings to correctly check for certain types of updates to ports.
 
-```
+```ini
 CHECK_CHANGED_OPTIONS=verbose
 [...]
 CHECK_CHANGED_DEPS=yes
@@ -167,13 +169,13 @@ CHECK_CHANGED_DEPS=yes
 
 Enable building ports using multiple concurrent jobs.
 
-```
+```ini
 ALLOW_MAKE_JOBS=yes
 ```
 
 Finally, set a base URL for `poudriere`'s web interface.
 
-```
+```ini
 URL_BASE=http://pkg.my_domain.tld
 ```
 
@@ -182,19 +184,19 @@ URL_BASE=http://pkg.my_domain.tld
 
 Create dedicated jail for `poudriere` to build binary packages for the `amd64` architecture, for the `14.0-RELEASE` version of FreeBSD.
 
-```
+```console
 # poudriere jail -c -j my_poudriere-amd64-14-0 -v 14.0-RELEASE
 ```
 
 Clone a new ports tree for the current quarterly branch from FreeBSD's official ports tree: `2023Q4`.
 
-```
+```console
 # poudriere ports -c -p 2023Q4 -B 2023Q4
 ```
 
 In addition to that, let's clone a `default` ports tree so we'll be able to easily set default options that will apply to all ports trees.
 
-```
+```console
 # poudriere ports -c -B 2023Q4
 ```
 
@@ -203,7 +205,7 @@ In addition to that, let's clone a `default` ports tree so we'll be able to easi
 
 For now, let's start with building our own version of the packages we installed above from the default FreeBSD-maintained binary package repository.
 
-```
+```console
 # cat << EOF > /usr/local/etc/poudriere.d/pkglist
 # /usr/local/etc/poudriere.d/pkglist
 
@@ -221,13 +223,16 @@ EOF
 
 Start an initial build using the `bulk` command.
 
-```
-# poudriere bulk -j my_poudriere-amd64-14-0 -p 2023Q4 -f /usr/local/etc/poudriere.d/pkglist
+```console
+# poudriere bulk \
+    -j my_poudriere-amd64-14-0 \
+    -p 2023Q4 \
+    -f /usr/local/etc/poudriere.d/pkglist
 ```
 
 Once the build is complete, setup a symbolic link for the current set of quarterly packages.
 
-```
+```console
 # cd /usr/local/poudriere/data/packages
 # ln -s my_poudriere-amd64-14-0-2023Q4 my_poudriere-amd64-14-0-quarterly
 ```
@@ -237,7 +242,7 @@ Once the build is complete, setup a symbolic link for the current set of quarter
 
 On the FreeBSD host `my_server`, disable using the default FreeBSD-maintained binary package repository.
 
-```
+```console
 # mkdir -p /usr/local/etc/pkg/repos
 # cat << EOF > /usr/local/etc/pkg/repos/FreeBSD.conf
 # /usr/local/etc/pkg/repos/FreeBSD.conf
@@ -250,14 +255,14 @@ EOF
 
 Install a copy of the public certificate `my_poudriere.cert` generated above.
 
-```
+```console
 # mkdir -p /usr/local/etc/ssl/certs
 # mv /path/to/my_poudriere.cert /usr/local/etc/ssl/certs
 ```
 
 Then enable using our own private package repository.
 
-```
+```console
 # cat << EOF > /usr/local/etc/pkg/repos/my_poudriere.conf
 # /usr/local/etc/pkg/repos/my_poudriere.conf
 
@@ -272,7 +277,7 @@ EOF
 
 Finally force reinstalling all the current packages from our own private package repository.
 
-```
+```console
 # pkg upgrade -f
 ```
 
@@ -281,7 +286,7 @@ Finally force reinstalling all the current packages from our own private package
 
 On the `my_poudriere` virtual machine, update both the jail and both of the ports trees.
 
-```
+```console
 # poudriere jail -j my_poudriere-amd64-14-0 -u
 # poudriere ports -u
 # poudriere ports -p 2023Q4 -u
@@ -289,7 +294,7 @@ On the `my_poudriere` virtual machine, update both the jail and both of the port
 
 Build packages for updated ports.
 
-```
+```console
 # poudriere bulk -j my_poudriere-amd64-14-0 -p 2023Q4 -f /usr/local/etc/poudriere.d/pkglist
 ```
 
@@ -298,19 +303,19 @@ Build packages for updated ports.
 
 Add a new entry to the package list.
 
-```
+```console
 # echo "misc/figlet" >> /usr/local/etc/poudriere.d/pkglist
 ```
 
 If the default set of options for this package don't suit you, you may customize them with the `options` command.
 
-```
+```console
 # poudriere options -c -n misc/figlet
 ```
 
 And start building again.
 
-```
+```console
 # poudriere bulk -j my_poudriere-amd64-14-0 -p 2023Q4 -f /usr/local/etc/poudriere.d/pkglist
 ```
 
@@ -319,13 +324,13 @@ And start building again.
 
 Clone a new ports tree for the new quarterly branch from FreeBSD's official ports tree: `2024Q1`.
 
-```
+```console
 # poudriere ports -c -p 2024Q1 -B 2024Q1
 ```
 
 Recreate the default ports tree to target the same branch.
 
-```
+```console
 # poudriere ports -d -p default
 # poudriere ports -c -B 2024Q1
 ```

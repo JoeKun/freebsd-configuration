@@ -6,13 +6,13 @@ This is partly inspired from [`vermaden`'s great article on `bhyve`](https://ver
 
 Install `vm-bhyve` with its associated firmware package for booting virtual machines with UEFI.
 
-```
+```console
 # pkg install vm-bhyve bhyve-firmware
 ```
 
 Load required kernel modules.
 
-```
+```console
 # kldload if_bridge
 # kldload if_tap
 # kldload nmdm
@@ -21,7 +21,7 @@ Load required kernel modules.
 
 Also add directives in `/boot/loader.conf` to load those same kernel modules at boot time.
 
-```
+```console
 # cat << EOF >> /boot/loader.conf
 
 # Virtual machine support
@@ -34,13 +34,13 @@ EOF
 
 Create new dataset for virtual machines.
 
-```
+```console
 # zfs create -o exec=off -o setuid=off system/var/virtual-machines
 ```
 
 Enable the `vm` service.
 
-```
+```console
 # cat << EOF > /etc/rc.conf.d/vm
 # /etc/rc.conf.d/vm: system configuration for vm
 
@@ -51,20 +51,20 @@ EOF
 
 Prepare scaffolding for virtual machines.
 
-```
+```console
 # vm init
 # cp -f /usr/local/share/examples/vm-bhyve/* /var/virtual-machines/.templates/
 ```
 
 Also install `tmux`, which is much easier to work with than the default console for `vm-bhyve`.
 
-```
+```console
 # pkg install tmux
 ```
 
 And enable `tmux` as the default console.
 
-```
+```console
 # echo "console=tmux" >> /var/virtual-machines/.config/system.conf
 ```
 
@@ -73,13 +73,13 @@ And enable `tmux` as the default console.
 
 Setup NAT network for virtual machines following [this guide](https://github.com/churchers/vm-bhyve/wiki/NAT-Configuration).
 
-```
+```console
 # vm switch create -a 172.16.0.1/24 public
 ```
 
 Enable `gateway` functionality.
 
-```
+```console
 # cat << EOF > /etc/rc.conf.d/routing
 # /etc/rc.conf.d/routing: system configuration for routing
 
@@ -89,7 +89,7 @@ EOF
 
 Create `pf` configuration file to setup NAT for this new internal virtual machines network.
 
-```
+```console
 # cat << 'EOF' > /etc/pf.conf
 # /etc/pf.conf: Configuration for Packet Filter
 
@@ -114,7 +114,7 @@ EOF
 
 Enable `pf` service.
 
-```
+```console
 # cat << EOF > /etc/rc.conf.d/pf
 # /etc/rc.conf.d/pf: system configuration for pf
 
@@ -124,7 +124,7 @@ EOF
 
 Start `pf` and enable gateway functionality without rebooting.
 
-```
+```console
 # sysctl net.inet.ip.forwarding=1
 # service pf start
 ```
@@ -134,7 +134,7 @@ Start `pf` and enable gateway functionality without rebooting.
 
 Create new virtual machine template for FreeBSD using the `uefi` boot loader, as well as the `nvme` driver for the storage block device.
 
-```
+```console
 # cd /var/virtual-machines/.templates
 # cp -av freebsd-zvol.conf freebsd-uefi-nvme-zvol.conf
 # sed -i '' 's/loader="bhyveload"/loader="uefi"/' freebsd-uefi-nvme-zvol.conf
@@ -143,25 +143,25 @@ Create new virtual machine template for FreeBSD using the `uefi` boot loader, as
 
 Download an ISO image for FreeBSD 14.0-RELEASE.
 
-```
+```console
 # vm iso "https://download.freebsd.org/releases/ISO-IMAGES/14.0/FreeBSD-14.0-RELEASE-amd64-disc1.iso"
 ```
 
 Create a new virtual machine using the template `freebsd-uefi-nvme-zvol` and with an appropriate amount of system resources.
 
-```
+```console
 # vm create -t freebsd-uefi-nvme-zvol -s 512G -m 32G -c 16 my_vm
 ```
 
 Start installing the previously downloaded ISO image onto this new `my_vm` virtual machine:
 
-```
+```console
 # vm install my_vm FreeBSD-14.0-RELEASE-amd64-disc1.iso
 ```
 
 Attach the console to the newly started virtual machine.
 
-```
+```console
 # vm console my_vm
 ```
 
@@ -190,7 +190,7 @@ Go through the initial setup, until the partitioning dialog comes up.
 
 In the *Partitioning* dialog, choose the *Shell* option.
 
-```
+```console
 # gpart create -s gpt nda0
 
 # gpart add -a 4k -t efi -l boot -s 200m nda0
@@ -200,7 +200,7 @@ In the *Partitioning* dialog, choose the *Shell* option.
 
 Create the ZFS pool.
 
-```
+```console
 # zpool create -o ashift=12 -o altroot=/mnt -m none system /dev/gpt/system
 # zfs set mountpoint=/ system
 # zfs set checksum=blake3 system
@@ -237,7 +237,7 @@ Create the ZFS pool.
 
 Prepare EFI mount point.
 
-```
+```console
 # mkdir /mnt/boot
 # cd /mnt/boot
 # mkdir efi
@@ -247,7 +247,7 @@ Prepare EFI mount point.
 
 Prepare `fstab` file.
 
-```
+```console
 # cat << EOF > /tmp/bsdinstall_etc/fstab
 # Device            Mountpoint      FStype      Options         Dump    Pass#
 /dev/gpt/boot       /boot/efi       msdosfs     rw              2       2
@@ -296,13 +296,13 @@ The next dialog will will offer the option to *open a shell in the new system*; 
 
 Configure ZFS to load and mount the file systems automatically at boot.
 
-```
+```console
 # echo 'zfs_enable="YES"' >> /etc/rc.conf
 ```
 
 Power the virtual machine off.
 
-```
+```console
 # poweroff
 ```
 
@@ -311,13 +311,13 @@ Power the virtual machine off.
 
 On the host server, start the virtual machine back up.
 
-```
+```console
 # vm start my_vm
 ```
 
 Back in the virtual machine, upgrade the base system.
 
-```
+```console
 # freebsd-update fetch
 # freebsd-update install
 # reboot
