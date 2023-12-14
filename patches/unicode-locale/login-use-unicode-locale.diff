@@ -1,6 +1,7 @@
---- a/login.conf	2021-07-03 15:44:44.154187000 -0700
-+++ b/login.conf	2021-07-03 15:45:22.948238000 -0700
-@@ -26,7 +26,7 @@
+diff -ru a/login.conf b/login.conf
+--- a/login.conf	2023-11-10 00:42:18.000000000 -0800
++++ b/login.conf	2023-12-14 09:09:55.085331000 -0800
+@@ -25,7 +25,7 @@
  	:passwd_format=sha512:\
  	:copyright=/etc/COPYRIGHT:\
  	:welcome=/var/run/motd:\
@@ -9,7 +10,7 @@
  	:mail=/var/mail/$:\
  	:path=/sbin /bin /usr/sbin /usr/bin /usr/local/sbin /usr/local/bin ~/bin:\
  	:nologin=/var/run/nologin:\
-@@ -49,7 +49,7 @@
+@@ -48,7 +48,7 @@
  	:ignoretime@:\
  	:umask=022:\
  	:charset=UTF-8:\
