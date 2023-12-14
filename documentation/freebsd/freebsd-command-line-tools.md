@@ -157,7 +157,23 @@ Replace default configuration file for `vimpager` with a symbolic links to relev
 ```
 
 
-## Install Terminal Markdown Viewer
+## Apply minor adjustment to password prompts
+
+FreeBSD’s default password prompts for `ssh` and `su` lack a space after the `Password:` prompt, which looks a bit inelegant.
+
+You may adjust these password prompts by applying the `authtok_prompt` option in the `auth` rule for `pam_unix.so` in the Pluggable Authentication Module configuration files for `ssh` and `su`.
+
+```console
+# cd /freebsd-configuration/patches/password-prompts
+# ./adjust_password_prompts
+```
+
+
+## Additional command-line tools for unprivileged users
+
+Here are a few more command-line tools you might be interested in using with your [unpriviledged user on FreeBSD](freebsd-unprivileged-user.md).
+
+### Terminal Markdown Viewer
 
 Install the Terminal Markdown Viewer package. [^1]
 
@@ -167,8 +183,7 @@ Install the Terminal Markdown Viewer package. [^1]
 # pkg install py39-mdv
 ```
 
-
-## Install command-line mail client `mutt`
+### Mail client `mutt`
 
 Install the `mutt` package. [^2]
 
@@ -180,8 +195,7 @@ Install the `mutt` package. [^2]
 
 Feel free to check the sample configuration files for `mutt` in the [`home/my_username/.mutt`](https://github.com/JoeKun/freebsd-configuration/tree/main/home/my_username/.mutt) directory of this repository.
 
-
-## Install command-line IRC client `irssi`
+### IRC client `irssi`
 
 Install the `irssi` and `irssi-scripts` packages. [^3]
 
