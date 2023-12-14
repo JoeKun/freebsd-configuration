@@ -15,3 +15,4 @@ If you suspect there may be an unspecified pre-requisite in any of these documen
  5. [Custom package management for FreeBSD with `poudriere`](freebsd-poudriere.md)
  6. [Useful command-line tools for FreeBSD](freebsd-command-line-tools.md)
  7. [Using a Unicode locale on FreeBSD](freebsd-unicode-locale.md)
+ 8. [Creating an unpriviledged user on FreeBSD](freebsd-unprivileged-user.md)

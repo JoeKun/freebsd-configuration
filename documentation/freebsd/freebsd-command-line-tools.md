@@ -83,7 +83,7 @@ Furthermore, in most cases, the approach followed to apply those configuration f
 
 ## Configure `git`
 
-Link to `git` configuration file.
+Link to `git` configuration files.
 
 ```console
 # cd

@@ -8,4 +8,6 @@ Furthermore, when this old documentation is ready to be retired, a few associate
 
  * `home/foo/.gitconfig`
  * `home/foo/.config`
+ * `home/foo/.zshenv`
+ * `home/foo/.zshrc`
  * `etc/rc.conf.d/zfs`
