@@ -1,0 +1,4 @@
+# ~/.config/git/attributes
+
+*.m diff=objc
+

@@ -1,0 +1,35 @@
+# /usr/local/etc/poudriere.d/pkglist
+
+# ports management
+ports-mgmt/pkg
+ports-mgmt/poudriere
+
+# bhyve support
+sysutils/vm-bhyve
+sysutils/bhyve-firmware
+sysutils/tmux
+
+# Command-line utilities
+devel/git
+devel/gmake
+devel/py-mdv
+editors/vim
+ftp/wget
+irc/irssi
+irc/irssi-scripts
+mail/mutt
+misc/figlet
+misc/fortune-mod-freebsd-classic
+misc/mmv
+shells/bash
+shells/zsh
+sysutils/htop
+sysutils/most
+sysutils/pstree
+sysutils/pwgen
+sysutils/screen
+sysutils/vimpager
+textproc/colordiff
+textproc/diff-so-fancy
+textproc/par
+

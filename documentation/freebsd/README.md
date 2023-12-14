@@ -13,3 +13,4 @@ If you suspect there may be an unspecified pre-requisite in any of these documen
  3. [Network file sharing with NFS on FreeBSD](freebsd-network-file-sharing-nfs.md)
  4. [FreeBSD guest virtual machine in FreeBSD host with `bhyve`](freebsd-bhyve-freebsd-guest.md)
  5. [Custom package management for FreeBSD with `poudriere`](freebsd-poudriere.md)
+ 6. [Useful command-line tools for FreeBSD](freebsd-command-line-tools.md)

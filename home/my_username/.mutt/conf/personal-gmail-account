@@ -1,16 +1,16 @@
 # ~/.mutt/conf/personal-gmail-account: Configuration for personal Gmail account
 
 # IMAP and SMTP configuration
-set imap_user = "foo@bar-google-apps-for-your-domain.com"
-set imap_pass = "foo_gafyd_password"
-set smtp_url = "smtp://foo@bar-google-apps-for-your-domain.com@smtp.gmail.com:587/"
-set smtp_pass = "foo_gafyd_password"
+set imap_user = "john@smith-google-workspace-domain.com"
+set imap_pass = "john_smith_gwd_password"
+set smtp_url = "smtp://john@smith-google-workspace-domain.com@smtp.gmail.com:587/"
+set smtp_pass = "john_smith_gwd_password"
 
 # Sender address
-set from = "foo@bar-google-apps-for-your-domain.com"
+set from = "john@smith-google-workspace-domain.com"
 
 # Alternate email addresses; this is useful for group replies.
-alternates ^(foo@baz\.com)$'
+alternates ^(john@other-organization\.com)$'
 
 # Domain name to be used after "@" when the domain name is missing.
 set hostname = gmail.com
