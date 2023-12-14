@@ -1,12 +1,18 @@
 # /etc/fstab: static file system information.
 #
-# <device>              <mount point>           <file system>   <options>      <dump>  <pass>
+# <device>                      <mount point>   <file system>   <options>      <dump>  <pass>
 
-# Special system mountpoints
-linproc                 /compat/linux/proc      linprocfs       rw,late         0       0
-fdesc                   /dev/fd                 fdescfs         rw              0       0
-proc                    /proc                   procfs          rw              0       0
+# EFI boot partitions
+/dev/gpt/boot-sn0               /boot/efi       msdosfs         rw              2       2
+/dev/gpt/boot-sn1               /boot/efi1      msdosfs         rw              2       2
+/dev/gpt/boot-sn2               /boot/efi2      msdosfs         rw              2       2
 
 # Swap
-/dev/gpt/swap           none                    swap            sw              0       0
+/dev/gpt/swap-sn0               none            swap            sw              0       0
+/dev/gpt/swap-sn1               none            swap            sw              0       0
+/dev/gpt/swap-sn2               none            swap            sw              0       0
+
+# Special file systems
+fdesc                           /dev/fd         fdescfs         rw              0       0
+proc                            /proc           procfs          rw              0       0
 

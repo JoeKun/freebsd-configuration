@@ -16,3 +16,4 @@ If you suspect there may be an unspecified pre-requisite in any of these documen
  6. [Useful command-line tools for FreeBSD](freebsd-command-line-tools.md)
  7. [Using a Unicode locale on FreeBSD](freebsd-unicode-locale.md)
  8. [Creating an unpriviledged user on FreeBSD](freebsd-unprivileged-user.md)
+ 9. [Mount special file systems on FreeBSD](freebsd-special-file-systems.md)
