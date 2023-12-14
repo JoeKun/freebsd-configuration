@@ -2,7 +2,7 @@
 
 ## Hardware configuration
 
-### Supermicro System
+### Supermicro system
 
  * **Motherboard:** Supermicro X12SPi-TF
  * **Processor:** Intel Xeon Gold 5317 12 Core 3.0 GHz
@@ -10,7 +10,7 @@
  * **Add-in card:** Gigabyte AORUS Gen-4 AIC 4 x M.2 PCIe Expansion Card Adapter
  * **System storage:** Three Samsung 990 PRO 2 TB - NVMe PCIe 4.0 M.2 2280 SSD
 
-### Installation Media
+### Installation media
 
 You will need one USB flash drive, only used at install time.
 
