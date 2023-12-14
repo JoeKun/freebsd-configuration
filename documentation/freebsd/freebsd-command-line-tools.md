@@ -161,7 +161,7 @@ Replace default configuration file for `vimpager` with a symbolic links to relev
 
 FreeBSD’s default password prompts for `ssh` and `su` lack a space after the `Password:` prompt, which looks a bit inelegant.
 
-You may adjust these password prompts by applying the `authtok_prompt` option in the `auth` rule for `pam_unix.so` in the Pluggable Authentication Module configuration files for `ssh` and `su`.
+You may adjust these password prompts by applying the `authtok_prompt` option in the `auth` rule for `pam_unix.so` in the Pluggable Authentication Module configuration files for `sshd` and `system`.
 
 ```console
 # cd /freebsd-configuration/patches/password-prompts
@@ -175,7 +175,7 @@ Here are a few more command-line tools you might be interested in using with you
 
 ### Terminal Markdown Viewer
 
-Install the Terminal Markdown Viewer package. [^1]
+Install the Terminal Markdown Viewer package.[^1]
 
 [^1]: If you’re using `poudriere`, make sure to build the package `devel/py-mdv` following the pattern described [above](#build-required-packages-using-poudriere).
 
@@ -185,7 +185,7 @@ Install the Terminal Markdown Viewer package. [^1]
 
 ### Mail client `mutt`
 
-Install the `mutt` package. [^2]
+Install the `mutt` package.[^2]
 
 [^2]: If you’re using `poudriere`, make sure to build the package `mail/mutt` following the pattern described [above](#build-required-packages-using-poudriere).
 
@@ -197,7 +197,7 @@ Feel free to check the sample configuration files for `mutt` in the [`home/my_us
 
 ### IRC client `irssi`
 
-Install the `irssi` and `irssi-scripts` packages. [^3]
+Install the `irssi` and `irssi-scripts` packages.[^3]
 
 [^3]: If you’re using `poudriere`, make sure to build the packages `irc/irssi` and `irc/irssi-scripts` following the pattern described [above](#build-required-packages-using-poudriere).
 
