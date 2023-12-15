@@ -1,4 +1,5 @@
 # /etc/rc.conf.d/syslogd: system configuration for syslogd
 
+syslogd_flags="-ss"
 altlog_proglist="named"
 
