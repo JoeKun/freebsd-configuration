@@ -224,7 +224,7 @@ Other system configuration files don't have that restriction.
 
 # rm -f rc.conf ; ln -s ../freebsd-configuration/etc/rc.conf
 # cd rc.conf.d
-# for file_name in cleartmp hostname network ntpd routing sshd zfs; do rm -f ${file_name}; ln -s ../../freebsd-configuration/etc/rc.conf.d/${file_name} ; done
+# for file_name in cleartmp hostname network ntpd routing sshd; do rm -f ${file_name}; ln -s ../../freebsd-configuration/etc/rc.conf.d/${file_name} ; done
 ```
 
 Manually edit `hostname` in `/etc/rc.conf.d/hostname`.
