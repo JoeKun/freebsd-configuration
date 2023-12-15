@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/moused: system configuration for moused
+
+moused_nondefault_enable="NO"
+
