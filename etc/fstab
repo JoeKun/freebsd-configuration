@@ -1,6 +1,6 @@
 # /etc/fstab: static file system information.
 #
-# <device>                      <mount point>   <file system>   <options>      <dump>  <pass>
+# <device>                      <mount point>   <file system>   <options>       <dump>  <pass>
 
 # EFI boot partitions
 /dev/gpt/boot-sn0               /boot/efi       msdosfs         rw              2       2
