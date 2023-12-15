@@ -1,0 +1,3 @@
+# /etc/rc.conf.d/lockd: system configuration for lockd
+
+rpc_lockd_enable="YES"

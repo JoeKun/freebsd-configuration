@@ -1,0 +1,3 @@
+# /etc/rc.conf.d/rpcbind: system configuration for rpcbind
+
+rpcbind_enable="YES"

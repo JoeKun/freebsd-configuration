@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/mountd: system configuration for mountd
+
+mountd_enable="YES"
+mountd_flags="-n"

@@ -1,0 +1,3 @@
+# /etc/rc.conf.d/nfsd: system configuration for nfsd
+
+nfs_server_enable="YES"
