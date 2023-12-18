@@ -1791,7 +1791,7 @@ You should now be able to boot successfully into the installer. Go through it as
  - Subnet: 172.16.0.0/24
  - Address: 172.16.0.10
  - Gateway: 172.16.0.1
- - Name servers: 1.1.1.1,1.0.0.1
+ - Name servers: 10.0.0.1
  - Search domains: none (leave empty)
 
 When the installation is over, you can log into your machine for the first time. You can also detach the console by pressing ^+B and then D (control + B and then D).

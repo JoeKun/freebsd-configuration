@@ -271,8 +271,8 @@ Decline configuring IPv6 for the virtual network adapter.
 Then the *Resolver Configuration* dialog comes up, use the following DNS settings.
 
  * *Search*: none (leave empty)
- * IPv4 DNS #1: `1.1.1.1`
- * IPv4 DNS #2: `1.0.0.1`
+ * IPv4 DNS #1: `10.0.0.1`
+ * IPv4 DNS #2: none (leave empty)
 
 ### Complete installation
 
