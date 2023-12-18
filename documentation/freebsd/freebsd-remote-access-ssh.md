@@ -4,7 +4,9 @@ FreeBSD includes OpenSSH as part of the base operating system. Here are instruct
 
 ## Enable `sshd` service
 
-In case you haven’t selected `sshd` as one of the enabled services in the FreeBSD installer, you can enable by setting `sshd_enable="YES"` in your system configuration.
+In case you haven’t selected `sshd` as one of the enabled services in the FreeBSD installer, you can enable by setting `sshd_enable="YES"` in your system configuration.[^1]
+
+[^1]: System configuration options are placed in discrete system configuration files according to the principles outlined in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
 
 ```console
 # cat << EOF > /etc/rc.conf.d/sshd
@@ -61,14 +63,14 @@ On the FreeBSD server, add this public key to the `~/.ssh/authorized_keys` file.
 
 ### Update `sshd` configuration to allow `root` login with an SSH key
 
-Allowing `root` login with an SSH key can be achieved by setting the configuration option `PermitRootLogin prohibit-password` in `/etc/ssh/sshd_config`.[^1]
+Allowing `root` login with an SSH key can be achieved by setting the configuration option `PermitRootLogin prohibit-password` in `/etc/ssh/sshd_config`.[^2]
 
 ```console
 # cd /etc/ssh
 # sed -i '' 's/^#PermitRootLogin no$/PermitRootLogin prohibit-password/' sshd_config
 ```
 
-[^1]: An equivalent patch for `sshd_config` can also be found in this `freebsd-configuration` repository at the following location: `patches/sshd/sshd-allow-root-login-using-ssh-key.diff`.
+[^2]: An equivalent patch for `sshd_config` can also be found in this `freebsd-configuration` repository at the following location: `patches/sshd/sshd-allow-root-login-using-ssh-key.diff`.
 
 Then reload the `sshd` service.
 
@@ -83,9 +85,9 @@ As seen in the following [FreeBSD commit](https://svnweb.freebsd.org/base?view=r
 
 Unfortunately, leaving `UseDNS` enabled can result in significant delays when logging in, especially from a client machine in a network where the public IP address doesn’t have a proper reverse DNS entry. Furthermore, `UseDNS` seems [pretty pointless for most people](http://unix.stackexchange.com/questions/56941/what-is-the-point-of-sshd-usedns-option#answer-56947).
 
-For those reasons, disabling `UseDNS` can be a good idea.[^2]
+For those reasons, disabling `UseDNS` can be a good idea.[^3]
 
-[^2]: An equivalent patch for `sshd_config` can also be found in this `freebsd-configuration` repository at the following location: `patches/sshd/sshd-disable-usedns-configuration-option.diff`.
+[^3]: An equivalent patch for `sshd_config` can also be found in this `freebsd-configuration` repository at the following location: `patches/sshd/sshd-disable-usedns-configuration-option.diff`.
 
 ```console
 # cd /etc/ssh

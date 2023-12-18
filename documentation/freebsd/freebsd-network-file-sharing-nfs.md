@@ -2,7 +2,9 @@
 
 ## Enable required services
 
-Enable a few services on your file server running FreeBSD.
+Enable a few services on your file server running FreeBSD.[^1]
+
+[^1]: System configuration options are placed in discrete system configuration files according to the principles outlined in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
 
 ### `nfsd`
 

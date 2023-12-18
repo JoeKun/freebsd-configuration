@@ -38,7 +38,9 @@ Create new dataset for virtual machines.
 # zfs create -o exec=off -o setuid=off system/var/virtual-machines
 ```
 
-Enable the `vm` service.
+Enable the `vm` service.[^1]
+
+[^1]: System configuration options are placed in discrete system configuration files according to the principles outlined in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
 
 ```console
 # cat << EOF > /etc/rc.conf.d/vm
@@ -77,7 +79,9 @@ Setup NAT network for virtual machines following [this guide](https://github.com
 # vm switch create -a 172.16.0.1/24 public
 ```
 
-Enable `gateway` functionality.
+Enable `gateway` functionality.[^2]
+
+[^2]: As shown in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
 
 ```console
 # cat << EOF > /etc/rc.conf.d/routing
@@ -112,7 +116,9 @@ nat on $ext_if inet from $vm_subnet to any -> ($ext_if)
 EOF
 ```
 
-Enable `pf` service.
+Enable `pf` service.[^3]
+
+[^3]: As shown in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
 
 ```console
 # cat << EOF > /etc/rc.conf.d/pf
