@@ -1856,7 +1856,7 @@ Configure and enable a new `redis` instance dedicated to GitLab:
 Install other required dependencies:
 
 ```
-# pkg install sudo bash icu cmake pkgconf node npm phantomjs krb5 gmake go libtool bison re2 yarn libgit2 ruby rubygem-bundler
+# pkg install sudo bash icu cmake pkgconf node npm phantomjs krb5 gmake go rust libtool bison re2 yarn libgit2 ruby rubygem-bundler
 ```
 
 Install a custom FreeBSD equivalent of Linux's `nproc` command:
@@ -1891,7 +1891,7 @@ Install `bundler` for that specific version of ruby:
 ```
 # source /usr/local/share/chruby/chruby.sh
 # chruby ruby-3.1.4
-# gem install bundler -v "2.4.21"
+# gem install bundler -v "2.4.22"
 ```
 
 Add unprivileged user for GitLab:

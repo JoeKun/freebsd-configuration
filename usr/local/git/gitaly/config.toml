@@ -1,36 +1,42 @@
-# Example Gitaly configuration file
-# Documentation lives at https://docs.gitlab.com/ee/administration/gitaly/ and
-# https://docs.gitlab.com/ee//administration/gitaly/reference
+# Example Gitaly configuration file.
+# For Gitaly documentation, see https://docs.gitlab.com/ee/administration/gitaly/
 
+# A path which Gitaly should open a Unix socket.
 socket_path = "/usr/local/git/gitlab/tmp/sockets/private/gitaly.socket"
 
-# The directory where Gitaly's executables are stored
+# Directory containing Gitaly executables.
 bin_dir = "/usr/local/git/gitaly/_build/bin"
 
-# # Optional: The directory where Gitaly can create all files required to
+# # Optional. The directory where Gitaly can create all files required to
 # # properly operate at runtime. If not set, Gitaly will create a directory in
 # # the global temporary directory. This directory must exist.
 # runtime_dir = "/usr/local/git/gitaly/run"
 
-# # Optional: listen on a TCP socket. This is insecure (no authentication)
+# # Optional if socket_path is set. TCP address for Gitaly to listen on. This is insecure (unencrypted connection).
 # listen_addr = "localhost:9999"
+
+# # Optional. TCP over TLS address for Gitaly to listen on.
 # tls_listen_addr = "localhost:8888"
 
-# # Optional: export metrics via Prometheus
+# # Optional. TCP listen address for Prometheus metrics. If not set, no Prometheus listener is started.
 # prometheus_listen_addr = "localhost:9236"
 
-# # Optional: configure where the Gitaly creates the sockets for internal connections. If unset, Gitaly will create a randomly
-# # named temp directory each time it boots.
-# # Non Gitaly clients should never connect to these sockets.
-# internal_socket_dir = "/usr/local/git/gitlab/tmp/sockets/private/internal"
-
-# # Optional: authenticate Gitaly requests using a shared secret
+# # Optional. Authenticate Gitaly requests using a shared secret.
+# # Gitaly rejects requests that do not contain the authentication token in their headers.
+# # Authentication is disabled when the token setting is absent or an empty string.
 # [auth]
 # token = 'abc123secret'
-# transitioning = false # Set `transitioning` to true to temporarily allow unauthenticated while rolling out authentication.
+# # Set `transitioning` to true to temporarily allow unauthenticated while rolling out authentication. This allows you
+# # to monitor if all clients are authenticating correctly without causing a service outage for clients that are still
+# # to be configured correctly.
+# # Remember to disable transitioning when you are done changing your token settings.
+# transitioning = false
 
+# # Gitaly supports TLS encryption. You must bring your own certificates because this isn’t provided automatically.
 # [tls]
+# # Path to the certificate.
 # certificate_path = '/usr/local/git/cert.cert'
+# # Path to the key.
 # key_path = '/usr/local/git/key.pem'
 
 # # Git settings
@@ -41,9 +47,12 @@ bin_path = "/usr/local/bin/git"
 # [[git.config]]
 # key = fetch.fsckObjects
 # value = true
-
+# # Storages are the directories where Gitaly stores its data such as the repositories and runtime state.
+# # Each storage must have a unique name.
 [[storage]]
+# # The name of the storage
 name = "default"
+# # The path to the storage.
 path = "/usr/local/git/repositories"
 
 # # You can optionally configure more storages for this Gitaly instance to serve up
@@ -58,7 +67,7 @@ path = "/usr/local/git/repositories"
 # # The directory where Gitaly stores extra log files
 dir = "/usr/local/git/gitlab/log"
 # format = "json"
-# # Optional: Set log level to only log entries with that severity or above
+# # Optional. Set log level to only log entries with that severity or above
 # # One of, in order: debug, info, warn, errror, fatal, panic
 # # Defaults to "info"
 # level = "warn"

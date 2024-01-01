@@ -11,10 +11,10 @@ index 3d7fb5c2532a..404d11c58687 100644
 +  version: '1981cf8c0206657a16f73f48d43a313c65485d5e'
 +  sha256: 19a8056f07061b110f315d4d84320010ee27436f6879eca93a02590871ad62cc
 diff --git a/ext/re2/recipes.rb b/ext/re2/recipes.rb
-index 18e5d01f9d70..61438be19c12 100644
+index c64e5bc43432..4afe69cf45b9 100644
 --- a/ext/re2/recipes.rb
 +++ b/ext/re2/recipes.rb
-@@ -27,7 +27,7 @@ def load_recipes
+@@ -35,7 +35,7 @@ def load_recipes
  
    abseil_recipe = build_recipe('abseil', dependencies['abseil']['version']) do |recipe|
      recipe.files = [{
