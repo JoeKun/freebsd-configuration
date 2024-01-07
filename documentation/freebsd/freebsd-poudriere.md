@@ -295,7 +295,10 @@ On the `my_poudriere` virtual machine, update both the jail and both of the port
 Build packages for updated ports.
 
 ```console
-# poudriere bulk -j my_poudriere-amd64-14-0 -p 2023Q4 -f /usr/local/etc/poudriere.d/pkglist
+# poudriere bulk \
+    -j my_poudriere-amd64-14-0 \
+    -p 2023Q4 \
+    -f /usr/local/etc/poudriere.d/pkglist
 ```
 
 
@@ -316,7 +319,10 @@ If the default set of options for this package don’t suit you, you may customi
 And start building again.
 
 ```console
-# poudriere bulk -j my_poudriere-amd64-14-0 -p 2023Q4 -f /usr/local/etc/poudriere.d/pkglist
+# poudriere bulk \
+    -j my_poudriere-amd64-14-0 \
+    -p 2023Q4 \
+    -f /usr/local/etc/poudriere.d/pkglist
 ```
 
 
@@ -336,3 +342,44 @@ Recreate the default ports tree to target the same branch.
 ```
 
 It’s sad to have to recreate the default ports tree entirely, but there is [no built-in support to switch branches for an existing ports tree in `poudriere` yet](https://github.com/freebsd/poudriere/issues/508).
+
+Then start building packages from this new quarterly branch.
+
+```console
+# poudriere bulk \
+    -j my_poudriere-amd64-14-0 \
+    -p 2024Q1 \
+    -f /usr/local/etc/poudriere.d/pkglist
+```
+
+Once the build is complete, update the symbolic link for the current set of quarterly packages.
+
+```console
+# cd /usr/local/poudriere/data/packages
+# rm -f my_poudriere-amd64-14-0-quarterly
+# ln -s my_poudriere-amd64-14-0-2024Q1 my_poudriere-amd64-14-0-quarterly
+```
+
+Assuming the new packages built from the new quarterly ports branch are satisfactory, the old ports tree can be removed.
+
+```console
+# poudriere ports -d -p 2023Q4
+```
+
+There are a number of other artifacts associated with that old ports tree that can also be removed manually.
+
+```console
+# cd /usr/local/poudriere/data
+# rm -R -f packages/my_poudriere-amd64-14-0-2023Q4
+# rm -R -f cache/my_poudriere-amd64-14-0-2023Q4
+# rmdir .m/my_poudriere-amd64-14-0-2023Q4
+
+# rm -R -f logs/bulk/my_poudriere-amd64-14-0-2023Q4
+# find logs/bulk/latest-per-pkg -iname "*2023Q4*" -delete
+# find logs/bulk/latest-per-pkg -type d -empty -delete
+
+# cd /var/run/poudriere
+# rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-14-0-2023Q4.flock
+# rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-14-0-2023Q4.pid
+# rm -f poudriere.my_poudriere-amd64-14-0-2023Q4.lock.pid.flock
+```
