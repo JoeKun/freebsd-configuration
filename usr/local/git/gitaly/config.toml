@@ -1,5 +1,5 @@
 # Example Gitaly configuration file.
-# For Gitaly documentation, see https://docs.gitlab.com/ee/administration/gitaly/
+# For Gitaly documentation, see https://docs.gitlab.com/ee/administration/gitaly/.
 
 # A path which Gitaly should open a Unix socket.
 socket_path = "/usr/local/git/gitlab/tmp/sockets/private/gitaly.socket"
@@ -42,8 +42,12 @@ bin_dir = "/usr/local/git/gitaly/_build/bin"
 # # Git settings
 [git]
 bin_path = "/usr/local/bin/git"
+# # Maximum number of cached 'cat-file' processes, which constitute a pair of 'git cat-file --batch' and
+# # 'git cat-file --batch-check' processes. Defaults to '100'.
 # catfile_cache_size = 100
-#
+# # Path to GPG signing key. If not set, Gitaly doesn’t sign commits made using the UI.
+# signing_key = ""
+
 # [[git.config]]
 # key = fetch.fsckObjects
 # value = true
@@ -62,32 +66,44 @@ path = "/usr/local/git/repositories"
 # path = "/mnt/other_storage/repositories"
 #
 
-# # You can optionally configure Gitaly to output JSON-formatted log messages to stdout
+# # Optional. Configure Gitaly to output JSON-formatted log messages to stdout.
 # [logging]
-# # The directory where Gitaly stores extra log files
+# # Directory where Gitaly stores extra log files.
 dir = "/usr/local/git/gitlab/log"
+# # Log format. Either 'text' or 'json'.
 # format = "json"
-# # Optional. Set log level to only log entries with that severity or above
-# # One of, in order: debug, info, warn, errror, fatal, panic
-# # Defaults to "info"
+# # Optional. Set log level to only log entries with that severity or above.
+# # Valid values are, in order, 'debug', 'info', 'warn', 'error', 'fatal', and 'panic'. Defaults to 'info'.
 # level = "warn"
-#
-# # Additionally exceptions from the Go server can be reported to Sentry
+# # Additionally, exceptions from the Go server can be reported to Sentry. Sentry DSN (Data Source Name)
+# # for exception monitoring.
 # sentry_dsn = "https://<key>:<secret>@sentry.io/<project>"
+# # Sentry Environment for exception monitoring.
+sentry_environment = ""
 
-# # You can optionally configure Gitaly to record histogram latencies on GRPC method calls
+# # Optional. Configure Gitaly to record histogram latencies on GRPC method calls in Prometheus.
 # [prometheus]
+# # Prometheus stores each observation in a bucket, which means you’d get an approximation of latency. Optimizing the
+# # buckets gives more control over the accuracy of the approximation.
 # grpc_latency_buckets = [0.001, 0.005, 0.025, 0.1, 0.5, 1.0, 10.0, 30.0, 60.0, 300.0, 1500.0]
 
+# # Custom Git hooks that are used to perform tasks based on changes performed in any repository.
 [hooks]
+# # Directory where custom Git hooks are installed. If left unset, no custom hooks are used.
 custom_hooks_dir = "/usr/local/git/custom_hooks"
 
+# # Gitaly must connect to the GitLab application to perform access checks when a user performs a change.
 [gitlab]
-secret_file = "/usr/local/git/gitlab-shell/.gitlab_shell_secret"
+# # URL of the GitLab server.
 url = "http+unix://%2Fusr%2Flocal%2Fgit%2Fgitlab%2Ftmp%2Fsockets%2Fgitlab-workhorse.socket"
-# Only needed if a UNIX socket is used in `url` and GitLab is configured to
-# use a relative path (e.g. /gitlab).
+# # 'relative_url_root' is only needed if a UNIX socket is used in 'url' and GitLab is configured to
+# # use a relative path. For example, '/gitlab'.
 # relative_url_root = '/'
+# # Path of the file containing the secret token used to authenticate with GitLab. Use either 'secret_token' or 'secret'
+# # but not both.
+secret_file = "/usr/local/git/gitlab-shell/.gitlab_shell_secret"
+# # Secret token used to authenticate with GitLab.
+# secret = ""
 
 [gitlab.http-settings]
 # read_timeout = 300
@@ -99,7 +115,9 @@ self_signed_cert = false
 
 # # You can adjust the concurrency of each RPC endpoint
 # [[concurrency]]
+# # Name of the RPC endpoint.
 # rpc = "/gitaly.RepositoryService/OptimizeRepository"
+# # Concurrency per RPC per repository.
 # max_per_repo = 1
 # max_queue_wait = "1m"
 # max_queue_size = 10
