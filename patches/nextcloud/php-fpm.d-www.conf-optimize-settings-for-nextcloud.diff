@@ -1,7 +1,7 @@
 diff -ru a/php-fpm.d/www.conf b/php-fpm.d/www.conf
---- a/php-fpm.d/www.conf	2022-04-06 19:43:02.911169000 -0700
-+++ b/php-fpm.d/www.conf	2022-04-06 19:44:35.254029000 -0700
-@@ -398,7 +398,7 @@
+--- a/php-fpm.d/www.conf	2024-02-04 21:45:32.854844000 -0800
++++ b/php-fpm.d/www.conf	2024-02-04 22:09:53.919295000 -0800
+@@ -449,7 +449,7 @@
  ; Setting to "no" will make all environment variables available to PHP code
  ; via getenv(), $_ENV and $_SERVER.
  ; Default Value: yes
@@ -10,7 +10,7 @@ diff -ru a/php-fpm.d/www.conf b/php-fpm.d/www.conf
  
  ; Limits the extensions of the main script FPM will allow to parse. This can
  ; prevent configuration mistakes on the web server side. You should only limit
-@@ -412,7 +412,7 @@
+@@ -463,7 +463,7 @@
  ; the current environment.
  ; Default Value: clean env
  ;env[HOSTNAME] = $HOSTNAME

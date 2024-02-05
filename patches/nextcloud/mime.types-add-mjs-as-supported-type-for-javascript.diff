@@ -1,0 +1,12 @@
+diff -ru a/mime.types b/mime.types
+--- a/mime.types	2024-01-08 16:50:44.000000000 -0800
++++ b/mime.types	2024-02-04 22:29:54.643509000 -0800
+@@ -5,7 +5,7 @@
+     text/xml                                         xml;
+     image/gif                                        gif;
+     image/jpeg                                       jpeg jpg;
+-    application/javascript                           js;
++    application/javascript                           js mjs;
+     application/atom+xml                             atom;
+     application/rss+xml                              rss;
+ 

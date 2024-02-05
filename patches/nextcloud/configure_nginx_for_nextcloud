@@ -1,0 +1,5 @@
+#! /bin/sh
+
+cd /usr/local/etc/nginx
+patch --posix -p1 -i /freebsd-configuration/patches/nextcloud/mime.types-add-mjs-as-supported-type-for-javascript.diff
+

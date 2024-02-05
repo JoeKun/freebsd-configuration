@@ -576,7 +576,7 @@ Some examples of how you can use these scripts to populate the LDAP directory ca
 
 ```
 # pkg install nginx
-# pkg install php81
+# pkg install php82
 ```
 
 Add `www` user to `ssl` group:
@@ -720,7 +720,7 @@ We should restart the MySQL service to ensure that our instance immediately impl
 # `phpMyAdmin`
 
 ```
-# pkg install phpMyAdmin-php81
+# pkg install phpMyAdmin-php82
 ```
 
 Create the `phpMyAdmin` storage database, as well as the `phpmyadmin` MySQL user with the right privileges:
@@ -817,7 +817,7 @@ $ rm -f ~/.psql_history
 ## `phpPgAdmin`
 
 ```
-# pkg install phppgadmin-php81
+# pkg install phppgadmin-php82
 # cd /freebsd-configuration/patches/phppgadmin
 # ./configure_phppgadmin
 ```
@@ -834,7 +834,7 @@ Enable `phpPgAdmin` configuration for `nginx`.
 ## `phpLDAPAdmin`
 
 ```
-# pkg install phpldapadmin-php81
+# pkg install phpldapadmin-php82
 ```
 
 Enable `phpLDAPAdmin` configuration for `nginx`.
@@ -1338,7 +1338,7 @@ See if any dependency is missing:
 If any, install the dependency using `pkg`. For example:
 
 ```
-# pkg install textproc/php81-dom devel/php81-intl sysutils/php81-fileinfo graphics/php81-exif databases/php81-pdo_pgsql databases/php81-pdo
+# pkg install textproc/php82-dom devel/php82-intl sysutils/php82-fileinfo graphics/php82-exif databases/php82-pdo_pgsql databases/php82-pdo
 # service php-fpm restart
 ```
 
@@ -1346,7 +1346,7 @@ Then proceed to installing `roundcube`:
 
 ```
 # make all install clean
-# pkg lock roundcube-php81
+# pkg lock roundcube-php82
 ```
 
 Create `roundcube` PostgreSQL database:
@@ -1443,7 +1443,7 @@ Restart `nginx`:
 Follow [these instructions](https://afterlogic.com/docs/webmail-pro-8/installation/compatibility-test) by going to `https://mail.foo.com/?install` with your web browser, in order to figure out if your server meets the minimum requirements to run AfterLogic WebMail Pro. You might need to install additional PHP modules; for example, you might need to do the following:
 
 ```
-# pkg install php81-pdo_mysql php81-tokenizer
+# pkg install php82-pdo_mysql php82-tokenizer
 # service php-fpm restart
 ```
 
@@ -2036,15 +2036,15 @@ See if any dependency is missing:
 If any, install the dependencies using `pkg`. For example:
 
 ```
-# pkg install php81-pecl-imagick-im7 php81-pecl-redis php81-pecl-APCu
-# pkg install math/php81-bcmath ftp/php81-curl math/php81-gmp devel/php81-pcntl devel/php81-sysvsem sysutils/php81-posix textproc/php81-simplexml textproc/php81-xmlreader textproc/php81-xmlwriter textproc/php81-xsl www/php81-opcache
+# pkg install php82-pecl-imagick php82-pecl-redis php82-pecl-APCu
+# pkg install math/php82-bcmath ftp/php82-curl math/php82-gmp devel/php82-pcntl sysutils/php82-posix textproc/php82-simplexml security/php82-sodium textproc/php82-xmlreader textproc/php82-xmlwriter textproc/php82-xsl www/php82-opcache devel/php82-sysvsem
 ```
 
 Then proceed to installing `nextcloud`:
 
 ```
 # make all install clean
-# pkg lock nextcloud-php81
+# pkg lock nextcloud-php82
 ```
 
 Prepare database:
@@ -2071,6 +2071,13 @@ Adjust `php` configuration with some optimizations for Nextcloud.
 # cd /freebsd-configuration/patches/nextcloud
 # ./configure_php_for_nextcloud
 # service php-fpm restart
+```
+
+Adjust global `nginx` configuration to be compatible with Nextcloud's requirements.
+
+```
+# cd /freebsd-configuration/patches/nextcloud
+# ./configure_nginx_for_nextcloud
 ```
 
 Enable `nginx` configuration for Nextcloud:
@@ -2280,7 +2287,7 @@ Install the `ingest-attachment` plugin for Elasticsearch, which is required to f
 Install the `readline` PHP package:
 
 ```
-# pkg install php81-readline
+# pkg install php82-readline
 # service php-fpm restart
 # service nginx restart
 ```

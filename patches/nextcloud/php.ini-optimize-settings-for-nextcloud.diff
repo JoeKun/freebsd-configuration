@@ -1,16 +1,16 @@
 diff -ru a/php.ini b/php.ini
---- a/php.ini	2022-04-06 19:48:39.185151000 -0700
-+++ b/php.ini	2022-04-06 19:40:39.387726000 -0700
-@@ -406,7 +406,7 @@
+--- a/php.ini	2024-02-04 21:46:22.216970000 -0800
++++ b/php.ini	2024-02-04 22:07:06.127503000 -0800
+@@ -432,7 +432,7 @@
  
  ; Maximum amount of memory a script may consume
  ; https://php.net/memory-limit
 -memory_limit = 128M
-+memory_limit = 512M
++memory_limit = 768M
  
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ; Error handling and logging ;
-@@ -1764,22 +1764,26 @@
+@@ -1781,22 +1781,26 @@
  [dba]
  ;dba.default_handler=
  
@@ -42,7 +42,7 @@ diff -ru a/php.ini b/php.ini
  
  ; The maximum percentage of "wasted" memory until a restart is scheduled.
  ;opcache.max_wasted_percentage=5
-@@ -1797,14 +1801,14 @@
+@@ -1814,14 +1818,14 @@
  ; How often (in seconds) to check file timestamps for changes to the shared
  ; memory storage allocation. ("1" means validate once per second, but only
  ; once per request. "0" means always validate)
@@ -57,5 +57,5 @@ diff -ru a/php.ini b/php.ini
 -;opcache.save_comments=1
 +opcache.save_comments=1
  
- ; Allow file existence override (file_exists, etc.) performance feature.
- ;opcache.enable_file_override=0
+ ; If enabled, compilation warnings (including notices and deprecations) will
+ ; be recorded and replayed each time a file is included. Otherwise, compilation
