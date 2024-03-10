@@ -1,8 +1,8 @@
 diff --git a/bazel/grpc_deps.bzl b/bazel/grpc_deps.bzl
-index 9f02b3f8e3ca..160377bcefdf 100644
+index a982d8079b5a..ec4f43ce6c1a 100644
 --- a/bazel/grpc_deps.bzl
 +++ b/bazel/grpc_deps.bzl
-@@ -328,11 +328,10 @@ def grpc_deps():
+@@ -343,11 +343,10 @@ def grpc_deps():
      if "com_google_absl" not in native.existing_rules():
          http_archive(
              name = "com_google_absl",
@@ -18,7 +18,7 @@ index 9f02b3f8e3ca..160377bcefdf 100644
          )
  
 diff --git a/templates/gRPC-C++.podspec.template b/templates/gRPC-C++.podspec.template
-index 51020aa19145..03715ee3ba15 100644
+index 739e2af928d8..412047ac97b8 100644
 --- a/templates/gRPC-C++.podspec.template
 +++ b/templates/gRPC-C++.podspec.template
 @@ -174,7 +174,7 @@
@@ -31,7 +31,7 @@ index 51020aa19145..03715ee3ba15 100644
        ss.dependency '${abseil_spec}', abseil_version
        % endfor
 diff --git a/templates/gRPC-Core.podspec.template b/templates/gRPC-Core.podspec.template
-index 6bdea60c5214..7998064ef438 100644
+index 626e67b4a706..e5dcf5775e8a 100644
 --- a/templates/gRPC-Core.podspec.template
 +++ b/templates/gRPC-Core.podspec.template
 @@ -122,7 +122,7 @@
@@ -51,12 +51,12 @@ index 29bf8085f3bf..fb3621f4f897 160000
 -Subproject commit 29bf8085f3bf17b84d30e34b3d7ff8248fda404e
 +Subproject commit fb3621f4f897824c0dbe0615fa94543df6192f30
 diff --git a/tools/run_tests/sanity/check_submodules.sh b/tools/run_tests/sanity/check_submodules.sh
-index feeaba9c5ab0..54e59fbef073 100755
+index 38b1cb4e201c..49f2d579148a 100755
 --- a/tools/run_tests/sanity/check_submodules.sh
 +++ b/tools/run_tests/sanity/check_submodules.sh
 @@ -25,7 +25,7 @@ want_submodules=$(mktemp /tmp/submXXXXXX)
  
- git submodule | awk '{ print $2 " " $1 }' | sort >"$submodules"
+ git submodule | sed 's/+//g' | awk '{ print $2 " " $1 }' | sort >"$submodules"
  cat <<EOF | sort >"$want_submodules"
 -third_party/abseil-cpp 29bf8085f3bf17b84d30e34b3d7ff8248fda404e
 +third_party/abseil-cpp fb3621f4f897824c0dbe0615fa94543df6192f30
