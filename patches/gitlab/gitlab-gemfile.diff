@@ -1,8 +1,8 @@
 diff --git a/Gemfile b/Gemfile
-index f60cd85d493d..d05777132497 100644
+index dccd147ca501..b44b5bf150f8 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -56,7 +56,7 @@ gem 'pg', '~> 1.5.4' # rubocop:todo Gemfile/MissingFeatureCategory
+@@ -56,7 +56,7 @@ gem 'pg', '~> 1.5.6' # rubocop:todo Gemfile/MissingFeatureCategory
  
  gem 'neighbor', '~> 0.2.3' # rubocop:todo Gemfile/MissingFeatureCategory
  
@@ -11,7 +11,7 @@ index f60cd85d493d..d05777132497 100644
  
  gem 'faraday', '~> 1.0' # rubocop:todo Gemfile/MissingFeatureCategory
  gem 'marginalia', '~> 1.11.1' # rubocop:todo Gemfile/MissingFeatureCategory
-@@ -481,7 +481,7 @@ group :development, :test, :coverage do
+@@ -483,7 +483,7 @@ group :development, :test, :coverage do
    gem 'simplecov', '~> 0.22', require: false, feature_category: :tooling
    gem 'simplecov-lcov', '~> 0.8.0', require: false, feature_category: :tooling
    gem 'simplecov-cobertura', '~> 2.1.0', require: false, feature_category: :tooling
@@ -21,10 +21,10 @@ index f60cd85d493d..d05777132497 100644
  
  # Gems required in omnibus-gitlab pipeline
 diff --git a/Gemfile.lock b/Gemfile.lock
-index 8648c235f491..456fac4c12f9 100644
+index e00e49f2f69e..488bf0168d48 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -361,6 +361,7 @@ GEM
+@@ -359,6 +359,7 @@ GEM
        erubi (>= 1.0.0)
        rack (>= 0.9.0)
        rouge (>= 1.0.0)
@@ -32,7 +32,7 @@ index 8648c235f491..456fac4c12f9 100644
      bindata (2.4.11)
      binding_of_caller (1.0.0)
        debug_inspector (>= 0.0.1)
-@@ -1533,7 +1534,7 @@ GEM
+@@ -1536,7 +1537,7 @@ GEM
      rubyntlm (0.6.3)
      rubypants (0.2.0)
      rubyzip (2.3.2)
@@ -41,7 +41,7 @@ index 8648c235f491..456fac4c12f9 100644
      safe_yaml (1.0.4)
      safety_net_attestation (0.4.0)
        jwt (~> 2.0)
-@@ -1728,10 +1729,11 @@ GEM
+@@ -1721,10 +1722,11 @@ GEM
      tzinfo (2.0.6)
        concurrent-ruby (~> 1.0)
      uber (0.1.0)
@@ -55,16 +55,16 @@ index 8648c235f491..456fac4c12f9 100644
      unf (0.1.4)
        unf_ext
      unf_ext (0.0.8.2)
-@@ -2094,7 +2096,7 @@ DEPENDENCIES
+@@ -2087,7 +2089,7 @@ DEPENDENCIES
    ruby-progressbar (~> 1.10)
    ruby-saml (~> 1.15.0)
    rubyzip (~> 2.3.2)
 -  rugged (~> 1.6)
 +  rugged (~> 1.7)
    sanitize (~> 6.0.2)
-   sassc-rails (~> 2.1.0)
    sd_notify (~> 0.1.0)
-@@ -2135,7 +2137,7 @@ DEPENDENCIES
+   seed-fu (~> 2.3.7)
+@@ -2127,7 +2129,7 @@ DEPENDENCIES
    toml-rb (~> 2.2.0)
    truncato (~> 0.7.12)
    typhoeus (~> 1.4.0)
