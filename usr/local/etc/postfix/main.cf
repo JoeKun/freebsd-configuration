@@ -126,7 +126,6 @@ smtpd_tls_security_level = may
 smtpd_tls_auth_only = yes
 smtpd_tls_received_header = yes
 smtpd_tls_dh512_param_file = ${config_directory}/dh512.pem
-smtpd_tls_dh1024_param_file = ${config_directory}/dh2048.pem
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_tlscache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_tlscache
 
