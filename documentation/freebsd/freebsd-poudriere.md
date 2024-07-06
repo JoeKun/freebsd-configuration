@@ -381,5 +381,7 @@ There are a number of other artifacts associated with that old ports tree that c
 # cd /var/run/poudriere
 # rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-14-0-2023Q4.flock
 # rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-14-0-2023Q4.pid
+# rm -f lock-poudriere-shared-jail_start_my_poudriere-amd64-14-0-2023Q4.flock
+# rm -f lock-poudriere-shared-jail_start_my_poudriere-amd64-14-0-2023Q4.pid
 # rm -f poudriere.my_poudriere-amd64-14-0-2023Q4.lock.pid.flock
 ```
