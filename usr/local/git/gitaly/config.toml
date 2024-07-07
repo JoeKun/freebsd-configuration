@@ -156,7 +156,17 @@ self_signed_cert = false
 # # The destination object-storage URL.
 # go_cloud_url = "gs://gitaly-backups"
 # # Optional: defaults to pointer
-# # layout = "pointer"
+# layout = "pointer"
+# # The object-storage URL for write-ahead log backups.
+# wal_backup_go_cloud_url = "gs://gitaly-wal-backups"
+# # Optional: defaults to 1
+# # The number of goroutines performing write-ahead log backups.
+# wal_backup_worker_count = 1
+
+# # Bundle-URI
+# [bundle_uri]
+# # The destination object-storage URL.
+# go_cloud_url = "gs://my-bundle-uri-bucket"
 
 # # Negotiation timeouts for remote Git operations
 # [timeout]

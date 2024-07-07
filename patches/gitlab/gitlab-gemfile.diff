@@ -1,17 +1,17 @@
 diff --git a/Gemfile b/Gemfile
-index 166fd779f666..2d19dfbc84e0 100644
+index d8f93f9280b1..443c9d404795 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -56,7 +56,7 @@ gem 'pg', '~> 1.5.6' # rubocop:todo Gemfile/MissingFeatureCategory
+@@ -56,7 +56,7 @@ gem 'pg', '~> 1.5.6', feature_category: :database
  
- gem 'neighbor', '~> 0.2.3' # rubocop:todo Gemfile/MissingFeatureCategory
+ gem 'neighbor', '~> 0.3.2', feature_category: :duo_chat
  
 -gem 'rugged', '~> 1.6' # rubocop:todo Gemfile/MissingFeatureCategory
 +gem 'rugged', '~> 1.7' # rubocop:todo Gemfile/MissingFeatureCategory
  
  gem 'faraday', '~> 1.0' # rubocop:todo Gemfile/MissingFeatureCategory
  gem 'marginalia', '~> 1.11.1' # rubocop:todo Gemfile/MissingFeatureCategory
-@@ -511,7 +511,7 @@ group :development, :test, :coverage do
+@@ -518,7 +518,7 @@ group :development, :test, :coverage do
    gem 'simplecov', '~> 0.22', require: false, feature_category: :tooling
    gem 'simplecov-lcov', '~> 0.8.0', require: false, feature_category: :tooling
    gem 'simplecov-cobertura', '~> 2.1.0', require: false, feature_category: :tooling
@@ -21,10 +21,10 @@ index 166fd779f666..2d19dfbc84e0 100644
  
  # Gems required in omnibus-gitlab pipeline
 diff --git a/Gemfile.lock b/Gemfile.lock
-index fffc56d1d097..0224d7bf2ff3 100644
+index aa9a829983a8..1a7798fb4632 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -1627,7 +1627,7 @@ GEM
+@@ -1631,7 +1631,7 @@ GEM
      rubyntlm (0.6.3)
      rubypants (0.2.0)
      rubyzip (2.3.2)
@@ -33,7 +33,7 @@ index fffc56d1d097..0224d7bf2ff3 100644
      safe_yaml (1.0.4)
      safety_net_attestation (0.4.0)
        jwt (~> 2.0)
-@@ -1812,10 +1812,11 @@ GEM
+@@ -1816,10 +1816,11 @@ GEM
      tzinfo (2.0.6)
        concurrent-ruby (~> 1.0)
      uber (0.1.0)
@@ -47,7 +47,7 @@ index fffc56d1d097..0224d7bf2ff3 100644
      unf (0.1.4)
        unf_ext
      unf_ext (0.0.8.2)
-@@ -2197,7 +2198,7 @@ DEPENDENCIES
+@@ -2202,7 +2203,7 @@ DEPENDENCIES
    ruby-progressbar (~> 1.10)
    ruby-saml (~> 1.15.0)
    rubyzip (~> 2.3.2)
@@ -56,7 +56,7 @@ index fffc56d1d097..0224d7bf2ff3 100644
    sanitize (~> 6.0.2)
    sd_notify (~> 0.1.0)
    seed-fu (~> 2.3.7)
-@@ -2237,7 +2238,7 @@ DEPENDENCIES
+@@ -2242,7 +2243,7 @@ DEPENDENCIES
    toml-rb (~> 2.2.0)
    truncato (~> 0.7.12)
    typhoeus (~> 1.4.0)
