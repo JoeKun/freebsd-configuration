@@ -1,30 +1,21 @@
 diff --git a/Gemfile b/Gemfile
-index cdb2f98b438a..68194eec5fe2 100644
+index e42c4fb6c865..cbb5a75c0651 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -57,7 +57,7 @@ gem 'pg', '~> 1.5.6', feature_category: :database
+@@ -66,7 +66,7 @@ gem 'pg', '~> 1.5.6', feature_category: :database
  
  gem 'neighbor', '~> 0.3.2', feature_category: :duo_chat
  
 -gem 'rugged', '~> 1.6' # rubocop:todo Gemfile/MissingFeatureCategory
 +gem 'rugged', '~> 1.7' # rubocop:todo Gemfile/MissingFeatureCategory
  
- gem 'faraday', '~> 1.10.3' # rubocop:todo Gemfile/MissingFeatureCategory
- gem 'marginalia', '~> 1.11.1' # rubocop:todo Gemfile/MissingFeatureCategory
-@@ -524,7 +524,7 @@ group :development, :test, :coverage do
-   gem 'simplecov', '~> 0.22', require: false, feature_category: :tooling
-   gem 'simplecov-lcov', '~> 0.8.0', require: false, feature_category: :tooling
-   gem 'simplecov-cobertura', '~> 2.1.0', require: false, feature_category: :tooling
--  gem 'undercover', '~> 0.4.4', require: false, feature_category: :tooling
-+  gem 'undercover', '~> 0.5.0', require: false, feature_category: :tooling
- end
- 
- # Gems required in omnibus-gitlab pipeline
+ gem 'faraday', '~> 2', feature_category: :shared
+ gem 'faraday-retry', '~> 2', feature_category: :shared
 diff --git a/Gemfile.lock b/Gemfile.lock
-index 317aaa3dc733..f0980d90cb55 100644
+index 018c2fdf71dd..f28030e56f82 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -1647,7 +1647,7 @@ GEM
+@@ -1671,7 +1671,7 @@ GEM
      rubyntlm (0.6.3)
      rubypants (0.2.0)
      rubyzip (2.3.2)
@@ -33,21 +24,7 @@ index 317aaa3dc733..f0980d90cb55 100644
      safe_yaml (1.0.4)
      safety_net_attestation (0.4.0)
        jwt (~> 2.0)
-@@ -1836,10 +1836,11 @@ GEM
-     tzinfo (2.0.6)
-       concurrent-ruby (~> 1.0)
-     uber (0.1.0)
--    undercover (0.4.6)
-+    undercover (0.5.0)
-+      bigdecimal (>= 0)
-       imagen (>= 0.1.8)
-       rainbow (>= 2.1, < 4.0)
--      rugged (>= 0.27, < 1.7)
-+      rugged (>= 0.27, < 1.8)
-     unf (0.1.4)
-       unf_ext
-     unf_ext (0.0.8.2)
-@@ -2224,7 +2225,7 @@ DEPENDENCIES
+@@ -2256,7 +2256,7 @@ DEPENDENCIES
    ruby-progressbar (~> 1.10)
    ruby-saml (~> 1.15.0)
    rubyzip (~> 2.3.2)
@@ -56,12 +33,3 @@ index 317aaa3dc733..f0980d90cb55 100644
    sanitize (~> 6.0.2)
    sd_notify (~> 0.1.0)
    seed-fu (~> 2.3.7)
-@@ -2266,7 +2267,7 @@ DEPENDENCIES
-   truncato (~> 0.7.12)
-   tty-prompt (~> 0.23)
-   typhoeus (~> 1.4.0)
--  undercover (~> 0.4.4)
-+  undercover (~> 0.5.0)
-   unleash (~> 3.2.2)
-   valid_email (~> 0.1)
-   validates_hostname (~> 1.0.13)

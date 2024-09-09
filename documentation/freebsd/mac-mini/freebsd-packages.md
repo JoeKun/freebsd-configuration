@@ -1875,22 +1875,22 @@ Install `chruby` to be able to select a specific version of ruby for GitLab:
 Install specific version of ruby for GitLab:
 
 ```
-# wget "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.3.tar.gz"
-# tar xvzf ruby-3.2.3.tar.gz
-# cd ruby-3.2.3
-# ./configure --enable-shared --prefix=/opt/rubies/ruby-3.2.3
+# wget "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.4.tar.gz"
+# tar xvzf ruby-3.2.4.tar.gz
+# cd ruby-3.2.4
+# ./configure --enable-shared --prefix=/opt/rubies/ruby-3.2.4
 # make
 # make install
 # cd ..
-# rm -R -f ruby-3.2.3 ruby-3.2.3.tar.gz
+# rm -R -f ruby-3.2.4 ruby-3.2.4.tar.gz
 ```
 
 Install `bundler` for that specific version of ruby:
 
 ```
 # source /usr/local/share/chruby/chruby.sh
-# chruby ruby-3.2.3
-# gem install bundler -v "2.5.5"
+# chruby ruby-3.2.4
+# gem install bundler -v "2.5.11"
 ```
 
 Add unprivileged user for GitLab:
