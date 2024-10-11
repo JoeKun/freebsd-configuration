@@ -1321,7 +1321,7 @@ production: &base
   # CAUTION!
   # Use the default values unless you really know what you are doing
   git:
-    bin_path: /usr/local/bin/git
+    bin_path: /usr/local/git/gitaly-git/bin/git
 
   ## Webpack settings
   # If enabled, this will tell rails to serve frontend assets from the webpack-dev-server running
@@ -1432,6 +1432,10 @@ production: &base
       # Ban an IP for one hour (3600s) after too many auth attempts
       # bantime: 3600
 
+  ## OpenBao settings
+  openbao:
+    proxy_address: http://127.0.0.1:8100
+
 development:
   <<: *base
 
@@ -1452,6 +1456,8 @@ development:
 
 test:
   <<: *base
+  openbao:
+    proxy_address: http://www.example.com
   object_store:
     enabled: false
   gravatar:
