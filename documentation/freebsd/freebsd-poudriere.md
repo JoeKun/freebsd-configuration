@@ -188,16 +188,16 @@ Create dedicated jail for `poudriere` to build binary packages for the `amd64` a
 # poudriere jail -c -j my_poudriere-amd64-14-1 -v 14.1-RELEASE
 ```
 
-Clone a new ports tree for the current quarterly branch from FreeBSD’s official ports tree: `2024Q2`.
+Clone a new ports tree for the current quarterly branch from FreeBSD’s official ports tree: `2024Q3`.
 
 ```console
-# poudriere ports -c -p 2024Q2 -B 2024Q2
+# poudriere ports -c -p 2024Q3 -B 2024Q3
 ```
 
 In addition to that, let’s clone a `default` ports tree so we’ll be able to easily set default options that will apply to all ports trees.
 
 ```console
-# poudriere ports -c -B 2024Q2
+# poudriere ports -c -B 2024Q3
 ```
 
 
@@ -226,7 +226,7 @@ Start an initial build using the `bulk` command.
 ```console
 # poudriere bulk \
     -j my_poudriere-amd64-14-1 \
-    -p 2024Q2 \
+    -p 2024Q3 \
     -f /usr/local/etc/poudriere.d/pkglist
 ```
 
@@ -234,7 +234,7 @@ Once the build is complete, setup a symbolic link for the current set of quarter
 
 ```console
 # cd /usr/local/poudriere/data/packages
-# ln -s my_poudriere-amd64-14-1-2024Q2 my_poudriere-amd64-14-1-quarterly
+# ln -s my_poudriere-amd64-14-1-2024Q3 my_poudriere-amd64-14-1-quarterly
 ```
 
 
@@ -289,7 +289,7 @@ On the `my_poudriere` virtual machine, update both the jail and both of the port
 ```console
 # poudriere jail -j my_poudriere-amd64-14-1 -u
 # poudriere ports -u
-# poudriere ports -p 2024Q2 -u
+# poudriere ports -p 2024Q3 -u
 ```
 
 Build packages for updated ports.
@@ -297,7 +297,7 @@ Build packages for updated ports.
 ```console
 # poudriere bulk \
     -j my_poudriere-amd64-14-1 \
-    -p 2024Q2 \
+    -p 2024Q3 \
     -f /usr/local/etc/poudriere.d/pkglist
 ```
 
@@ -321,24 +321,24 @@ And start building again.
 ```console
 # poudriere bulk \
     -j my_poudriere-amd64-14-1 \
-    -p 2024Q2 \
+    -p 2024Q3 \
     -f /usr/local/etc/poudriere.d/pkglist
 ```
 
 
 ## Switch to a new quarterly ports branch
 
-Clone a new ports tree for the new quarterly branch from FreeBSD’s official ports tree: `2024Q3`.
+Clone a new ports tree for the new quarterly branch from FreeBSD’s official ports tree: `2024Q4`.
 
 ```console
-# poudriere ports -c -p 2024Q3 -B 2024Q3
+# poudriere ports -c -p 2024Q4 -B 2024Q4
 ```
 
 Recreate the default ports tree to target the same branch.
 
 ```console
 # poudriere ports -d -p default
-# poudriere ports -c -B 2024Q3
+# poudriere ports -c -B 2024Q4
 ```
 
 It’s sad to have to recreate the default ports tree entirely, but there is [no built-in support to switch branches for an existing ports tree in `poudriere` yet](https://github.com/freebsd/poudriere/issues/508).
@@ -348,7 +348,7 @@ Then start building packages from this new quarterly branch.
 ```console
 # poudriere bulk \
     -j my_poudriere-amd64-14-1 \
-    -p 2024Q3 \
+    -p 2024Q4 \
     -f /usr/local/etc/poudriere.d/pkglist
 ```
 
@@ -357,31 +357,31 @@ Once the build is complete, update the symbolic link for the current set of quar
 ```console
 # cd /usr/local/poudriere/data/packages
 # rm -f my_poudriere-amd64-14-1-quarterly
-# ln -s my_poudriere-amd64-14-1-2024Q3 my_poudriere-amd64-14-1-quarterly
+# ln -s my_poudriere-amd64-14-1-2024Q4 my_poudriere-amd64-14-1-quarterly
 ```
 
 Assuming the new packages built from the new quarterly ports branch are satisfactory, the old ports tree can be removed.
 
 ```console
-# poudriere ports -d -p 2024Q2
+# poudriere ports -d -p 2024Q3
 ```
 
 There are a number of other artifacts associated with that old ports tree that can also be removed manually.
 
 ```console
 # cd /usr/local/poudriere/data
-# rm -R -f packages/my_poudriere-amd64-14-1-2024Q2
-# rm -R -f cache/my_poudriere-amd64-14-1-2024Q2
-# rmdir .m/my_poudriere-amd64-14-1-2024Q2
+# rm -R -f packages/my_poudriere-amd64-14-1-2024Q3
+# rm -R -f cache/my_poudriere-amd64-14-1-2024Q3
+# rmdir .m/my_poudriere-amd64-14-1-2024Q3
 
-# rm -R -f logs/bulk/my_poudriere-amd64-14-1-2024Q2
-# find logs/bulk/latest-per-pkg -iname "*2024Q2*" -delete
+# rm -R -f logs/bulk/my_poudriere-amd64-14-1-2024Q3
+# find logs/bulk/latest-per-pkg -iname "*2024Q3*" -delete
 # find logs/bulk/latest-per-pkg -type d -empty -delete
 
 # cd /var/run/poudriere
-# rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-14-1-2024Q2.flock
-# rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-14-1-2024Q2.pid
-# rm -f lock-poudriere-shared-jail_start_my_poudriere-amd64-14-1-2024Q2.flock
-# rm -f lock-poudriere-shared-jail_start_my_poudriere-amd64-14-1-2024Q2.pid
-# rm -f poudriere.my_poudriere-amd64-14-1-2024Q2.lock.pid.flock
+# rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-14-1-2024Q3.flock
+# rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-14-1-2024Q3.pid
+# rm -f lock-poudriere-shared-jail_start_my_poudriere-amd64-14-1-2024Q3.flock
+# rm -f lock-poudriere-shared-jail_start_my_poudriere-amd64-14-1-2024Q3.pid
+# rm -f poudriere.my_poudriere-amd64-14-1-2024Q3.lock.pid.flock
 ```
