@@ -1,4 +1,4 @@
-# Creating an unpriviledged user on FreeBSD
+# Creating an unprivileged user on FreeBSD
 
 ## Skeleton for home directory of unprivileged users
 
