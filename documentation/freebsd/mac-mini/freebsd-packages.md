@@ -630,7 +630,7 @@ Enable `php`:
 ```
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/php_fpm
-# service php-fpm start
+# service php_fpm start
 ```
 
 Configure `nginx`:
@@ -1032,8 +1032,8 @@ Initialize and enable ClamAV:
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/clamav_clamd
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/clamav_freshclam
-# service clamav-clamd start
-# service clamav-freshclam start
+# service clamav_clamd start
+# service clamav_freshclam start
 ```
 
 Install this helper script that makes it easy to augment ClamAV's database of known virus signatures:
@@ -1339,7 +1339,7 @@ If any, install the dependency using `pkg`. For example:
 
 ```
 # pkg install textproc/php82-dom devel/php82-intl sysutils/php82-fileinfo graphics/php82-exif databases/php82-pdo_pgsql databases/php82-pdo
-# service php-fpm restart
+# service php_fpm restart
 ```
 
 Then proceed to installing `roundcube`:
@@ -1444,7 +1444,7 @@ Follow [these instructions](https://afterlogic.com/docs/webmail-pro-8/installati
 
 ```
 # pkg install php82-pdo_mysql php82-tokenizer
-# service php-fpm restart
+# service php_fpm restart
 ```
 
 Create `webmail` MySQL database as well as associated `webmail` user:
@@ -2077,7 +2077,7 @@ Adjust `php` configuration with some optimizations for Nextcloud.
 ```
 # cd /freebsd-configuration/patches/nextcloud
 # ./configure_php_for_nextcloud
-# service php-fpm restart
+# service php_fpm restart
 ```
 
 Adjust global `nginx` configuration to be compatible with Nextcloud's requirements.
@@ -2295,7 +2295,7 @@ Install the `readline` PHP package:
 
 ```
 # pkg install php82-readline
-# service php-fpm restart
+# service php_fpm restart
 # service nginx restart
 ```
 
