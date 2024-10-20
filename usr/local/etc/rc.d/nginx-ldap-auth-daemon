@@ -22,7 +22,7 @@ load_rc_config $name
 : ${nginx_ldap_auth_daemon_log_directory_path:="/var/log/nginx-ldap-auth"}
 : ${nginx_ldap_auth_daemon_log_file_path:="${nginx_ldap_auth_daemon_log_directory_path}/${nginx_ldap_auth_daemon_name}.log"}
 : ${nginx_ldap_auth_daemon_executable_arguments:="--configuration \"${nginx_ldap_auth_daemon_configuration_file_path}\""}
-: ${nginx_ldap_auth_daemon_command_interpreter:="/usr/local/bin/python3.9"}
+: ${nginx_ldap_auth_daemon_command_interpreter:="/usr/local/bin/python3.11"}
 
 procname="${nginx_ldap_auth_daemon_executable_file_path}"
 command_interpreter="${nginx_ldap_auth_daemon_command_interpreter}"

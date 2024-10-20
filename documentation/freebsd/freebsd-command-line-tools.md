@@ -180,7 +180,7 @@ Install the Terminal Markdown Viewer package.[^1]
 [^1]: If you’re using `poudriere`, make sure to build the package `devel/py-mdv` following the pattern described [above](#build-required-packages-using-poudriere).
 
 ```console
-# pkg install py39-mdv
+# pkg install py311-mdv
 ```
 
 ### Mail client `mutt`

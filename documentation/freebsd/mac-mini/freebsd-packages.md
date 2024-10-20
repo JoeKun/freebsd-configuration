@@ -252,7 +252,7 @@ Manually edit `hostname` in `/etc/rc.conf.d/hostname`.
 # pkg install par_format
 # pkg install gmake
 # pkg install pwgen
-# pkg install py39-mdv
+# pkg install py311-mdv
 # pkg install pstree
 ```
 
@@ -393,7 +393,7 @@ This will do the right dance with `rndc freeze` and `rndc thaw` on your behalf f
 A great option to get a valid SSL certificate is [Let's Encrypt](https://www.letsencrypt.org/). To use it, you'll need to install the following:
 
 ```
-# pkg install py39-certbot
+# pkg install py311-certbot
 ```
 
 Let's discuss at a high level two different ways to generate Let's Encrypt signed certificates with `certbot`.
@@ -449,7 +449,7 @@ Restart `bind`:
 Install the RFC 2136 plugin for `certbot`:
 
 ```
-# pkg install py39-certbot-dns-rfc2136
+# pkg install py311-certbot-dns-rfc2136
 ```
 
 Create a configuration file for this plugin:
@@ -588,7 +588,7 @@ Add `www` user to `ssl` group:
 Install `nginx-ldap-auth-daemon`:
 
 ```
-# pkg install py39-ldap py39-yaml
+# pkg install py311-python-ldap py311-pyyaml
 # cd /usr/local
 # ln -s ../../freebsd-configuration/usr/local/nginx-ldap-auth
 # chown root:www /usr/local/nginx-ldap-auth/nginx-ldap-auth-daemon.conf
@@ -1594,9 +1594,16 @@ Install some important dependencies of Gate One:
 ```
 # pkg install sudo
 # pkg install dtach
-# pkg install py39-future
-# pkg install py39-tornado4
-# pkg install py39-pip
+# pkg install py311-future
+# pkg install py311-tornado4
+# pkg install py311-pip
+```
+
+Apply a small patch for tornado4 to work as expected with Python 3.11:
+
+```
+# cd /usr/local/lib/python3.11/site-packages/tornado
+# patch -p0 -i /freebsd-configuration/patches/gateone/tornado4-python-3-11-compatibility-uses-MutableMapping-from-collections-abc.diff
 ```
 
 Make sure to load the `pty` kernel module for pseudo-terminal support:
@@ -1635,15 +1642,15 @@ $ ln -s ../../../freebsd-configuration/usr/local/gateone/.zshenv
 $ ln -s ../../../freebsd-configuration/usr/local/gateone/.zshrc
 $ git clone https://github.com/liftoff/GateOne.git gateone
 $ cd gateone
-$ git am /freebsd-configuration/patches/gateone/gateone-python-3-9-compatibility-stop-using-reserved-keywords-async-and-await.patch
-$ git am /freebsd-configuration/patches/gateone/gateone-python-3-9-compatibility-workaround-regression-with-process-pool-executor-shutdown.patch
+$ git am /freebsd-configuration/patches/gateone/gateone-python-3-11-compatibility-stop-using-reserved-keywords-async-and-await.patch
+$ git am /freebsd-configuration/patches/gateone/gateone-python-3-11-compatibility-workaround-regression-with-process-pool-executor-shutdown.patch
 $ cd ..
 $ mkdir tmp
-$ 2to3-3.9 tmp -W -n gateone
+$ 2to3-3.11 tmp -W -n gateone
 $ rmdir tmp
 $ cd gateone
 $ git commit -a -m "Convert to Python 3 using 2to3 tool."
-$ git am /freebsd-configuration/patches/gateone/gateone-python-3-9-compatibility-disable-automatic-2to3-conversion-in-setup-script.patch
+$ git am /freebsd-configuration/patches/gateone/gateone-python-3-11-compatibility-disable-automatic-2to3-conversion-in-setup-script.patch
 $ pip install .
 ```
 

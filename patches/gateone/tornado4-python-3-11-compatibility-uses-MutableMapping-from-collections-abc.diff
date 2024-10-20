@@ -1,0 +1,11 @@
+--- httputil.py.orig	2024-10-20 11:38:30.171135000 -0700
++++ httputil.py	2024-10-20 11:21:19.540318000 -0700
+@@ -103,7 +103,7 @@
+ _normalized_headers = _NormalizedHeaderCache(1000)
+ 
+ 
+-class HTTPHeaders(collections.MutableMapping):
++class HTTPHeaders(collections.abc.MutableMapping):
+     """A dictionary that maintains ``Http-Header-Case`` for all keys.
+ 
+     Supports multiple values per key via a pair of new methods,
