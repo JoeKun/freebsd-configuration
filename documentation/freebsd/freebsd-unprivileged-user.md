@@ -31,17 +31,18 @@ Login class [default]:
 Shell (sh csh tcsh git-shell zsh rzsh bash rbash nologin) [zsh]: 
 Home directory [/home/]: 
 Home directory permissions (Leave empty for default): 
+Enable ZFS encryption? (yes/no) [no]: 
 Use password-based authentication? [yes]: 
 Use an empty password? (yes/no) [no]: 
 Use a random password? (yes/no) [no]: 
 Lock out the account after creation? [no]: 
-Pass Type  : yes
-Class      : 
-Groups     : users 
-Home       : /home/
-Home Mode  : 
-Shell      : /usr/local/bin/zsh
-Locked     : no
+Pass Type   : yes
+Class       : 
+Groups      : users 
+Home        : /home/
+Home Mode   : 
+Shell       : /usr/local/bin/zsh
+Locked      : no
 OK? (yes/no) [yes]: yes
 Re-edit the default configuration? (yes/no) [no]: no
 Goodbye!
@@ -63,23 +64,26 @@ Login class [default]:
 Shell (sh csh tcsh git-shell zsh rzsh bash rbash nologin) [zsh]: 
 Home directory [/home/john]: 
 Home directory permissions (Leave empty for default): 
+Enable ZFS encryption? (yes/no) [no]: 
 Use password-based authentication? [yes]: 
 Use an empty password? (yes/no) [no]: 
 Use a random password? (yes/no) [no]: 
 Enter password: 
 Enter password again: 
 Lock out the account after creation? [no]: 
-Username   : john
-Password   : *****
-Full Name  : John Smith
-Uid        : 1000
-Class      : 
-Groups     : users 
-Home       : /home/john
-Home Mode  : 
-Shell      : /usr/local/bin/zsh
-Locked     : no
+Username    : john
+Password    : *****
+Full Name   : John Smith
+Uid         : 1000
+ZFS dataset : system/home/john
+Class       : 
+Groups      : users 
+Home        : /home/john
+Home Mode   : 
+Shell       : /usr/local/bin/zsh
+Locked      : no
 OK? (yes/no) [yes]: yes
+adduser: INFO: Successfully created ZFS dataset (system/home/john).
 adduser: INFO: Successfully added (john) to the user database.
 Add another user? (yes/no) [no]: no
 Goodbye!
