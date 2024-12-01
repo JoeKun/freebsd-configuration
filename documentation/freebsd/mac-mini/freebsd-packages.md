@@ -306,6 +306,44 @@ daily_status_smart_devices="/dev/ada0 /dev/ada1 /dev/ada2"
 ```
 
 
+## `nsnotifyd`
+
+In this section, we will install `nsnotifyd`, which can be used to listen to DNS NOTIFY messages from a regular DNS server, and invoke a custom script.
+
+This is inspired by [Jan-Piet Mens' guide on how to setup nsnotifyd and its possible uses](https://jpmens.net/2015/06/16/alert-on-dns-notify/).
+
+More specifically, we will use this to invoke a script to request immediate synchronization of the corresponding DNS zone by the BuddyNS secondary DNS servers, using their [SyncNOW API](https://www.buddyns.com/support/api/v2/#example-sync-zone).
+
+Install the `buddyns-sync-zone` script:
+
+```
+# mkdir -p /opt/local/bin
+# cd /opt/local/bin
+# ln -s ../../../freebsd-configuration/opt/local/bin/buddyns-sync-zone
+
+# mkdir -p /opt/local/etc
+# cd /opt/local/etc
+# ln -s ../../../freebsd-configuration/opt/local/etc/buddyns-sync-zone.conf
+# chown root:nobody /opt/local/etc/buddyns-sync-zone.conf
+# chmod 640 /opt/local/etc/buddyns-sync-zone.conf
+```
+
+Edit `/opt/local/etc/buddyns-sync-zone.conf` with your [BuddyNS API Key](https://www.buddyns.com/support/api/v2/#security-authentication).
+
+Install and enable `nsnotifyd`:
+
+```
+# pkg install nsnotifyd
+
+# mkdir -p /var/run/nsnotifyd
+# chown -R nobody:nobody /var/run/nsnotifyd
+
+# cd /etc/rc.conf.d
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/nsnotifyd
+# service nsnotifyd start
+```
+
+
 ## `bind`
 
 ### Basic configuration

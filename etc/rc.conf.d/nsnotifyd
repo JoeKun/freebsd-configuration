@@ -1,0 +1,8 @@
+# /etc/rc.conf.d/nsnotifyd: system configuration for nsnotifyd
+
+nsnotifyd_enable="YES"
+nsnotifyd_pidfile="/var/run/nsnotifyd/nsnotifyd.pid"
+nsnotifyd_user="nobody"
+nsnotifyd_port="5309"
+nsnotifyd_command="/opt/local/bin/buddyns-sync-zone"
+nsnotifyd_flags="-P ${nsnotifyd_pidfile} -u ${nsnotifyd_user} -p ${nsnotifyd_port} -w ${nsnotifyd_command}"

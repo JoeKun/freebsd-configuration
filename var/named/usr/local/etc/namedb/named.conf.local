@@ -76,6 +76,11 @@ acl buddyns-transfer {
 	2605:6400:30:fd6e::3;
 };
 
+// BuddyNS notify bridge
+primaries buddyns-notify-bridge {
+	127.0.0.1 port 5309;
+};
+
 // baz.org
 primaries baz {
 	123.45.67.89;
@@ -101,6 +106,9 @@ zone "foo.com" {
 	};
 	allow-transfer {
 		buddyns-transfer;
+	};
+	also-notify {
+		buddyns-notify-bridge;
 	};
 	// Uncomment the following two sections for Let's Encrypt.
 	/*

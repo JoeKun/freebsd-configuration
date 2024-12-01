@@ -1,0 +1,53 @@
+#! /bin/sh
+# 
+# buddyns-sync-zone
+# 
+# Created by Joel Lopes Da Silva on 2/11/24.
+# Copyright © 2024 Joel Lopes Da Silva. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#       http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# 
+
+script_name=$(basename "$0")
+zone=$1
+serial=$2
+notify_source=${3:+@$3}
+
+logger -p daemon.notice -t "${script_name}" "Received NOTIFY from ${notify_source} about zone ${zone} being updated to serial number ${serial}."
+
+script_directory_path=$(dirname "${0}")
+cd "${script_directory_path}"
+script_directory_path=$(pwd)
+cd - > /dev/null
+
+configuration_file_path=$(echo "${script_directory_path}" | sed "s,/bin$,/etc/${script_name}.conf,")
+. "${configuration_file_path}"
+
+if [ -z "${buddyns_api_key}" ]
+then
+    logger -p daemon.error -t "${script_name}" "Missing BuddyNS API key. Please define one as the buddyns_api_key variable in ${configuration_file_path}."
+    exit 1
+fi
+
+sync_response=$(/usr/local/bin/curl -i -H "Authorization: Token ${buddyns_api_key}" "https://www.buddyns.com/api/v2/sync/${zone}" 2> /dev/null)
+status_code=$(echo "${sync_response}" | head -n 1 | cut -d " " -f 2)
+
+expected_status_code=204
+if [ ${status_code} -eq ${expected_status_code} ]
+then
+    logger -p daemon.notice -t "${script_name}" "Triggered sync for zone ${zone} with BuddyNS."
+else
+    logger -p daemon.error -t "${script_name}" "Received unexpected status code from BuddyNS sync API: ${status_code}."
+    echo "${sync_response}" | logger -p daemon.error -t "${script_name}"
+fi
+
