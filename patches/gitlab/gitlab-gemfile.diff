@@ -1,5 +1,5 @@
 diff --git a/Gemfile b/Gemfile
-index 99b050b2d5cb..58253b5bbe85 100644
+index 4be9aed49bde..e8fca3778431 100644
 --- a/Gemfile
 +++ b/Gemfile
 @@ -70,7 +70,7 @@ gem 'pg', '~> 1.5.6', feature_category: :database
@@ -12,10 +12,10 @@ index 99b050b2d5cb..58253b5bbe85 100644
  gem 'faraday', '~> 2', feature_category: :shared
  gem 'faraday-retry', '~> 2', feature_category: :shared
 diff --git a/Gemfile.lock b/Gemfile.lock
-index 94e4e0d1022b..70f125beca23 100644
+index 9991f04b2e05..96e8d1d16e10 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -1680,7 +1680,7 @@ GEM
+@@ -1689,7 +1689,7 @@ GEM
      rubyntlm (0.6.3)
      rubypants (0.2.0)
      rubyzip (2.3.2)
@@ -24,7 +24,7 @@ index 94e4e0d1022b..70f125beca23 100644
      safe_yaml (1.0.4)
      safety_net_attestation (0.4.0)
        jwt (~> 2.0)
-@@ -2270,7 +2270,7 @@ DEPENDENCIES
+@@ -2278,7 +2278,7 @@ DEPENDENCIES
    ruby-progressbar (~> 1.10)
    ruby-saml (~> 1.17.0)
    rubyzip (~> 2.3.2)
