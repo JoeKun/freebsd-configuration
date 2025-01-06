@@ -16,6 +16,6 @@ If you suspect there may be an unspecified pre-requisite in any of these documen
  6. [Custom package management for FreeBSD with `poudriere`](freebsd-poudriere.md)
  7. [Useful command-line tools for FreeBSD](freebsd-command-line-tools.md)
  8. [Using a Unicode locale on FreeBSD](freebsd-unicode-locale.md)
- 9. [Creating an unpriviledged user on FreeBSD](freebsd-unprivileged-user.md)
+ 9. [Creating an unprivileged user on FreeBSD](freebsd-unprivileged-user.md)
  10. [Mount special file systems on FreeBSD](freebsd-special-file-systems.md)
  11. [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md)

@@ -171,7 +171,7 @@ You may adjust these password prompts by applying the `authtok_prompt` option in
 
 ## Additional command-line tools for unprivileged users
 
-Here are a few more command-line tools you might be interested in using with your [unpriviledged user on FreeBSD](freebsd-unprivileged-user.md).
+Here are a few more command-line tools you might be interested in using with your [unprivileged user on FreeBSD](freebsd-unprivileged-user.md).
 
 ### Terminal Markdown Viewer
 
