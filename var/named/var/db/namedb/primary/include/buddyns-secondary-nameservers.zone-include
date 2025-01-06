@@ -17,9 +17,9 @@
 @                       IN      NS      ns4
 @                       IN      NS      ns5
 
-; i.pro.ns.buddyns.com: USA, California
-ns1                     IN      A       216.73.156.203
-ns1                     IN      AAAA    2602:fafd:902:51::a
+; b.pro.ns.buddyns.com: USA, Texas
+ns1                     IN      A       108.61.224.67
+ns1                     IN      AAAA    2001:19f0:6400:8642::3
 
 ; d.pro.ns.buddyns.com: USA, New York
 ns2                     IN      A       107.191.99.111
