@@ -1917,24 +1917,39 @@ Install `chruby` to be able to select a specific version of ruby for GitLab:
 # pkg install chruby
 ```
 
+Install `gcc13` to build ruby with it:
+
+```
+# pkg install gcc13
+```
+
 Install specific version of ruby for GitLab:
 
 ```
-# wget "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.4.tar.gz"
-# tar xvzf ruby-3.2.4.tar.gz
-# cd ruby-3.2.4
-# ./configure --enable-shared --prefix=/opt/rubies/ruby-3.2.4
-# make
+# wget "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.7.tar.gz"
+# tar xvzf ruby-3.3.7.tar.gz
+# cd ruby-3.3.7
+# patch -p1 -i /freebsd-configuration/patches/ruby/ruby-gcc-freebsd-build-fix.diff
+# export MAKE=/usr/local/bin/gmake
+# export CC=/usr/local/bin/gcc13
+# export CXX=/usr/local/bin/g++13
+# export LD=/usr/local/bin/gcc13
+# export AR=/usr/local/bin/gcc-ar13
+# export NM=/usr/local/bin/gcc-nm13
+# export RANLIB=/usr/local/bin/gcc-ranlib13
+# export OBJCOPY=/usr/local/bin/objcopy
+# ./configure --enable-shared --prefix=/opt/rubies/ruby-3.3.7
+# make -j4
 # make install
 # cd ..
-# rm -R -f ruby-3.2.4 ruby-3.2.4.tar.gz
+# rm -R -f ruby-3.3.7 ruby-3.3.7.tar.gz
 ```
 
 Install `bundler` for that specific version of ruby:
 
 ```
 # source /usr/local/share/chruby/chruby.sh
-# chruby ruby-3.2.4
+# chruby ruby-3.3.7
 # gem install bundler -v "2.5.11"
 ```
 

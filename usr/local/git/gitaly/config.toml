@@ -162,6 +162,9 @@ self_signed_cert = false
 # # Optional: defaults to 1
 # # The number of goroutines performing write-ahead log backups.
 # wal_backup_worker_count = 1
+# # Optional: defaults to 5,242,880 bytes (5MiB). If 0, the driver will choose a reasonable default.
+# # The size of each part in a multipart upload to object storage.
+# buffer_size = 0
 
 # # Bundle-URI
 # [bundle_uri]

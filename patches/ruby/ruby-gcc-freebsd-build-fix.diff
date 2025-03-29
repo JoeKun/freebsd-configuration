@@ -1,0 +1,17 @@
+diff -ru a/yjit/yjit.mk b/yjit/yjit.mk
+--- a/yjit/yjit.mk	2025-01-14 23:22:35.000000000 -0800
++++ b/yjit/yjit.mk	2025-03-29 11:57:33.227354000 -0700
+@@ -48,8 +48,13 @@
+ ifneq ($(findstring darwin,$(target_os)),)
+ 	$(Q) $(CC) -nodefaultlibs -r -o $@ -exported_symbols_list $(YJIT_LIB_SYMBOLS) $(YJIT_LIBS)
+ else
++ifneq ($(findstring gcc,$(CC)),)
++	$(Q) $(LD) -r -o $@ -Wl,-whole-archive $(YJIT_LIBS) -Wl,-no-whole-archive
++	-$(Q) $(OBJCOPY) --wildcard --keep-global-symbol='$(SYMBOL_PREFIX)rb_*' $(@)
++else
+ 	$(Q) $(LD) -r -o $@ --whole-archive $(YJIT_LIBS)
+ 	-$(Q) $(OBJCOPY) --wildcard --keep-global-symbol='$(SYMBOL_PREFIX)rb_*' $(@)
++endif
+ endif
+ 
+ # For Darwin only: a list of symbols that we want the glommed Rust static lib to export.

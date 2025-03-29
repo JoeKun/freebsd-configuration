@@ -1,0 +1,699 @@
+From a8c0b9c800a8bc1c293a0f8bc933e607f9d8c810 Mon Sep 17 00:00:00 2001
+From: Esun Kim <veblush@google.com>
+Date: Fri, 27 Sep 2024 14:54:52 -0700
+Subject: [PATCH] [Deps] Updated Abseil to 1.20240722.0 (#37543)
+
+Closes #37543
+
+PiperOrigin-RevId: 679738302
+---
+ CMakeLists.txt                                |   6 +
+ Makefile                                      |   3 +
+ bazel/grpc_deps.bzl                           |   8 +-
+ config.m4                                     |   3 +
+ config.w32                                    |   3 +
+ gRPC-C++.podspec                              |   2 +-
+ gRPC-Core.podspec                             |   2 +-
+ grpc.gemspec                                  |  10 +-
+ package.xml                                   |  10 +-
+ src/abseil-cpp/preprocessed_builds.yaml       | 107 ++++++++++++++++--
+ src/python/grpcio/grpc_core_dependencies.py   |   3 +
+ .../observability_lib_deps.py                 |   3 +
+ templates/gRPC-C++.podspec.template           |   2 +-
+ templates/gRPC-Core.podspec.template          |   2 +-
+ third_party/abseil-cpp                        |   2 +-
+ .../python/grpcio_tools/protoc_lib_deps.py    |   3 +
+ tools/run_tests/sanity/check_submodules.sh    |   2 +-
+ 17 files changed, 148 insertions(+), 23 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 53bcbe10e57c..697e9610695f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -108,12 +108,14 @@ set(gRPC_ABSL_USED_TARGETS
+   absl_base_internal
+   absl_bind_front
+   absl_bits
++  absl_bounded_utf8_length_sequence
+   absl_charset
+   absl_city
+   absl_civil_time
+   absl_cleanup
+   absl_cleanup_internal
+   absl_common_policy_traits
++  absl_compare
+   absl_compressed_tuple
+   absl_config
+   absl_container_common
+@@ -132,7 +134,9 @@ set(gRPC_ABSL_USED_TARGETS
+   absl_crc_cpu_detect
+   absl_crc_internal
+   absl_debugging_internal
++  absl_decode_rust_punycode
+   absl_demangle_internal
++  absl_demangle_rust
+   absl_dynamic_annotations
+   absl_endian
+   absl_errno_saver
+@@ -156,6 +160,7 @@ set(gRPC_ABSL_USED_TARGETS
+   absl_graphcycles_internal
+   absl_has_ostream_operator
+   absl_hash
++  absl_hash_container_defaults
+   absl_hash_function_defaults
+   absl_hash_policy_traits
+   absl_hashtable_debug_hooks
+@@ -240,6 +245,7 @@ set(gRPC_ABSL_USED_TARGETS
+   absl_time
+   absl_time_zone
+   absl_type_traits
++  absl_utf8_for_code_point
+   absl_utility
+   absl_variant
+   absl_vlog_config_internal
+diff --git a/Makefile b/Makefile
+index 5b49e47379c3..843b18d8af10 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1533,9 +1533,12 @@ LIBGRPC_SRC = \
+     third_party/abseil-cpp/absl/crc/internal/crc_non_temporal_memcpy.cc \
+     third_party/abseil-cpp/absl/crc/internal/crc_x86_arm_combined.cc \
+     third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc \
++    third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.cc \
+     third_party/abseil-cpp/absl/debugging/internal/demangle.cc \
++    third_party/abseil-cpp/absl/debugging/internal/demangle_rust.cc \
+     third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc \
+     third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc \
++    third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.cc \
+     third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc \
+     third_party/abseil-cpp/absl/debugging/stacktrace.cc \
+     third_party/abseil-cpp/absl/debugging/symbolize.cc \
+diff --git a/bazel/grpc_deps.bzl b/bazel/grpc_deps.bzl
+index 0873c63ab1de..021ef8edd778 100644
+--- a/bazel/grpc_deps.bzl
++++ b/bazel/grpc_deps.bzl
+@@ -348,11 +348,11 @@ def grpc_deps():
+     if "com_google_absl" not in native.existing_rules():
+         http_archive(
+             name = "com_google_absl",
+-            sha256 = "338420448b140f0dfd1a1ea3c3ce71b3bc172071f24f4d9a57d59b45037da440",
+-            strip_prefix = "abseil-cpp-20240116.0",
++            sha256 = "f50e5ac311a81382da7fa75b97310e4b9006474f9560ac46f54a9967f07d4ae3",
++            strip_prefix = "abseil-cpp-20240722.0",
+             urls = [
+-                "https://storage.googleapis.com/grpc-bazel-mirror/github.com/abseil/abseil-cpp/archive/20240116.0.tar.gz",
+-                "https://github.com/abseil/abseil-cpp/archive/20240116.0.tar.gz",
++                "https://storage.googleapis.com/grpc-bazel-mirror/github.com/abseil/abseil-cpp/archive/20240722.0.tar.gz",
++                "https://github.com/abseil/abseil-cpp/archive/20240722.0.tar.gz",
+             ],
+         )
+ 
+diff --git a/config.m4 b/config.m4
+index 1937033c0b81..2beadc16ea6b 100644
+--- a/config.m4
++++ b/config.m4
+@@ -918,9 +918,12 @@ if test "$PHP_GRPC" != "no"; then
+     third_party/abseil-cpp/absl/crc/internal/crc_non_temporal_memcpy.cc \
+     third_party/abseil-cpp/absl/crc/internal/crc_x86_arm_combined.cc \
+     third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc \
++    third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.cc \
+     third_party/abseil-cpp/absl/debugging/internal/demangle.cc \
++    third_party/abseil-cpp/absl/debugging/internal/demangle_rust.cc \
+     third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc \
+     third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc \
++    third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.cc \
+     third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc \
+     third_party/abseil-cpp/absl/debugging/stacktrace.cc \
+     third_party/abseil-cpp/absl/debugging/symbolize.cc \
+diff --git a/config.w32 b/config.w32
+index f5fc445b4349..9455294c4a2e 100644
+--- a/config.w32
++++ b/config.w32
+@@ -883,9 +883,12 @@ if (PHP_GRPC != "no") {
+     "third_party\\abseil-cpp\\absl\\crc\\internal\\crc_non_temporal_memcpy.cc " +
+     "third_party\\abseil-cpp\\absl\\crc\\internal\\crc_x86_arm_combined.cc " +
+     "third_party\\abseil-cpp\\absl\\debugging\\internal\\address_is_readable.cc " +
++    "third_party\\abseil-cpp\\absl\\debugging\\internal\\decode_rust_punycode.cc " +
+     "third_party\\abseil-cpp\\absl\\debugging\\internal\\demangle.cc " +
++    "third_party\\abseil-cpp\\absl\\debugging\\internal\\demangle_rust.cc " +
+     "third_party\\abseil-cpp\\absl\\debugging\\internal\\elf_mem_image.cc " +
+     "third_party\\abseil-cpp\\absl\\debugging\\internal\\examine_stack.cc " +
++    "third_party\\abseil-cpp\\absl\\debugging\\internal\\utf8_for_code_point.cc " +
+     "third_party\\abseil-cpp\\absl\\debugging\\internal\\vdso_support.cc " +
+     "third_party\\abseil-cpp\\absl\\debugging\\stacktrace.cc " +
+     "third_party\\abseil-cpp\\absl\\debugging\\symbolize.cc " +
+diff --git a/gRPC-C++.podspec b/gRPC-C++.podspec
+index 218e1df7a67f..6950a994f367 100644
+--- a/gRPC-C++.podspec
++++ b/gRPC-C++.podspec
+@@ -225,7 +225,7 @@ Pod::Spec.new do |s|
+     ss.dependency "#{s.name}/Privacy", version
+     ss.dependency "#{s.name}/Interface", version
+     ss.dependency 'gRPC-Core', version
+-    abseil_version = '1.20240116.1'
++    abseil_version = '~> 1.20240722.0'
+     ss.dependency 'abseil/algorithm/container', abseil_version
+     ss.dependency 'abseil/base/base', abseil_version
+     ss.dependency 'abseil/base/config', abseil_version
+diff --git a/gRPC-Core.podspec b/gRPC-Core.podspec
+index 45ad30639e36..abd852d412b3 100644
+--- a/gRPC-Core.podspec
++++ b/gRPC-Core.podspec
+@@ -46,7 +46,7 @@ Pod::Spec.new do |s|
+   s.requires_arc = false
+ 
+   name = 'grpc'
+-  abseil_version = '1.20240116.1'
++  abseil_version = '~> 1.20240722.0'
+ 
+   # When creating a dynamic framework, name it grpc.framework instead of gRPC-Core.framework.
+   # This lets users write their includes like `#include <grpc/grpc.h>` as opposed to `#include
+diff --git a/grpc.gemspec b/grpc.gemspec
+index 73b322284790..0150e17693b8 100644
+--- a/grpc.gemspec
++++ b/grpc.gemspec
+@@ -2078,6 +2078,7 @@ Gem::Specification.new do |s|
+   s.files += %w( third_party/abseil-cpp/absl/container/fixed_array.h )
+   s.files += %w( third_party/abseil-cpp/absl/container/flat_hash_map.h )
+   s.files += %w( third_party/abseil-cpp/absl/container/flat_hash_set.h )
++  s.files += %w( third_party/abseil-cpp/absl/container/hash_container_defaults.h )
+   s.files += %w( third_party/abseil-cpp/absl/container/inlined_vector.h )
+   s.files += %w( third_party/abseil-cpp/absl/container/internal/common.h )
+   s.files += %w( third_party/abseil-cpp/absl/container/internal/common_policy_traits.h )
+@@ -2115,8 +2116,13 @@ Gem::Specification.new do |s|
+   s.files += %w( third_party/abseil-cpp/absl/crc/internal/non_temporal_memcpy.h )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/address_is_readable.h )
++  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/bounded_utf8_length_sequence.h )
++  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.cc )
++  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.h )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/demangle.cc )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/demangle.h )
++  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/demangle_rust.cc )
++  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/demangle_rust.h )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.h )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc )
+@@ -2132,6 +2138,8 @@ Gem::Specification.new do |s|
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_win32-inl.inc )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_x86-inl.inc )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/symbolize.h )
++  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.cc )
++  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.h )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/internal/vdso_support.h )
+   s.files += %w( third_party/abseil-cpp/absl/debugging/stacktrace.cc )
+@@ -2325,7 +2333,6 @@ Gem::Specification.new do |s|
+   s.files += %w( third_party/abseil-cpp/absl/strings/internal/damerau_levenshtein_distance.h )
+   s.files += %w( third_party/abseil-cpp/absl/strings/internal/escaping.cc )
+   s.files += %w( third_party/abseil-cpp/absl/strings/internal/escaping.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/has_absl_stringify.h )
+   s.files += %w( third_party/abseil-cpp/absl/strings/internal/memutil.cc )
+   s.files += %w( third_party/abseil-cpp/absl/strings/internal/memutil.h )
+   s.files += %w( third_party/abseil-cpp/absl/strings/internal/ostringstream.cc )
+@@ -2435,6 +2442,7 @@ Gem::Specification.new do |s|
+   s.files += %w( third_party/abseil-cpp/absl/types/bad_optional_access.h )
+   s.files += %w( third_party/abseil-cpp/absl/types/bad_variant_access.cc )
+   s.files += %w( third_party/abseil-cpp/absl/types/bad_variant_access.h )
++  s.files += %w( third_party/abseil-cpp/absl/types/compare.h )
+   s.files += %w( third_party/abseil-cpp/absl/types/internal/optional.h )
+   s.files += %w( third_party/abseil-cpp/absl/types/internal/span.h )
+   s.files += %w( third_party/abseil-cpp/absl/types/internal/variant.h )
+diff --git a/package.xml b/package.xml
+index 1ff6a5eab4b7..5c2dff5a6ef3 100644
+--- a/package.xml
++++ b/package.xml
+@@ -2082,6 +2082,7 @@
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/container/fixed_array.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/container/flat_hash_map.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/container/flat_hash_set.h" role="src" />
++    <file baseinstalldir="/" name="third_party/abseil-cpp/absl/container/hash_container_defaults.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/container/inlined_vector.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/container/internal/common.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/container/internal/common_policy_traits.h" role="src" />
+@@ -2119,8 +2120,13 @@
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/crc/internal/non_temporal_memcpy.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/address_is_readable.h" role="src" />
++    <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/bounded_utf8_length_sequence.h" role="src" />
++    <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.cc" role="src" />
++    <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/demangle.cc" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/demangle.h" role="src" />
++    <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/demangle_rust.cc" role="src" />
++    <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/demangle_rust.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc" role="src" />
+@@ -2136,6 +2142,8 @@
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/stacktrace_win32-inl.inc" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/stacktrace_x86-inl.inc" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/symbolize.h" role="src" />
++    <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.cc" role="src" />
++    <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/internal/vdso_support.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/debugging/stacktrace.cc" role="src" />
+@@ -2329,7 +2337,6 @@
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/strings/internal/damerau_levenshtein_distance.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/strings/internal/escaping.cc" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/strings/internal/escaping.h" role="src" />
+-    <file baseinstalldir="/" name="third_party/abseil-cpp/absl/strings/internal/has_absl_stringify.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/strings/internal/memutil.cc" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/strings/internal/memutil.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/strings/internal/ostringstream.cc" role="src" />
+@@ -2439,6 +2446,7 @@
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/types/bad_optional_access.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/types/bad_variant_access.cc" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/types/bad_variant_access.h" role="src" />
++    <file baseinstalldir="/" name="third_party/abseil-cpp/absl/types/compare.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/types/internal/optional.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/types/internal/span.h" role="src" />
+     <file baseinstalldir="/" name="third_party/abseil-cpp/absl/types/internal/variant.h" role="src" />
+diff --git a/src/abseil-cpp/preprocessed_builds.yaml b/src/abseil-cpp/preprocessed_builds.yaml
+index 6250c0fa12db..5d82f5149bc0 100644
+--- a/src/abseil-cpp/preprocessed_builds.yaml
++++ b/src/abseil-cpp/preprocessed_builds.yaml
+@@ -8,6 +8,7 @@
+ - cmake_target: absl::algorithm_container
+   deps:
+   - absl/algorithm:algorithm
++  - absl/base:config
+   - absl/base:core_headers
+   - absl/base:nullability
+   - absl/meta:type_traits
+@@ -155,12 +156,14 @@
+ - cmake_target: absl::no_destructor
+   deps:
+   - absl/base:config
++  - absl/base:nullability
+   headers:
+   - third_party/abseil-cpp/absl/base/no_destructor.h
+   name: absl/base:no_destructor
+   src: []
+ - cmake_target: absl::nullability
+   deps:
++  - absl/base:config
+   - absl/base:core_headers
+   - absl/meta:type_traits
+   headers:
+@@ -168,6 +171,16 @@
+   - third_party/abseil-cpp/absl/base/nullability.h
+   name: absl/base:nullability
+   src: []
++- cmake_target: absl::poison
++  deps:
++  - absl/base:config
++  - absl/base:core_headers
++  - absl/base:malloc_internal
++  headers:
++  - third_party/abseil-cpp/absl/base/internal/poison.h
++  name: absl/base:poison
++  src:
++  - third_party/abseil-cpp/absl/base/internal/poison.cc
+ - cmake_target: absl::prefetch
+   deps:
+   - absl/base:config
+@@ -247,6 +260,7 @@
+   src: []
+ - cmake_target: absl::btree
+   deps:
++  - absl/base:config
+   - absl/base:core_headers
+   - absl/base:raw_logging_internal
+   - absl/base:throw_delegate
+@@ -260,7 +274,6 @@
+   - absl/strings:cord
+   - absl/strings:strings
+   - absl/types:compare
+-  - absl/utility:utility
+   headers:
+   - third_party/abseil-cpp/absl/container/btree_map.h
+   - third_party/abseil-cpp/absl/container/btree_set.h
+@@ -318,9 +331,9 @@
+   - absl/algorithm:container
+   - absl/base:core_headers
+   - absl/container:container_memory
+-  - absl/container:hash_function_defaults
++  - absl/container:hash_container_defaults
+   - absl/container:raw_hash_map
+-  - absl/memory:memory
++  - absl/meta:type_traits
+   headers:
+   - third_party/abseil-cpp/absl/container/flat_hash_map.h
+   name: absl/container:flat_hash_map
+@@ -330,17 +343,28 @@
+   - absl/algorithm:container
+   - absl/base:core_headers
+   - absl/container:container_memory
+-  - absl/container:hash_function_defaults
++  - absl/container:hash_container_defaults
+   - absl/container:raw_hash_set
+   - absl/memory:memory
++  - absl/meta:type_traits
+   headers:
+   - third_party/abseil-cpp/absl/container/flat_hash_set.h
+   name: absl/container:flat_hash_set
+   src: []
++- cmake_target: absl::hash_container_defaults
++  deps:
++  - absl/base:config
++  - absl/container:hash_function_defaults
++  headers:
++  - third_party/abseil-cpp/absl/container/hash_container_defaults.h
++  name: absl/container:hash_container_defaults
++  src: []
+ - cmake_target: absl::hash_function_defaults
+   deps:
+   - absl/base:config
++  - absl/container:common
+   - absl/hash:hash
++  - absl/meta:type_traits
+   - absl/strings:cord
+   - absl/strings:strings
+   headers:
+@@ -374,6 +398,7 @@
+   - absl/base:base
+   - absl/base:config
+   - absl/base:core_headers
++  - absl/base:no_destructor
+   - absl/base:raw_logging_internal
+   - absl/debugging:stacktrace
+   - absl/memory:memory
+@@ -402,6 +427,7 @@
+   src: []
+ - cmake_target: absl::inlined_vector_internal
+   deps:
++  - absl/base:base_internal
+   - absl/base:config
+   - absl/base:core_headers
+   - absl/container:compressed_tuple
+@@ -430,10 +456,11 @@
+   - absl/algorithm:container
+   - absl/base:core_headers
+   - absl/container:container_memory
+-  - absl/container:hash_function_defaults
++  - absl/container:hash_container_defaults
+   - absl/container:node_slot_policy
+   - absl/container:raw_hash_map
+   - absl/memory:memory
++  - absl/meta:type_traits
+   headers:
+   - third_party/abseil-cpp/absl/container/node_hash_map.h
+   name: absl/container:node_hash_map
+@@ -442,10 +469,12 @@
+   deps:
+   - absl/algorithm:container
+   - absl/base:core_headers
+-  - absl/container:hash_function_defaults
++  - absl/container:container_memory
++  - absl/container:hash_container_defaults
+   - absl/container:node_slot_policy
+   - absl/container:raw_hash_set
+   - absl/memory:memory
++  - absl/meta:type_traits
+   headers:
+   - third_party/abseil-cpp/absl/container/node_hash_set.h
+   name: absl/container:node_hash_set
+@@ -526,9 +555,9 @@
+ - cmake_target: absl::crc_cord_state
+   deps:
+   - absl/base:config
++  - absl/base:no_destructor
+   - absl/crc:crc32c
+   - absl/numeric:bits
+-  - absl/strings:strings
+   headers:
+   - third_party/abseil-cpp/absl/crc/internal/crc_cord_state.h
+   name: absl/crc:crc_cord_state
+@@ -568,6 +597,14 @@
+   - third_party/abseil-cpp/absl/crc/internal/non_temporal_memcpy.h
+   name: absl/crc:non_temporal_memcpy
+   src: []
++- cmake_target: absl::bounded_utf8_length_sequence
++  deps:
++  - absl/base:config
++  - absl/numeric:bits
++  headers:
++  - third_party/abseil-cpp/absl/debugging/internal/bounded_utf8_length_sequence.h
++  name: absl/debugging:bounded_utf8_length_sequence
++  src: []
+ - cmake_target: absl::debugging_internal
+   deps:
+   - absl/base:config
+@@ -584,16 +621,40 @@
+   - third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc
+   - third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc
+   - third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc
++- cmake_target: absl::decode_rust_punycode
++  deps:
++  - absl/base:config
++  - absl/base:nullability
++  - absl/debugging:bounded_utf8_length_sequence
++  - absl/debugging:utf8_for_code_point
++  headers:
++  - third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.h
++  name: absl/debugging:decode_rust_punycode
++  src:
++  - third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.cc
+ - cmake_target: absl::demangle_internal
+   deps:
+   - absl/base:base
+   - absl/base:config
+   - absl/base:core_headers
++  - absl/base:nullability
++  - absl/debugging:demangle_rust
++  - absl/numeric:bits
+   headers:
+   - third_party/abseil-cpp/absl/debugging/internal/demangle.h
+   name: absl/debugging:demangle_internal
+   src:
+   - third_party/abseil-cpp/absl/debugging/internal/demangle.cc
++- cmake_target: absl::demangle_rust
++  deps:
++  - absl/base:config
++  - absl/base:core_headers
++  - absl/debugging:decode_rust_punycode
++  headers:
++  - third_party/abseil-cpp/absl/debugging/internal/demangle_rust.h
++  name: absl/debugging:demangle_rust
++  src:
++  - third_party/abseil-cpp/absl/debugging/internal/demangle_rust.cc
+ - cmake_target: absl::examine_stack
+   deps:
+   - absl/base:config
+@@ -672,6 +733,14 @@
+   name: absl/debugging:symbolize
+   src:
+   - third_party/abseil-cpp/absl/debugging/symbolize.cc
++- cmake_target: absl::utf8_for_code_point
++  deps:
++  - absl/base:config
++  headers:
++  - third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.h
++  name: absl/debugging:utf8_for_code_point
++  src:
++  - third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.cc
+ - cmake_target: absl::flags_commandlineflag
+   deps:
+   - absl/base:config
+@@ -709,9 +778,9 @@
+   - third_party/abseil-cpp/absl/flags/usage_config.cc
+ - cmake_target: absl::flags
+   deps:
+-  - absl/base:base
+   - absl/base:config
+   - absl/base:core_headers
++  - absl/flags:commandlineflag
+   - absl/flags:config
+   - absl/flags:flag_internal
+   - absl/flags:reflection
+@@ -1139,6 +1208,7 @@
+   - third_party/abseil-cpp/absl/log/internal/proto.cc
+ - cmake_target: absl::log_internal_strip
+   deps:
++  - absl/base:core_headers
+   - absl/base:log_severity
+   - absl/log/internal:log_message
+   - absl/log/internal:nullstream
+@@ -1366,6 +1436,7 @@
+   - absl/base:config
+   - absl/base:core_headers
+   - absl/numeric:bits
++  - absl/types:compare
+   headers:
+   - third_party/abseil-cpp/absl/numeric/int128.h
+   - third_party/abseil-cpp/absl/numeric/int128_have_intrinsic.inc
+@@ -1453,12 +1524,25 @@
+   src: []
+ - cmake_target: absl::random_internal_mock_helpers
+   deps:
++  - absl/base:config
+   - absl/base:fast_type_id
+   - absl/types:optional
+   headers:
+   - third_party/abseil-cpp/absl/random/internal/mock_helpers.h
+   name: absl/random/internal:mock_helpers
+   src: []
++- cmake_target: ''
++  deps:
++  - absl/base:config
++  - absl/base:raw_logging_internal
++  - absl/random/internal:iostream_state_saver
++  - absl/random/internal:uniform_helper
++  - absl/strings:string_view
++  - absl/strings:strings
++  headers:
++  - third_party/abseil-cpp/absl/random/internal/mock_validators.h
++  name: absl/random/internal:mock_validators
++  src: []
+ - cmake_target: ''
+   deps:
+   - absl/base:config
+@@ -1615,7 +1699,6 @@
+   deps:
+   - absl/base:config
+   - absl/meta:type_traits
+-  - absl/numeric:int128
+   - absl/random/internal:traits
+   headers:
+   - third_party/abseil-cpp/absl/random/internal/uniform_helper.h
+@@ -1698,10 +1781,12 @@
+ - cmake_target: absl::random_seed_sequences
+   deps:
+   - absl/base:config
++  - absl/base:nullability
+   - absl/random/internal:pool_urbg
+   - absl/random/internal:salted_seed_seq
+   - absl/random/internal:seed_material
+   - absl/random:seed_gen_exception
++  - absl/strings:string_view
+   - absl/types:span
+   headers:
+   - third_party/abseil-cpp/absl/random/seed_sequences.h
+@@ -1786,6 +1871,7 @@
+   - absl/strings:cordz_update_tracker
+   - absl/strings:internal
+   - absl/strings:strings
++  - absl/types:compare
+   - absl/types:optional
+   - absl/types:span
+   headers:
+@@ -1844,8 +1930,8 @@
+   - third_party/abseil-cpp/absl/strings/internal/cordz_functions.cc
+ - cmake_target: absl::cordz_handle
+   deps:
+-  - absl/base:base
+   - absl/base:config
++  - absl/base:no_destructor
+   - absl/base:raw_logging_internal
+   - absl/synchronization:synchronization
+   headers:
+@@ -2014,7 +2100,6 @@
+   - third_party/abseil-cpp/absl/strings/internal/charconv_bigint.h
+   - third_party/abseil-cpp/absl/strings/internal/charconv_parse.h
+   - third_party/abseil-cpp/absl/strings/internal/damerau_levenshtein_distance.h
+-  - third_party/abseil-cpp/absl/strings/internal/has_absl_stringify.h
+   - third_party/abseil-cpp/absl/strings/internal/memutil.h
+   - third_party/abseil-cpp/absl/strings/internal/stl_type_traits.h
+   - third_party/abseil-cpp/absl/strings/internal/str_join_internal.h
+diff --git a/src/python/grpcio/grpc_core_dependencies.py b/src/python/grpcio/grpc_core_dependencies.py
+index 9f20c1f18f16..06832fc00fb9 100644
+--- a/src/python/grpcio/grpc_core_dependencies.py
++++ b/src/python/grpcio/grpc_core_dependencies.py
+@@ -882,9 +882,12 @@ CORE_SOURCE_FILES = [
+     'third_party/abseil-cpp/absl/crc/internal/crc_non_temporal_memcpy.cc',
+     'third_party/abseil-cpp/absl/crc/internal/crc_x86_arm_combined.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc',
++    'third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/demangle.cc',
++    'third_party/abseil-cpp/absl/debugging/internal/demangle_rust.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc',
++    'third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc',
+     'third_party/abseil-cpp/absl/debugging/stacktrace.cc',
+     'third_party/abseil-cpp/absl/debugging/symbolize.cc',
+diff --git a/src/python/grpcio_observability/observability_lib_deps.py b/src/python/grpcio_observability/observability_lib_deps.py
+index fe1616569708..452f00d93d1d 100644
+--- a/src/python/grpcio_observability/observability_lib_deps.py
++++ b/src/python/grpcio_observability/observability_lib_deps.py
+@@ -87,9 +87,12 @@ CC_FILES=[
+     'third_party/abseil-cpp/absl/crc/internal/crc_non_temporal_memcpy.cc',
+     'third_party/abseil-cpp/absl/crc/internal/crc_x86_arm_combined.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc',
++    'third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/demangle.cc',
++    'third_party/abseil-cpp/absl/debugging/internal/demangle_rust.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc',
++    'third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc',
+     'third_party/abseil-cpp/absl/debugging/stacktrace.cc',
+     'third_party/abseil-cpp/absl/debugging/symbolize.cc',
+diff --git a/templates/gRPC-C++.podspec.template b/templates/gRPC-C++.podspec.template
+index b4c24348bf1f..14d7b58a8029 100644
+--- a/templates/gRPC-C++.podspec.template
++++ b/templates/gRPC-C++.podspec.template
+@@ -183,7 +183,7 @@
+       ss.dependency "#{s.name}/Privacy", version
+       ss.dependency "#{s.name}/Interface", version
+       ss.dependency 'gRPC-Core', version
+-      abseil_version = '1.20240116.1'
++      abseil_version = '~> 1.20240722.0'
+       % for abseil_spec in grpcpp_abseil_specs:
+       ss.dependency '${abseil_spec}', abseil_version
+       % endfor
+diff --git a/templates/gRPC-Core.podspec.template b/templates/gRPC-Core.podspec.template
+index c3a0b10b0f3f..9733c37df812 100644
+--- a/templates/gRPC-Core.podspec.template
++++ b/templates/gRPC-Core.podspec.template
+@@ -122,7 +122,7 @@
+     s.requires_arc = false
+ 
+     name = 'grpc'
+-    abseil_version = '1.20240116.1'
++    abseil_version = '~> 1.20240722.0'
+ 
+     # When creating a dynamic framework, name it grpc.framework instead of gRPC-Core.framework.
+     # This lets users write their includes like `#include <grpc/grpc.h>` as opposed to `#include
+diff --git a/third_party/abseil-cpp b/third_party/abseil-cpp
+index 4a2c63365eff..4447c7562e3b 160000
+--- a/third_party/abseil-cpp
++++ b/third_party/abseil-cpp
+@@ -1 +1 @@
+-Subproject commit 4a2c63365eff8823a5221db86ef490e828306f9d
++Subproject commit 4447c7562e3bc702ade25105912dce503f0c4010
+diff --git a/tools/distrib/python/grpcio_tools/protoc_lib_deps.py b/tools/distrib/python/grpcio_tools/protoc_lib_deps.py
+index 4577c6ddf496..1ea930ea2d46 100644
+--- a/tools/distrib/python/grpcio_tools/protoc_lib_deps.py
++++ b/tools/distrib/python/grpcio_tools/protoc_lib_deps.py
+@@ -38,9 +38,12 @@ CC_FILES=[
+     'third_party/abseil-cpp/absl/crc/internal/crc_non_temporal_memcpy.cc',
+     'third_party/abseil-cpp/absl/crc/internal/crc_x86_arm_combined.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc',
++    'third_party/abseil-cpp/absl/debugging/internal/decode_rust_punycode.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/demangle.cc',
++    'third_party/abseil-cpp/absl/debugging/internal/demangle_rust.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc',
++    'third_party/abseil-cpp/absl/debugging/internal/utf8_for_code_point.cc',
+     'third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc',
+     'third_party/abseil-cpp/absl/debugging/stacktrace.cc',
+     'third_party/abseil-cpp/absl/debugging/symbolize.cc',
+diff --git a/tools/run_tests/sanity/check_submodules.sh b/tools/run_tests/sanity/check_submodules.sh
+index 872a988c37fd..b852c7e7643b 100755
+--- a/tools/run_tests/sanity/check_submodules.sh
++++ b/tools/run_tests/sanity/check_submodules.sh
+@@ -25,7 +25,7 @@ want_submodules=$(mktemp /tmp/submXXXXXX)
+ 
+ git submodule | sed 's/+//g' | awk '{ print $2 " " $1 }' | sort >"$submodules"
+ cat <<EOF | sort >"$want_submodules"
+-third_party/abseil-cpp 4a2c63365eff8823a5221db86ef490e828306f9d
++third_party/abseil-cpp 4447c7562e3bc702ade25105912dce503f0c4010
+ third_party/benchmark 344117638c8ff7e239044fd0fa7085839fc03021
+ third_party/bloaty 60209eb1ccc34d5deefb002d1b7f37545204f7f2
+ third_party/boringssl-with-bazel e14d29f68c2d1b02e06f10c83b9b8ea4d061f8df
+-- 
+2.48.1
+
