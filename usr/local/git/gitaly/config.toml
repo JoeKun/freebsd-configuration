@@ -38,6 +38,8 @@ bin_dir = "/usr/local/git/gitaly/_build/bin"
 # certificate_path = '/usr/local/git/cert.cert'
 # # Path to the key.
 # key_path = '/usr/local/git/key.pem'
+# Minimum offered TLS version. Options: ["TLS 1.2", "TLS 1.3"].
+# min_version = "TLS 1.2"
 
 # # Git settings
 [git]
