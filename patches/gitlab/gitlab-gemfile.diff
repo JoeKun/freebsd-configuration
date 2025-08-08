@@ -1,5 +1,5 @@
 diff --git a/Gemfile b/Gemfile
-index ae4380cfd361..a9497b7795e7 100644
+index 9dc6f14926d4..dc6360672301 100644
 --- a/Gemfile
 +++ b/Gemfile
 @@ -71,7 +71,7 @@ gem 'view_component', '~> 3.23.2', feature_category: :shared
@@ -7,29 +7,29 @@ index ae4380cfd361..a9497b7795e7 100644
  gem 'pg', '~> 1.5.6', feature_category: :database
  
 -gem 'rugged', '~> 1.6', feature_category: :gitaly
-+gem 'rugged', '~> 1.7', feature_category: :gitaly
++gem 'rugged', '~> 1.9', feature_category: :gitaly
  
  gem 'faraday', '~> 2', feature_category: :shared
  gem 'faraday-retry', '~> 2', feature_category: :shared
 diff --git a/Gemfile.lock b/Gemfile.lock
-index 00044cb6c6b5..9caef87e56e4 100644
+index fa3c69281788..d4b1bca21a34 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -1759,7 +1759,7 @@ GEM
+@@ -1747,7 +1747,7 @@ GEM
      rubyntlm (0.6.3)
      rubypants (0.2.0)
      rubyzip (2.4.1)
 -    rugged (1.6.3)
-+    rugged (1.7.2)
++    rugged (1.9.0)
      safe_yaml (1.0.4)
      safety_net_attestation (0.4.0)
        jwt (~> 2.0)
-@@ -2366,7 +2366,7 @@ DEPENDENCIES
+@@ -2356,7 +2356,7 @@ DEPENDENCIES
    ruby-progressbar (~> 1.10)
    ruby-saml (~> 1.18)
    rubyzip (~> 2.4.0)
 -  rugged (~> 1.6)
-+  rugged (~> 1.7)
++  rugged (~> 1.9)
    sanitize (~> 6.0.2)
    sd_notify (~> 0.1.0)
    seed-fu (~> 2.3.7)
