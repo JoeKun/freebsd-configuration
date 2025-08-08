@@ -812,7 +812,7 @@ Enable `phpMyAdmin` configuration for `nginx`.
 ## PostgreSQL
 
 ```
-# pkg install postgresql13-client postgresql13-server postgresql13-contrib
+# pkg install postgresql17-client postgresql17-server postgresql17-contrib
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/postgresql
 # service postgresql initdb

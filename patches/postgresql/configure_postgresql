@@ -1,5 +1,5 @@
 #! /bin/sh
 
-cd /var/db/postgres/data15
+cd /var/db/postgres/data17
 patch --posix -p1 -i /freebsd-configuration/patches/postgresql/postgresql.conf-enable-port.diff
 
