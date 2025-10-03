@@ -163,6 +163,19 @@ self_signed_cert = false
 # # The size of each part in a multipart upload to object storage.
 # buffer_size = 0
 
+## Pack-object cache configuration
+# [archive_cache]
+## If the cache is enabled or not
+# enabled = true
+## Controls whether the cache applies a backpressure mechanism
+# backpressure = true
+## Directory where cached packfile are stored
+# dir = '/path/to/cache'
+## Max duration of packfiles in the cache
+# max_age = '300s'
+## Minimum number of identical requests required before caching an object
+# min_occurrences = 1
+
 # # Bundle-URI
 # [bundle_uri]
 # # The destination object-storage URL.
