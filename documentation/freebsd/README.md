@@ -19,3 +19,4 @@ If you suspect there may be an unspecified pre-requisite in any of these documen
  9. [Creating an unprivileged user on FreeBSD](freebsd-unprivileged-user.md)
  10. [Mount special file systems on FreeBSD](freebsd-special-file-systems.md)
  11. [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md)
+ 12. [Configuring firewall for FreeBSD with `pf`](freebsd-firewall.md)

@@ -1,0 +1,11 @@
+--- a/sshguard.conf	2025-07-04 14:08:54.000000000 -0700
++++ b/sshguard.conf	2025-10-04 21:46:18.171016000 -0700
+@@ -8,7 +8,7 @@
+ # Full path to backend executable (required, no default)
+ #BACKEND="/usr/local/libexec/sshg-fw-hosts"
+ #BACKEND="/usr/local/libexec/sshg-fw-ipfw"
+-#BACKEND="/usr/local/libexec/sshg-fw-pf"
++BACKEND="/usr/local/libexec/sshg-fw-pf"
+ 
+ # Space-separated list of log files to monitor. (optional, no default)
+ FILES="/var/log/auth.log /var/log/maillog"

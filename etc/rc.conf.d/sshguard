@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/sshguard: system configuration for sshguard
+
+sshguard_enable="YES"
+
