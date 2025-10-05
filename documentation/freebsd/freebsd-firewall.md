@@ -117,10 +117,23 @@ pf_enable="YES"
 EOF
 ```
 
-Start `pf`.
+To enable logging for `pf`, you must also enable the `pflog` service separately.[^2]
+
+[^2]: As shown in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
+
+```console
+# cat << EOF > /etc/rc.conf.d/pflog
+# /etc/rc.conf.d/pflog: system configuration for pflog
+
+pflog_enable="YES"
+EOF
+```
+
+Start `pf` and `pflog`.
 
 ```console
 # service pf start
+# service pflog start
 ```
 
 
@@ -170,20 +183,20 @@ Finally, on the target server machine, install `sshguard`.
 
 Some configuration is needed to instruct `sshguard` to use `pf` as its `BACKEND`.
 
-This can be achieved by editing `/usr/local/etc/sshguard.conf` and enabling the option `BACKEND="/usr/local/libexec/sshg-fw-pf"`.[^2]
+This can be achieved by editing `/usr/local/etc/sshguard.conf` and enabling the option `BACKEND="/usr/local/libexec/sshg-fw-pf"`.[^3]
 
 ```console
 # cd /usr/local/etc
-# sed -i '' 's,^#BACKEND="/usr/local/libexec/sshg-fw-pf"$,BACKEND="/usr/local/libexec/sshg-fw-pf",' sshguard.conf 
+# sed -i '' 's,^#BACKEND="/usr/local/libexec/sshg-fw-pf"$,BACKEND="/usr/local/libexec/sshg-fw-pf",' sshguard.conf
 ```
 
-[^2]: An equivalent patch for `sshguard.conf` can also be found in this `freebsd-configuration` repository at the following location: `patches/sshguard/sshguard-use-pf-backend.diff`.
+[^3]: An equivalent patch for `sshguard.conf` can also be found in this `freebsd-configuration` repository at the following location: `patches/sshguard/sshguard-use-pf-backend.diff`.
 
 ### Enable `sshguard`
 
-Enable the `sshguard` service.[^3]
+Enable the `sshguard` service.[^4]
 
-[^3]: As shown in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
+[^4]: As shown in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
 
 ```console
 # cat << EOF > /etc/rc.conf.d/sshguard
