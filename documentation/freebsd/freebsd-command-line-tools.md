@@ -36,7 +36,7 @@ And build your packages again.
 ```console
 # poudriere bulk \
     -j my_poudriere-amd64-14-3 \
-    -p 2025Q3 \
+    -p 2025Q4 \
     -f /usr/local/etc/poudriere.d/pkglist
 ```
 
