@@ -1,7 +1,9 @@
 # /etc/rc.conf.d/vm: system configuration for vm
 
 vm_enable="YES"
-vm_dir="zfs:storage/var/virtual-machines"
-vm_list="baz"
-vm_delay="5"
+vm_dir="zfs:system/var/virtual-machines"
 
+# To automatically start the virtual machine named my_vm with a 5 seconds delay
+# at boot time, uncomment the following section.
+#vm_list="my_vm"
+#vm_delay="5"
