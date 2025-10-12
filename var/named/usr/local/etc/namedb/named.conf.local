@@ -1,7 +1,7 @@
 // /usr/local/etc/namedb/named.conf.local: Local configuration for bind
 
 //-----------------------------------------------------------
-// Access-Lists
+// Access Lists
 //-----------------------------------------------------------
 
 // self: local link, localhost
@@ -81,26 +81,29 @@ primaries buddyns-notify-bridge {
 	127.0.0.1 port 5309;
 };
 
-// baz.org
-primaries baz {
+// my_friend_name_server.tld
+primaries my_friend_name_server {
 	123.45.67.89;
 };
 
 
 //-----------------------------------------------------------
-// Let's Encrypt Key
+// Let’s Encrypt Key
 //-----------------------------------------------------------
 
+// Uncomment the following directive for Let’s Encrypt.
+/*
 include "/usr/local/etc/namedb/letsencrypt.key";
+*/
 
 
 //-----------------------------------------------------------
 // DNS Zones Configuration as primary
 //-----------------------------------------------------------
 
-zone "foo.com" {
+zone "my_domain.tld" {
 	type primary;
-	file "primary-dynamic/foo.com.zone";
+	file "primary-dynamic/my_domain.tld.zone";
 	allow-query {
 		any;
 	};
@@ -110,11 +113,12 @@ zone "foo.com" {
 	also-notify {
 		buddyns-notify-bridge;
 	};
-	// Uncomment the following two sections for Let's Encrypt.
+	notify yes;
+	// Uncomment the following two sections for Let’s Encrypt.
 	/*
 	check-names warn;
 	update-policy {
-		grant letsencrypt name _acme-challenge.foo.com. txt;
+		grant letsencrypt name _acme-challenge.my_domain.tld. txt;
 	};
 	*/
 };
@@ -124,11 +128,11 @@ zone "foo.com" {
 // DNS Zones Configuration as secondary
 //-----------------------------------------------------------
 
-zone "bar.com" {
+zone "my_friend_domain.tld" {
 	type secondary;
-	file "secondary/bar.com.zone";
+	file "secondary/my_friend_domain.tld.zone";
 	primaries {
-		baz;
+		my_friend_name_server;
 	};
 	allow-query {
 		any;

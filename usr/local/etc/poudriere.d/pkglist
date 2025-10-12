@@ -33,3 +33,8 @@ textproc/colordiff
 textproc/diff-so-fancy
 textproc/par
 
+# Firewall related services
+security/sshguard
+
+# DNS related services
+dns/bind920

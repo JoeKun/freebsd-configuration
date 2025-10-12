@@ -1,5 +1,6 @@
 # /etc/rc.conf.d/syslogd: system configuration for syslogd
 
+# Disable opening Syslogd network socket (disables remote logging).
 syslogd_flags="-ss"
 altlog_proglist="named"
 

@@ -20,3 +20,4 @@ If you suspect there may be an unspecified pre-requisite in any of these documen
  10. [Mount special file systems on FreeBSD](freebsd-special-file-systems.md)
  11. [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md)
  12. [Configuring firewall for FreeBSD with `pf`](freebsd-firewall.md)
+ 13. [Authoritative DNS server on FreeBSD with BIND](freebsd-dns-bind.md)
