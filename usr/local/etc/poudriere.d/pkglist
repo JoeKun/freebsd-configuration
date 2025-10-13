@@ -38,3 +38,4 @@ security/sshguard
 
 # DNS related services
 dns/bind920
+dns/nsnotifyd
