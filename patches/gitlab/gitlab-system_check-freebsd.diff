@@ -1,8 +1,8 @@
 diff --git a/lib/system_check/rake_task/app_task.rb b/lib/system_check/rake_task/app_task.rb
-index 20332d4b24ba..bfc864068a37 100644
+index 8e711138856f..29116dffe6d2 100644
 --- a/lib/system_check/rake_task/app_task.rb
 +++ b/lib/system_check/rake_task/app_task.rb
-@@ -24,8 +24,8 @@ def self.checks
+@@ -25,8 +25,8 @@ def self.checks
            SystemCheck::App::UploadsDirectoryExistsCheck,
            SystemCheck::App::UploadsPathPermissionCheck,
            SystemCheck::App::UploadsPathTmpPermissionCheck,
@@ -14,7 +14,7 @@ index 20332d4b24ba..bfc864068a37 100644
            SystemCheck::App::RedisVersionCheck,
            SystemCheck::App::RubyVersionCheck,
 diff --git a/lib/system_check/sidekiq_check.rb b/lib/system_check/sidekiq_check.rb
-index 777e06f7501f..461b64248721 100644
+index 8b53182f8856..1847262d6d0c 100644
 --- a/lib/system_check/sidekiq_check.rb
 +++ b/lib/system_check/sidekiq_check.rb
 @@ -17,7 +17,7 @@ def multi_check
@@ -23,6 +23,6 @@ index 777e06f7501f..461b64248721 100644
  
 -      if sidekiq_worker_process_count > 0
 +      if sidekiq_worker_process_count > 0 || sidekiq_cluster_process_count > 0
-         $stdout.puts "yes".color(:green)
+         $stdout.puts Rainbow("yes").green
        else
-         $stdout.puts "no".color(:red)
+         $stdout.puts Rainbow("no").red
