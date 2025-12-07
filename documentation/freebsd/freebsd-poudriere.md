@@ -182,10 +182,10 @@ URL_BASE=http://pkg.my_domain.tld
 
 ## Setup build environment for `poudriere`
 
-Create dedicated jail for `poudriere` to build binary packages for the `amd64` architecture, for the `14.3-RELEASE` version of FreeBSD.
+Create dedicated jail for `poudriere` to build binary packages for the `amd64` architecture, for the `15.0-RELEASE` version of FreeBSD.
 
 ```console
-# poudriere jail -c -j my_poudriere-amd64-14-3 -v 14.3-RELEASE
+# poudriere jail -c -j my_poudriere-amd64-15-0 -v 15.0-RELEASE
 ```
 
 Clone a new ports tree for the current quarterly branch from FreeBSD’s official ports tree: `2025Q4`.
@@ -225,7 +225,7 @@ Start an initial build using the `bulk` command.
 
 ```console
 # poudriere bulk \
-    -j my_poudriere-amd64-14-3 \
+    -j my_poudriere-amd64-15-0 \
     -p 2025Q4 \
     -f /usr/local/etc/poudriere.d/pkglist
 ```
@@ -234,7 +234,7 @@ Once the build is complete, setup a symbolic link for the current set of quarter
 
 ```console
 # cd /usr/local/poudriere/data/packages
-# ln -s my_poudriere-amd64-14-3-2025Q4 my_poudriere-amd64-14-3-quarterly
+# ln -s my_poudriere-amd64-15-0-2025Q4 my_poudriere-amd64-15-0-quarterly
 ```
 
 
@@ -267,7 +267,7 @@ Then enable using our own private package repository.
 # /usr/local/etc/pkg/repos/my_poudriere.conf
 
 my_poudriere: {
-    url: "file:///var/poudriere/packages/my_poudriere-amd64-14-3-quarterly",
+    url: "file:///var/poudriere/packages/my_poudriere-amd64-15-0-quarterly",
     signature_type: "pubkey",
     pubkey: "/usr/local/etc/ssl/certs/my_poudriere.cert",
     enabled: yes
@@ -287,7 +287,7 @@ Finally force reinstalling all the current packages from our own private package
 On the `my_poudriere` virtual machine, update both the jail and both of the ports trees.
 
 ```console
-# poudriere jail -j my_poudriere-amd64-14-3 -u
+# poudriere jail -j my_poudriere-amd64-15-0 -u
 # poudriere ports -u
 # poudriere ports -p 2025Q4 -u
 ```
@@ -296,7 +296,7 @@ Build packages for updated ports.
 
 ```console
 # poudriere bulk \
-    -j my_poudriere-amd64-14-3 \
+    -j my_poudriere-amd64-15-0 \
     -p 2025Q4 \
     -f /usr/local/etc/poudriere.d/pkglist
 ```
@@ -320,7 +320,7 @@ And start building again.
 
 ```console
 # poudriere bulk \
-    -j my_poudriere-amd64-14-3 \
+    -j my_poudriere-amd64-15-0 \
     -p 2025Q4 \
     -f /usr/local/etc/poudriere.d/pkglist
 ```
@@ -347,7 +347,7 @@ Then start building packages from this new quarterly branch.
 
 ```console
 # poudriere bulk \
-    -j my_poudriere-amd64-14-3 \
+    -j my_poudriere-amd64-15-0 \
     -p 2026Q1 \
     -f /usr/local/etc/poudriere.d/pkglist
 ```
@@ -356,16 +356,16 @@ Once the build is complete, update the symbolic link for the current set of quar
 
 ```console
 # cd /usr/local/poudriere/data/packages
-# rm -f my_poudriere-amd64-14-3-quarterly
-# ln -s my_poudriere-amd64-14-3-2026Q1 my_poudriere-amd64-14-3-quarterly
+# rm -f my_poudriere-amd64-15-0-quarterly
+# ln -s my_poudriere-amd64-15-0-2026Q1 my_poudriere-amd64-15-0-quarterly
 ```
 
 Assuming the new packages built from the new quarterly ports branch are satisfactory, you may want to clean up existing packages, distribution files and logs associated with that old ports tree.
 
 ```console
-# poudriere pkgclean -A -j my_poudriere-amd64-14-3 -p 2025Q4
+# poudriere pkgclean -A -j my_poudriere-amd64-15-0 -p 2025Q4
 # poudriere distclean -p 2025Q4 -f /usr/local/etc/poudriere.d/pkglist
-# poudriere logclean -j my_poudriere-amd64-14-3 -p 2025Q4 -a
+# poudriere logclean -j my_poudriere-amd64-15-0 -p 2025Q4 -a
 ```
 
 Then, the old ports tree itself can be removed.
@@ -378,13 +378,13 @@ Lastly, there are a number of other small artifacts associated with that old por
 
 ```console
 # cd /usr/local/poudriere/data
-# rm -R -f packages/my_poudriere-amd64-14-3-2025Q4
-# rmdir cache/my_poudriere-amd64-14-3-2025Q4
-# rmdir .m/my_poudriere-amd64-14-3-2025Q4
+# rm -R -f packages/my_poudriere-amd64-15-0-2025Q4
+# rmdir cache/my_poudriere-amd64-15-0-2025Q4
+# rmdir .m/my_poudriere-amd64-15-0-2025Q4
 
 # cd /var/run/poudriere
-# rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-14-3-2025Q4.flock
-# rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-14-3-2025Q4.pid
-# rm -f lock-poudriere-shared-jail_start_my_poudriere-amd64-14-3-2025Q4.flock
-# rm -f lock-poudriere-shared-jail_start_my_poudriere-amd64-14-3-2025Q4.pid
+# rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-15-0-2025Q4.flock
+# rm -f lock-poudriere-shared-json_jail_my_poudriere-amd64-15-0-2025Q4.pid
+# rm -f lock-poudriere-shared-jail_start_my_poudriere-amd64-15-0-2025Q4.flock
+# rm -f lock-poudriere-shared-jail_start_my_poudriere-amd64-15-0-2025Q4.pid
 ```
