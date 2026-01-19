@@ -1,21 +1,21 @@
 diff --git a/Gemfile b/Gemfile
-index 397105092d20..7b3994fb48f4 100644
+index 610c4e2296c0..b2ddf0986e3c 100644
 --- a/Gemfile
 +++ b/Gemfile
-@@ -74,7 +74,7 @@ gem 'view_component', '~> 3.23.2', feature_category: :shared
+@@ -67,7 +67,7 @@ gem 'view_component', '~> 3.23.2', feature_category: :shared # rubocop:todo Gemf
  # Supported DBs
  gem 'pg', '~> 1.6.1', feature_category: :database
  
 -gem 'rugged', '~> 1.6', feature_category: :gitaly
 +gem 'rugged', '~> 1.9', feature_category: :gitaly
  
- gem 'faraday', '~> 2', feature_category: :shared
- gem 'faraday-retry', '~> 2', feature_category: :shared
+ gem 'faraday', '~> 2', feature_category: :shared # rubocop:todo Gemfile/MissingFeatureCategory -- https://gitlab.com/gitlab-org/gitlab/-/issues/581839
+ gem 'faraday-retry', '~> 2', feature_category: :shared # rubocop:todo Gemfile/MissingFeatureCategory -- https://gitlab.com/gitlab-org/gitlab/-/issues/581839
 diff --git a/Gemfile.lock b/Gemfile.lock
-index ffbaf50467a5..b3625dd6b675 100644
+index d808c4d21015..42d35c4c5b48 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -1783,7 +1783,7 @@ GEM
+@@ -1781,7 +1781,7 @@ GEM
      rubyntlm (0.6.3)
      rubypants (0.2.0)
      rubyzip (2.4.1)
@@ -24,7 +24,7 @@ index ffbaf50467a5..b3625dd6b675 100644
      safe_yaml (1.0.4)
      safety_net_attestation (0.4.0)
        jwt (~> 2.0)
-@@ -2399,7 +2399,7 @@ DEPENDENCIES
+@@ -2397,7 +2397,7 @@ DEPENDENCIES
    ruby-progressbar (~> 1.10)
    ruby-saml (~> 1.18)
    rubyzip (~> 2.4.0)
