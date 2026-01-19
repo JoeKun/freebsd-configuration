@@ -1772,6 +1772,7 @@ Enable `vm` service:
 ```
 # cd /etc/rc.conf.d
 # ln -s ../../freebsd-configuration/etc/rc.conf.d/vm
+# ln -s ../../freebsd-configuration/etc/rc.conf.d/vm_network
 ```
 
 From this point forward, we'll assume you want one virtual machine with Ubuntu Server 22.04.1 LTS (Jammy Jellyfish), named `baz`. If you prefer a different name for this machine, please edit commands below, as well as the variable `vm_list` in `/etc/rc.conf.d`.

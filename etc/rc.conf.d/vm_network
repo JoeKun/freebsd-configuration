@@ -1,0 +1,4 @@
+# /etc/rc.conf.d/vm_network: system configuration for vm_network
+
+vm_enable="YES"
+
