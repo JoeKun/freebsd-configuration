@@ -1,6 +1,6 @@
 diff -ru a/postgresql.conf b/postgresql.conf
---- a/postgresql.conf	2022-01-08 21:05:44.536917000 -0800
-+++ b/postgresql.conf	2022-01-08 21:07:11.699687000 -0800
+--- a/postgresql.conf	2026-04-18 11:32:29.311441000 -0700
++++ b/postgresql.conf	2026-04-18 11:33:18.891542000 -0700
 @@ -61,7 +61,7 @@
  					# comma-separated list of addresses;
  					# defaults to 'localhost'; use '*' for all
@@ -8,5 +8,5 @@ diff -ru a/postgresql.conf b/postgresql.conf
 -#port = 5432				# (change requires restart)
 +port = 5432				# (change requires restart)
  max_connections = 100			# (change requires restart)
+ #reserved_connections = 0		# (change requires restart)
  #superuser_reserved_connections = 3	# (change requires restart)
- #unix_socket_directories = '/tmp'	# comma-separated list of directories
