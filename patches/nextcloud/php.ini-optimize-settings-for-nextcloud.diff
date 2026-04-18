@@ -1,6 +1,6 @@
 diff -ru a/php.ini b/php.ini
---- a/php.ini	2024-02-04 21:46:22.216970000 -0800
-+++ b/php.ini	2024-02-04 22:07:06.127503000 -0800
+--- a/php.ini	2026-04-17 22:21:40.020765000 -0700
++++ b/php.ini	2026-04-17 22:29:14.869154000 -0700
 @@ -432,7 +432,7 @@
  
  ; Maximum amount of memory a script may consume
@@ -10,7 +10,7 @@ diff -ru a/php.ini b/php.ini
  
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  ; Error handling and logging ;
-@@ -1781,22 +1781,26 @@
+@@ -1661,22 +1661,26 @@
  [dba]
  ;dba.default_handler=
  
@@ -42,7 +42,7 @@ diff -ru a/php.ini b/php.ini
  
  ; The maximum percentage of "wasted" memory until a restart is scheduled.
  ;opcache.max_wasted_percentage=5
-@@ -1814,14 +1818,14 @@
+@@ -1694,14 +1698,14 @@
  ; How often (in seconds) to check file timestamps for changes to the shared
  ; memory storage allocation. ("1" means validate once per second, but only
  ; once per request. "0" means always validate)

@@ -1,7 +1,7 @@
 diff -ru a/php.ini b/php.ini
---- a/php.ini	2023-04-12 16:46:22.800028000 -0700
-+++ b/php.ini	2023-04-12 16:48:10.433771000 -0700
-@@ -804,7 +804,7 @@
+--- a/php.ini	2026-04-17 22:16:03.237747000 -0700
++++ b/php.ini	2026-04-17 22:17:32.432973000 -0700
+@@ -800,7 +800,7 @@
  ; of zero causes PHP to behave as before.  Default is 1.  You should fix your scripts
  ; to use SCRIPT_FILENAME rather than PATH_TRANSLATED.
  ; https://php.net/cgi.fix-pathinfo
