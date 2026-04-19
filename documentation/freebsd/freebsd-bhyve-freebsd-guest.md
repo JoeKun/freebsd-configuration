@@ -51,18 +51,6 @@ vm_dir="zfs:system/var/virtual-machines"
 EOF
 ```
 
-Also enable the `vm_network` service.[^2]
-
-[^2]: As shown in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
-
-```console
-# cat << EOF > /etc/rc.conf.d/vm_network
-# /etc/rc.conf.d/vm_network: system configuration for vm_network
-
-vm_enable="YES"
-EOF
-```
-
 Prepare scaffolding for virtual machines.
 
 ```console
@@ -91,9 +79,9 @@ Setup NAT network for virtual machines following [this guide](https://github.com
 # vm switch create -a 172.16.0.1/24 public
 ```
 
-Enable `gateway` functionality.[^3]
+Enable `gateway` functionality.[^2]
 
-[^3]: As shown in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
+[^2]: As shown in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
 
 ```console
 # cat << EOF > /etc/rc.conf.d/routing
@@ -128,9 +116,9 @@ nat on $ext_if inet from $vm_subnet to any -> ($ext_if)
 EOF
 ```
 
-Enable `pf` service.[^4]
+Enable `pf` service.[^3]
 
-[^4]: As shown in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
+[^3]: As shown in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
 
 ```console
 # cat << EOF > /etc/rc.conf.d/pf
