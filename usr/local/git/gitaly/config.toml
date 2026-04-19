@@ -162,6 +162,9 @@ self_signed_cert = false
 # # Optional: defaults to 5,242,880 bytes (5MiB). If 0, the driver will choose a reasonable default.
 # # The size of each part in a multipart upload to object storage.
 # buffer_size = 0
+# # Optional: defaults to false. If true, gitaly will inject checksum algorithm to aws sdk v2 requests.
+# # This is needed to work with a bucket with object lock and versioning.
+# enable_trailing_checksum = false
 
 ## Pack-object cache configuration
 # [archive_cache]
