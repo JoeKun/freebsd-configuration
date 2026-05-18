@@ -1,0 +1,35 @@
+diff --git a/Gemfile b/Gemfile
+index 51ab15115117..85d28f184b5e 100644
+--- a/Gemfile
++++ b/Gemfile
+@@ -366,7 +366,7 @@ gem 'licensee', '~> 9.16', feature_category: :shared # rubocop:todo Gemfile/Miss
+ # Pinned below 1.8 so rugged.so links libgit2's old http-parser instead of
+ # the bundled llhttp, which collides with llhttp-ffi symbols at runtime.
+ # See https://gitlab.com/gitlab-org/gitlab/-/issues/598564
+-gem 'rugged', '~> 1.7.2', require: false, feature_category: :gitaly
++gem 'rugged', '~> 1.9', require: false, feature_category: :gitaly
+ 
+ # Detect and convert string character encoding
+ gem 'charlock_holmes', '~> 0.7.9', feature_category: :shared # rubocop:todo Gemfile/MissingFeatureCategory -- https://gitlab.com/gitlab-org/gitlab/-/issues/581839
+diff --git a/Gemfile.lock b/Gemfile.lock
+index f3e631d33ddb..5aee3a970a8b 100644
+--- a/Gemfile.lock
++++ b/Gemfile.lock
+@@ -1871,7 +1871,7 @@ GEM
+     rubyntlm (0.6.3)
+     rubypants (0.2.0)
+     rubyzip (2.4.1)
+-    rugged (1.7.2)
++    rugged (1.9.0)
+     safe_yaml (1.0.4)
+     safety_net_attestation (0.5.0)
+       jwt (>= 2.0, < 4.0)
+@@ -2492,7 +2492,7 @@ DEPENDENCIES
+   ruby-progressbar (~> 1.10)
+   ruby-saml (~> 1.18)
+   rubyzip (~> 2.4.0)
+-  rugged (~> 1.7.2)
++  rugged (~> 1.9)
+   sanitize (~> 6.0.2)
+   sd_notify (~> 0.1.0)
+   seed-fu (~> 2.3.7)

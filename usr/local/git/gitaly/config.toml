@@ -26,6 +26,9 @@ bin_dir = "/usr/local/git/gitaly/_build/bin"
 # # Authentication is disabled when the token setting is absent or an empty string.
 # [auth]
 # token = 'abc123secret'
+# # Read the token from a file (must have 0600 or 0400 permissions).
+# # The token and token_file options are mutually exclusive.
+# token_file = '/path/to/token/file'
 # # Set `transitioning` to true to temporarily allow unauthenticated while rolling out authentication. This allows you
 # # to monitor if all clients are authenticating correctly without causing a service outage for clients that are still
 # # to be configured correctly.
