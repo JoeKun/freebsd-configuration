@@ -21,10 +21,23 @@ However, with a Supermicro motherboard such as the X12SPi-TF, Virtual Media Supp
 
 ## Prepare installation media
 
-Download latest FreeBSD 14 image for AMD64 architecture, in `memstick` format.
+Download latest FreeBSD 15 image for AMD64 architecture, in `memstick` format.
 
 ```console
-$ wget https://download.freebsd.org/releases/ISO-IMAGES/14.0/FreeBSD-14.0-RELEASE-amd64-memstick.img
+$ curl -O -L https://download.freebsd.org/releases/ISO-IMAGES/15.0/FreeBSD-15.0-RELEASE-amd64-memstick.img
+```
+
+Verify its checksum.
+
+```console
+$ curl -O -L https://download.freebsd.org/releases/ISO-IMAGES/15.0/CHECKSUM.SHA512-FreeBSD-15.0-RELEASE-amd64
+$ shasum -c -a 512 --ignore-missing CHECKSUM.SHA512-FreeBSD-15.0-RELEASE-amd64
+```
+
+If the checksum matches, you should see the following output.
+
+```console
+FreeBSD-15.0-RELEASE-amd64-memstick.img: OK
 ```
 
 Find device identifier for USB flash drive to be used for installing FreeBSD by looking at the output of the following command.
@@ -35,12 +48,16 @@ $ diskutil list
 
 Let’s assume going forward that the USB flash drive corresponds to `/dev/disk27`.
 
-Make sure to unmount all volumes from the USB flash drive using the Disk Utility application.
+Make sure to unmount all volumes from the USB flash drive.
+
+```console
+$ diskutil unmountDisk /dev/disk27
+```
 
 Expand the image to USB flash drive using the following command.
 
 ```console
-$ sudo dd if=FreeBSD-14.0-RELEASE-amd64-memstick.img of=/dev/disk27 bs=4m
+$ sudo dd if=FreeBSD-15.0-RELEASE-amd64-memstick.img of=/dev/disk27 bs=4m
 ```
 
 
@@ -211,7 +228,7 @@ EOF
 # zfs create -o exec=off -o setuid=off system/var/crash
 # zfs create -o exec=off -o setuid=off system/var/db
 # zfs create -o exec=on -o setuid=off system/var/db/pkg
-# zfs create -o exec=off -o setuid=off -o readonly=on system/var/empty
+# zfs create -o exec=off -o setuid=off system/var/empty
 # zfs create -o compression=gzip -o exec=off -o setuid=off system/var/log
 # zfs create -o compression=gzip -o exec=off -o setuid=off -o atime=on system/var/mail
 # zfs create -o exec=off -o setuid=off system/var/run

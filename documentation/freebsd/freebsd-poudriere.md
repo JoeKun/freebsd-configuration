@@ -240,14 +240,18 @@ Once the build is complete, setup a symbolic link for the current set of quarter
 
 ## Configure host to use private package repository
 
-On the FreeBSD host `my_server`, disable using the default FreeBSD-maintained binary package repository.
+On the FreeBSD host `my_server`, disable using the default FreeBSD-maintained binary package repositories for `FreeBSD-ports` and `FreeBSD-ports-kmods`.
 
 ```console
 # mkdir -p /usr/local/etc/pkg/repos
-# cat << EOF > /usr/local/etc/pkg/repos/FreeBSD.conf
-# /usr/local/etc/pkg/repos/FreeBSD.conf
+# cat << EOF > /usr/local/etc/pkg/repos/FreeBSD-ports.conf
+# /usr/local/etc/pkg/repos/FreeBSD-ports.conf
 
-FreeBSD: {
+FreeBSD-ports: {
+    enabled: no
+}
+
+FreeBSD-ports-kmods: {
     enabled: no
 }
 EOF

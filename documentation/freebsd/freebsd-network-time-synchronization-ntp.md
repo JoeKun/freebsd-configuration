@@ -6,7 +6,7 @@ FreeBSD includes the [Network Time Protocol daemon](https://docs.freebsd.org/en/
 
 In case you haven’t selected `ntpd` as one of the enabled services in the FreeBSD installer, you can enable by setting `ntpd_enable="YES"` in your system configuration.[^1]
 
-It's also desirable to include the `ntpd_sync_on_start="YES"` directive to make sure time can be adjusted automatically at startup time.
+It's also desirable to include the `ntpd_sync_on_start="YES"` directive to make sure time can be adjusted automatically at startup time, even if the offset is large.
 
 [^1]: System configuration options are placed in discrete system configuration files according to the principles outlined in [Modular system configuration on FreeBSD](freebsd-modular-system-configuration.md).
 

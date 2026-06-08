@@ -147,10 +147,10 @@ Create new virtual machine template for FreeBSD using the `uefi` boot loader, as
 # sed -i '' 's/_type="virtio-blk"/_type="nvme"/' freebsd-uefi-nvme-zvol.conf
 ```
 
-Download an ISO image for FreeBSD 14.0-RELEASE.
+Download an ISO image for FreeBSD 15.0-RELEASE.
 
 ```console
-# vm iso "https://download.freebsd.org/releases/ISO-IMAGES/14.0/FreeBSD-14.0-RELEASE-amd64-disc1.iso"
+# vm iso "https://download.freebsd.org/releases/ISO-IMAGES/15.0/FreeBSD-15.0-RELEASE-amd64-disc1.iso"
 ```
 
 Create a new virtual machine using the template `freebsd-uefi-nvme-zvol` and with an appropriate amount of system resources.
@@ -162,7 +162,7 @@ Create a new virtual machine using the template `freebsd-uefi-nvme-zvol` and wit
 Start installing the previously downloaded ISO image onto this new `my_vm` virtual machine:
 
 ```console
-# vm install my_vm FreeBSD-14.0-RELEASE-amd64-disc1.iso
+# vm install my_vm FreeBSD-15.0-RELEASE-amd64-disc1.iso
 ```
 
 Attach the console to the newly started virtual machine.
@@ -233,7 +233,7 @@ Create the ZFS pool.
 # zfs create -o exec=off -o setuid=off system/var/crash
 # zfs create -o exec=off -o setuid=off system/var/db
 # zfs create -o exec=on -o setuid=off system/var/db/pkg
-# zfs create -o exec=off -o setuid=off -o readonly=on system/var/empty
+# zfs create -o exec=off -o setuid=off system/var/empty
 # zfs create -o compression=gzip -o exec=off -o setuid=off system/var/log
 # zfs create -o compression=gzip -o exec=off -o setuid=off -o atime=on system/var/mail
 # zfs create -o exec=off -o setuid=off system/var/run
