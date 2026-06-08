@@ -7,7 +7,7 @@
  * **Motherboard:** Supermicro X12SPi-TF
  * **Processor:** Intel Xeon Gold 5317 12 Core 3.0 GHz
  * **Memory:** 256 GB of Samsung DDR4 (PC4-25600), ECC Registered, Dual-rank
- * **Add-in card:** Gigabyte AORUS Gen-4 AIC 4 x M.2 PCIe Expansion Card Adapter
+ * **Add-in card:** Icy Dock ExpressSlot Slide 4 Bay M.2 NVMe SSD Adapter Card
  * **System storage:** Three Samsung 990 PRO 2 TB - NVMe PCIe 4.0 M.2 2280 SSD
 
 ### Installation media
