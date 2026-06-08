@@ -168,8 +168,8 @@ And build your packages again.
 
 ```console
 # poudriere bulk \
-    -j my_poudriere-amd64-14-3 \
-    -p 2025Q4 \
+    -j my_poudriere-amd64-15-0 \
+    -p 2026Q2 \
     -f /usr/local/etc/poudriere.d/pkglist
 ```
 
