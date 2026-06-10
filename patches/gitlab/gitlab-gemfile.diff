@@ -1,35 +1,70 @@
-diff --git a/Gemfile b/Gemfile
-index 51ab15115117..85d28f184b5e 100644
---- a/Gemfile
-+++ b/Gemfile
-@@ -366,7 +366,7 @@ gem 'licensee', '~> 9.16', feature_category: :shared # rubocop:todo Gemfile/Miss
- # Pinned below 1.8 so rugged.so links libgit2's old http-parser instead of
- # the bundled llhttp, which collides with llhttp-ffi symbols at runtime.
- # See https://gitlab.com/gitlab-org/gitlab/-/issues/598564
--gem 'rugged', '~> 1.7.2', require: false, feature_category: :gitaly
-+gem 'rugged', '~> 1.9', require: false, feature_category: :gitaly
- 
- # Detect and convert string character encoding
- gem 'charlock_holmes', '~> 0.7.9', feature_category: :shared # rubocop:todo Gemfile/MissingFeatureCategory -- https://gitlab.com/gitlab-org/gitlab/-/issues/581839
+diff --git a/Gemfile.checksum b/Gemfile.checksum
+index 7177478d1de7..d44ec40368ed 100644
+--- a/Gemfile.checksum
++++ b/Gemfile.checksum
+@@ -699,7 +699,7 @@
+ {"name":"rubyntlm","version":"0.6.3","platform":"ruby","checksum":"5b321456dba3130351f7451f8669f1afa83a0d26fd63cdec285b7b88e667102d"},
+ {"name":"rubypants","version":"0.2.0","platform":"ruby","checksum":"f07e38eac793655a0323fe91946081052341b9e69807026fcf102346589eedee"},
+ {"name":"rubyzip","version":"2.4.1","platform":"ruby","checksum":"8577c88edc1fde8935eb91064c5cb1aef9ad5494b940cf19c775ee833e075615"},
+-{"name":"rugged","version":"1.7.2","platform":"ruby","checksum":"9049b1f4c37f39d7b0e6fc5768815c5c5f470bf27d3fd725ab032258c2b38ce9"},
++{"name":"rugged","version":"1.9.0","platform":"ruby","checksum":"7faaa912c5888d6e348d20fa31209b6409f1574346b1b80e309dbc7e8d63efac"},
+ {"name":"safe_yaml","version":"1.0.4","platform":"ruby","checksum":"248193992ef1730a0c9ec579999ef2256a2b3a32a9bd9d708a1e12544a489ec2"},
+ {"name":"safety_net_attestation","version":"0.5.0","platform":"ruby","checksum":"c8cd01dd550dbe8553862918af6355a04672db11d218ec96104ce3955293f2aa"},
+ {"name":"sanitize","version":"6.0.2","platform":"ruby","checksum":"48c4eb8e92bb1699056b6000986ac50fc9df82f458a941abf2c4d6759bccd5cf"},
 diff --git a/Gemfile.lock b/Gemfile.lock
-index f3e631d33ddb..5aee3a970a8b 100644
+index bf1911a71889..391d3af9c430 100644
 --- a/Gemfile.lock
 +++ b/Gemfile.lock
-@@ -1871,7 +1871,7 @@ GEM
+@@ -1985,7 +1985,7 @@ GEM
      rubyntlm (0.6.3)
      rubypants (0.2.0)
      rubyzip (2.4.1)
 -    rugged (1.7.2)
 +    rugged (1.9.0)
-     safe_yaml (1.0.4)
      safety_net_attestation (0.5.0)
        jwt (>= 2.0, < 4.0)
-@@ -2492,7 +2492,7 @@ DEPENDENCIES
-   ruby-progressbar (~> 1.10)
-   ruby-saml (~> 1.18)
-   rubyzip (~> 2.4.0)
--  rugged (~> 1.7.2)
-+  rugged (~> 1.9)
-   sanitize (~> 6.0.2)
-   sd_notify (~> 0.1.0)
-   seed-fu (~> 2.3.7)
+     sanitize (6.0.2)
+@@ -3356,7 +3356,7 @@ CHECKSUMS
+   rubyntlm (0.6.3) sha256=5b321456dba3130351f7451f8669f1afa83a0d26fd63cdec285b7b88e667102d
+   rubypants (0.2.0) sha256=f07e38eac793655a0323fe91946081052341b9e69807026fcf102346589eedee
+   rubyzip (2.4.1) sha256=8577c88edc1fde8935eb91064c5cb1aef9ad5494b940cf19c775ee833e075615
+-  rugged (1.7.2) sha256=9049b1f4c37f39d7b0e6fc5768815c5c5f470bf27d3fd725ab032258c2b38ce9
++  rugged (1.9.0) sha256=7faaa912c5888d6e348d20fa31209b6409f1574346b1b80e309dbc7e8d63efac
+   safety_net_attestation (0.5.0) sha256=c8cd01dd550dbe8553862918af6355a04672db11d218ec96104ce3955293f2aa
+   sanitize (6.0.2) sha256=48c4eb8e92bb1699056b6000986ac50fc9df82f458a941abf2c4d6759bccd5cf
+   sass-embedded (1.77.5) sha256=a2a6adc4ce695ece780f40388d207de396e5091ddd28767440c7907a4501beda
+diff --git a/Gemfile.next.checksum b/Gemfile.next.checksum
+index 7177478d1de7..d44ec40368ed 100644
+--- a/Gemfile.next.checksum
++++ b/Gemfile.next.checksum
+@@ -699,7 +699,7 @@
+ {"name":"rubyntlm","version":"0.6.3","platform":"ruby","checksum":"5b321456dba3130351f7451f8669f1afa83a0d26fd63cdec285b7b88e667102d"},
+ {"name":"rubypants","version":"0.2.0","platform":"ruby","checksum":"f07e38eac793655a0323fe91946081052341b9e69807026fcf102346589eedee"},
+ {"name":"rubyzip","version":"2.4.1","platform":"ruby","checksum":"8577c88edc1fde8935eb91064c5cb1aef9ad5494b940cf19c775ee833e075615"},
+-{"name":"rugged","version":"1.7.2","platform":"ruby","checksum":"9049b1f4c37f39d7b0e6fc5768815c5c5f470bf27d3fd725ab032258c2b38ce9"},
++{"name":"rugged","version":"1.9.0","platform":"ruby","checksum":"7faaa912c5888d6e348d20fa31209b6409f1574346b1b80e309dbc7e8d63efac"},
+ {"name":"safe_yaml","version":"1.0.4","platform":"ruby","checksum":"248193992ef1730a0c9ec579999ef2256a2b3a32a9bd9d708a1e12544a489ec2"},
+ {"name":"safety_net_attestation","version":"0.5.0","platform":"ruby","checksum":"c8cd01dd550dbe8553862918af6355a04672db11d218ec96104ce3955293f2aa"},
+ {"name":"sanitize","version":"6.0.2","platform":"ruby","checksum":"48c4eb8e92bb1699056b6000986ac50fc9df82f458a941abf2c4d6759bccd5cf"},
+diff --git a/Gemfile.next.lock b/Gemfile.next.lock
+index bf1911a71889..391d3af9c430 100644
+--- a/Gemfile.next.lock
++++ b/Gemfile.next.lock
+@@ -1985,7 +1985,7 @@ GEM
+     rubyntlm (0.6.3)
+     rubypants (0.2.0)
+     rubyzip (2.4.1)
+-    rugged (1.7.2)
++    rugged (1.9.0)
+     safety_net_attestation (0.5.0)
+       jwt (>= 2.0, < 4.0)
+     sanitize (6.0.2)
+@@ -3356,7 +3356,7 @@ CHECKSUMS
+   rubyntlm (0.6.3) sha256=5b321456dba3130351f7451f8669f1afa83a0d26fd63cdec285b7b88e667102d
+   rubypants (0.2.0) sha256=f07e38eac793655a0323fe91946081052341b9e69807026fcf102346589eedee
+   rubyzip (2.4.1) sha256=8577c88edc1fde8935eb91064c5cb1aef9ad5494b940cf19c775ee833e075615
+-  rugged (1.7.2) sha256=9049b1f4c37f39d7b0e6fc5768815c5c5f470bf27d3fd725ab032258c2b38ce9
++  rugged (1.9.0) sha256=7faaa912c5888d6e348d20fa31209b6409f1574346b1b80e309dbc7e8d63efac
+   safety_net_attestation (0.5.0) sha256=c8cd01dd550dbe8553862918af6355a04672db11d218ec96104ce3955293f2aa
+   sanitize (6.0.2) sha256=48c4eb8e92bb1699056b6000986ac50fc9df82f458a941abf2c4d6759bccd5cf
+   sass-embedded (1.77.5) sha256=a2a6adc4ce695ece780f40388d207de396e5091ddd28767440c7907a4501beda

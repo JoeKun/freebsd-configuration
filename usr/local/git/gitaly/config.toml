@@ -155,8 +155,6 @@ self_signed_cert = false
 # [backup]
 # # The destination object-storage URL.
 # go_cloud_url = "gs://gitaly-backups"
-# # Optional: defaults to pointer
-# layout = "pointer"
 # # The object-storage URL for write-ahead log backups.
 # wal_backup_go_cloud_url = "gs://gitaly-wal-backups"
 # # Optional: defaults to 1

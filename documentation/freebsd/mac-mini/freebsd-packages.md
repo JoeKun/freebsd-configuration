@@ -1926,9 +1926,9 @@ Install `gcc14` to build ruby with it:
 Install specific version of ruby for GitLab:
 
 ```
-# wget "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.10.tar.gz"
-# tar xvzf ruby-3.3.10.tar.gz
-# cd ruby-3.3.10
+# wget "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.11.tar.gz"
+# tar xvzf ruby-3.3.11.tar.gz
+# cd ruby-3.3.11
 # patch -p1 -i /freebsd-configuration/patches/ruby/ruby-gcc-freebsd-build-fix.diff
 # export MAKE=/usr/local/bin/gmake
 # export CC=/usr/local/bin/gcc14
@@ -1938,19 +1938,19 @@ Install specific version of ruby for GitLab:
 # export NM=/usr/local/bin/gcc-nm14
 # export RANLIB=/usr/local/bin/gcc-ranlib14
 # export OBJCOPY=/usr/local/bin/objcopy
-# ./configure --enable-shared --prefix=/opt/rubies/ruby-3.3.10
+# ./configure --enable-shared --prefix=/opt/rubies/ruby-3.3.11
 # make -j4
 # make install
 # cd ..
-# rm -R -f ruby-3.3.10 ruby-3.3.10.tar.gz
+# rm -R -f ruby-3.3.11 ruby-3.3.11.tar.gz
 ```
 
 Install `bundler` for that specific version of ruby:
 
 ```
 # source /usr/local/share/chruby/chruby.sh
-# chruby ruby-3.3.10
-# gem install bundler -v "2.7.1"
+# chruby ruby-3.3.11
+# gem install bundler -v "4.0.11"
 ```
 
 Add unprivileged user for GitLab:
