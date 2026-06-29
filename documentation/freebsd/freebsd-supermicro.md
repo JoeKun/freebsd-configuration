@@ -60,6 +60,12 @@ Expand the image to USB flash drive using the following command.
 $ sudo dd if=FreeBSD-15.0-RELEASE-amd64-memstick.img of=/dev/disk27 bs=4m
 ```
 
+You will likely be met with a standard macOS system dialog that says:
+
+> The disk you attached was not readable by this computer.
+
+You can safely dismiss this dialog by pressing the *Ignore* button.
+
 
 ## BIOS configuration
 
