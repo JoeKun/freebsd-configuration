@@ -260,9 +260,9 @@ EOF
 ```console
 # cat << EOF > /tmp/bsdinstall_etc/fstab
 # Device            Mountpoint      FStype      Options         Dump    Pass#
-/dev/gpt/boot-sn0   /boot/efi       msdosfs     rw              2       2
-/dev/gpt/boot-sn1   /boot/efi1      msdosfs     rw              2       2
-/dev/gpt/boot-sn2   /boot/efi2      msdosfs     rw              2       2
+/dev/gpt/boot-sn0   /boot/efi       msdosfs     rw,failok       0       0
+/dev/gpt/boot-sn1   /boot/efi1      msdosfs     rw,failok       0       0
+/dev/gpt/boot-sn2   /boot/efi2      msdosfs     rw,failok       0       0
 
 /dev/gpt/swap-sn0   none            swap        sw              0       0
 /dev/gpt/swap-sn1   none            swap        sw              0       0

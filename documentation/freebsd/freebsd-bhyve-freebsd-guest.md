@@ -256,7 +256,7 @@ Prepare `fstab` file.
 ```console
 # cat << EOF > /tmp/bsdinstall_etc/fstab
 # Device            Mountpoint      FStype      Options         Dump    Pass#
-/dev/gpt/boot       /boot/efi       msdosfs     rw              2       2
+/dev/gpt/boot       /boot/efi       msdosfs     rw              0       0
 
 /dev/gpt/swap       none            swap        sw              0       0
 EOF

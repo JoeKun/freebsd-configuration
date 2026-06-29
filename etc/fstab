@@ -3,9 +3,9 @@
 # <device>                      <mount point>   <file system>   <options>       <dump>  <pass>
 
 # EFI boot partitions
-/dev/gpt/boot-sn0               /boot/efi       msdosfs         rw              2       2
-/dev/gpt/boot-sn1               /boot/efi1      msdosfs         rw              2       2
-/dev/gpt/boot-sn2               /boot/efi2      msdosfs         rw              2       2
+/dev/gpt/boot-sn0               /boot/efi       msdosfs         rw,failok       0       0
+/dev/gpt/boot-sn1               /boot/efi1      msdosfs         rw,failok       0       0
+/dev/gpt/boot-sn2               /boot/efi2      msdosfs         rw,failok       0       0
 
 # Swap
 /dev/gpt/swap-sn0               none            swap            sw              0       0
