@@ -168,7 +168,7 @@ self_signed_cert = false
 # enable_trailing_checksum = false
 
 ## Pack-object cache configuration
-# [archive_cache]
+# [pack_objects_cache]
 ## If the cache is enabled or not
 # enabled = true
 ## Controls whether the cache applies a backpressure mechanism
@@ -179,6 +179,15 @@ self_signed_cert = false
 # max_age = '300s'
 ## Minimum number of identical requests required before caching an object
 # min_occurrences = 1
+
+## Archive cache configuration
+# [archive_cache]
+## If the cache is enabled or not
+# enabled = true
+## Directory where cached archives are stored
+# dir = '/path/to/cache'
+## Max duration of packfiles in the cache
+# max_age = '300s'
 
 # # Bundle-URI
 # [bundle_uri]

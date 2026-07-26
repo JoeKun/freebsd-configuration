@@ -19,6 +19,12 @@ export NM=/usr/local/bin/gcc-nm14
 export RANLIB=/usr/local/bin/gcc-ranlib14
 export OBJCOPY=/usr/local/bin/objcopy
 
+# Special directory for GNU binary utilities.
+export PATH="$HOME/gnu/bin:$PATH"
+
+# Special build options for Meson.
+export GIT_MESON_BUILD_OPTIONS="-Db_pch=false"
+
 # Select desired ruby version using chruby.
 chruby_initialization_script_file_path="/usr/local/share/chruby/chruby.sh"
 gitlab_ruby_version_file_path="${HOME}/gitlab/.ruby-version"
