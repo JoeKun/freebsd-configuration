@@ -1,5 +1,5 @@
 # /etc/rc.conf.d/elasticsearch: system configuration for elasticsearch
 
+elasticsearch_java_home="/usr/local/openjdk17"
 elasticsearch_enable="YES"
-elasticsearch_env="JAVA_HOME=/usr/local/openjdk8"
 
