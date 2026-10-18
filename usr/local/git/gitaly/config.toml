@@ -21,6 +21,13 @@ bin_dir = "/usr/local/git/gitaly/_build/bin"
 # # Optional. TCP listen address for Prometheus metrics. If not set, no Prometheus listener is started.
 # prometheus_listen_addr = "localhost:9236"
 
+# # Optional. A top-level setting (not part of any [[concurrency]] block). Client names, from the
+# # "client_name" gRPC metadata, treated as authenticated for concurrency limiting even without an
+# # end-user "username". These are trusted internal callers whose traffic must not fall into the
+# # unauthenticated limits meant for anonymous public Git access. Defaults to ["gitlab-sidekiq"]; set
+# # to an empty list to disable the exemption.
+# internal_clients = ["gitlab-sidekiq"]
+
 # # Optional. Authenticate Gitaly requests using a shared secret.
 # # Gitaly rejects requests that do not contain the authentication token in their headers.
 # # Authentication is disabled when the token setting is absent or an empty string.
