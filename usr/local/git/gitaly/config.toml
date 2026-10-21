@@ -103,6 +103,11 @@ sentry_environment = ""
 [hooks]
 # # Directory where custom Git hooks are installed. If left unset, no custom hooks are used.
 custom_hooks_dir = "/usr/local/git/custom_hooks"
+# # Maximum time the post-receive hook waits for Praefect to finish transaction
+# # coordination (including the database generation update) before failing the push.
+# # Only applies when running through Praefect with the post-receive signal feature
+# # enabled; outside Praefect the hook does not wait. Defaults to "60s".
+# post_receive_wait_timeout = "60s"
 
 # # Gitaly must connect to the GitLab application to perform access checks when a user performs a change.
 [gitlab]
