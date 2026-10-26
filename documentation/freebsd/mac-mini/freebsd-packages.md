@@ -2096,7 +2096,7 @@ See if any dependency is missing:
 If any, install the dependencies using `pkg`. For example:
 
 ```
-# pkg install php84-pecl-imagick php84-pecl-redis php84-pecl-APCu
+# pkg install php84-pecl-imagick php84-pecl-APCu
 # pkg install math/php84-bcmath ftp/php84-curl math/php84-gmp devel/php84-pcntl sysutils/php84-posix textproc/php84-simplexml security/php84-sodium textproc/php84-xmlreader textproc/php84-xmlwriter textproc/php84-xsl www/php84-opcache devel/php84-sysvsem
 ```
 
